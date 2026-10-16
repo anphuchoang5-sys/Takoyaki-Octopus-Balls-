@@ -89,13 +89,13 @@ export function groundGlow(x, z, sx, sz, color, opacity) {
   m.rotation.x = -Math.PI / 2; m.position.set(x, .045, z); world.add(m); return m;
 }
 // Consolidate static geometry while retaining all animated doors, rain and lights.
-export function batchStatic() {
-  world.updateMatrixWorld(true);
+export function batchStatic(root = world) {
+  root.updateMatrixWorld(true);
   const buckets = new Map(); const remove = [];
-  world.traverse(obj => {
+  root.traverse(obj => {
     if ((!obj.isMesh && !obj.isLineSegments) || Array.isArray(obj.material) || obj.material.transparent) return;
-    for (let p = obj; p && p !== world; p = p.parent) if (p.userData.dynamic) return;
-    const key = `${obj.type}:${obj.material.uuid}:${obj.castShadow}`;
+    for (let p = obj; p && p !== root; p = p.parent) if (p.userData.dynamic) return;
+    const key = `${obj.type}:${obj.material.uuid}:${obj.castShadow}:${obj.geometry.index ? 'indexed' : 'unindexed'}`;
     if (!buckets.has(key)) buckets.set(key, { material: obj.material, lines: obj.isLineSegments, shadow: obj.castShadow, items: [] });
     const g = obj.geometry.clone(); g.applyMatrix4(obj.matrixWorld); buckets.get(key).items.push(g); remove.push(obj);
   });
@@ -106,7 +106,7 @@ export function batchStatic() {
   for (const b of buckets.values()) {
     const geometry = mergeGeometries(b.items, false); b.items.forEach(g => g.dispose());
     const mesh = b.lines ? new THREE.LineSegments(geometry, b.material) : new THREE.Mesh(geometry, b.material);
-    mesh.castShadow = b.shadow; mesh.receiveShadow = true; world.add(mesh);
+    mesh.castShadow = b.shadow; mesh.receiveShadow = true; root.add(mesh);
   }
-  if (outlines.length) { world.add(new THREE.LineSegments(mergeGeometries(outlines), outline)); outlines.forEach(g => g.dispose()); }
+  if (outlines.length) { root.add(new THREE.LineSegments(mergeGeometries(outlines), outline)); outlines.forEach(g => g.dispose()); }
 }

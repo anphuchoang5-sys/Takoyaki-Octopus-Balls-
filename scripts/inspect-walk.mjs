@@ -1,0 +1,26 @@
+import {chromium} from 'playwright';
+import {mkdir,writeFile} from 'node:fs/promises';
+await mkdir('artifacts/walk',{recursive:true});
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+const response=await page.goto(process.argv[2]||'http://127.0.0.1:4173/walk/',{waitUntil:'networkidle'});
+try{await page.waitForFunction(()=>window.__walk?.ready,null,{timeout:45000});}catch(error){console.log(JSON.stringify({error:error.message,errors}));await page.screenshot({path:'artifacts/walk/failed.png'});await browser.close();process.exit(1);}
+await page.waitForTimeout(900);await page.screenshot({path:'artifacts/walk/01-dusk.png'});
+const initial=await page.evaluate(()=>window.__walk.state);
+await page.keyboard.down('KeyW');await page.waitForTimeout(850);const moving=await page.evaluate(()=>window.__walk.state);await page.keyboard.up('KeyW');
+await page.waitForTimeout(600);const stopped=await page.evaluate(()=>window.__walk.state);
+await page.keyboard.press('Home');await page.keyboard.down('KeyD');await page.waitForTimeout(1200);await page.keyboard.up('KeyD');
+await page.keyboard.down('KeyW');await page.waitForTimeout(2400);await page.keyboard.up('KeyW');
+const collision=await page.evaluate(()=>window.__walk.state);
+await page.keyboard.press('Home');await page.keyboard.press('Digit1');await page.waitForTimeout(2000);await page.screenshot({path:'artifacts/walk/02-morning.png'});
+await page.keyboard.down('KeyS');await page.waitForTimeout(1400);await page.keyboard.up('KeyS');await page.keyboard.down('KeyW');await page.waitForTimeout(300);await page.keyboard.up('KeyW');await page.waitForTimeout(400);
+await page.mouse.move(800,500);await page.mouse.down();await page.mouse.move(180,500,{steps:20});await page.mouse.up();await page.waitForTimeout(700);await page.screenshot({path:'artifacts/walk/03-character.png'});
+await page.keyboard.press('Home');await page.keyboard.press('Digit4');await page.keyboard.press('KeyR');await page.waitForTimeout(4500);await page.screenshot({path:'artifacts/walk/04-night-rain.png'});
+const rain=await page.evaluate(()=>window.__walk.state);
+await page.keyboard.press('Digit2');await page.keyboard.press('KeyH');await page.waitForTimeout(2500);await page.screenshot({path:'artifacts/walk/05-hail.png'});const hail=await page.evaluate(()=>window.__walk.state);
+await page.keyboard.press('KeyC');await page.keyboard.press('Digit3');await page.keyboard.press('KeyV');await page.waitForTimeout(1500);await page.screenshot({path:'artifacts/walk/06-map.png'});
+const overview=await page.evaluate(()=>window.__walk.state);
+const report={status:response.status(),errors,initial,moving,stopped,collision,rain,hail,overview,movementPassed:moving.walked>initial.walked+.7,collisionPassed:collision.player[2]>3.2,independentTimeWeather:rain.environment.period==='night'&&rain.environment.weather==='rain'&&hail.environment.period==='afternoon'&&hail.environment.weather==='hail',singleWeather:initial.weatherSystems===1,uniqueSlots:new Set(initial.tiles.map(t=>t.grid.join(','))).size===initial.tiles.length};
+await writeFile('artifacts/walk/inspection.json',JSON.stringify(report,null,2));console.log(JSON.stringify({status:report.status,errors,movementPassed:report.movementPassed,independentTimeWeather:report.independentTimeWeather,singleWeather:report.singleWeather,uniqueSlots:report.uniqueSlots,initial:initial.player,moving:moving.player,collision:collision.player,rain:rain.environment,hail:hail.environment},null,2));await browser.close();
+if(errors.length||!report.movementPassed||!report.collisionPassed||!report.independentTimeWeather||!report.uniqueSlots)process.exit(1);

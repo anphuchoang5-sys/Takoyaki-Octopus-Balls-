@@ -16,9 +16,10 @@ for(const file of files){
   const source=(await readFile(file,'utf8')).replace(/(\bfrom\s*|\bimport\s*)(['"])([^'"]+)\2/g,(match,prefix,quote,spec)=>prefix+quote+moduleId(spec,relative)+quote);
   imports['@ame/'+relative]='data:text/javascript;base64,'+Buffer.from(source).toString('base64');
 }
-const source=await readFile(path.join(root,'index.html'),'utf8');
+const walking=process.argv.includes('--walk');
+const source=await readFile(path.join(root,walking?'walk/index.html':'index.html'),'utf8');
 const html=source.replace(/<script type="importmap">[\s\S]*?<\/script>/,'<script type="importmap">'+JSON.stringify({imports})+'</script>')
-  .replace('<script type="module" src="./scene.js"></script>','<script type="module">import "@ame/scene.js";</script>');
+  .replace(walking?'<script type="module" src="./main.js"></script>':'<script type="module" src="./scene.js"></script>',walking?'<script type="module">import "@ame/walk/main.js";</script>':'<script type="module">import "@ame/scene.js";</script>');
 await mkdir('artifacts',{recursive:true});
-const destination=path.resolve('artifacts/雨夜便利店.html');
+const destination=path.resolve(walking?'artifacts/雨待町散步.html':'artifacts/雨夜便利店.html');
 await writeFile(destination,html);console.log(JSON.stringify({file:destination,modules:files.length,bytes:Buffer.byteLength(html)}));
