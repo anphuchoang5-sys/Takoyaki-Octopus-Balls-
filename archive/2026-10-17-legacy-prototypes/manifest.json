@@ -1,0 +1,270 @@
+{
+  "date": "2026-10-17",
+  "purpose": "Retired original showcase and walking prototype; independent runtime snapshot",
+  "files": [
+    {
+      "original": "dist/scene.js",
+      "path": "dist/scene.js",
+      "bytes": 7728,
+      "hash": "be9a807bc9a07cc522d211a5906379c9bff4642f0420981eb891779c973fa6b6"
+    },
+    {
+      "original": "dist/vendor/three.module.js",
+      "path": "dist/vendor/three.module.js",
+      "bytes": 603113,
+      "hash": "c8211c69345d2e9949dc7a8ac969380497aa0600a5a8ac6a459c8cd02dd9cb8a"
+    },
+    {
+      "original": "dist/vendor/three.core.js",
+      "path": "dist/vendor/three.core.js",
+      "bytes": 1403455,
+      "hash": "eb077d2417f61d3e6d9264c317cabc4ea35769ed6b0ab533067292a550784c20"
+    },
+    {
+      "original": "dist/vendor/addons/controls/OrbitControls.js",
+      "path": "dist/vendor/addons/controls/OrbitControls.js",
+      "bytes": 38703,
+      "hash": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/EffectComposer.js",
+      "path": "dist/vendor/addons/postprocessing/EffectComposer.js",
+      "bytes": 8477,
+      "hash": "4b8c855f28eed2570bed898adc0ab89c585a8a281ecb6d905c09d00697f9f50a"
+    },
+    {
+      "original": "dist/vendor/addons/shaders/CopyShader.js",
+      "path": "dist/vendor/addons/shaders/CopyShader.js",
+      "bytes": 729,
+      "hash": "a33057d5ac91c43304c186ac0e8816e62bb2ed471d3a00ff3018dfd5c0389718"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/ShaderPass.js",
+      "path": "dist/vendor/addons/postprocessing/ShaderPass.js",
+      "bytes": 3228,
+      "hash": "e2500a5913b26bbf5148ceaae644c6edcff06a18b01494ee37bf856353d2ab9d"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/Pass.js",
+      "path": "dist/vendor/addons/postprocessing/Pass.js",
+      "bytes": 4218,
+      "hash": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/MaskPass.js",
+      "path": "dist/vendor/addons/postprocessing/MaskPass.js",
+      "bytes": 4694,
+      "hash": "7cd08eee9d5d6f5578beaddbdcbe9c384f6873810af27f22ab7db3ceeb127aa3"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/RenderPass.js",
+      "path": "dist/vendor/addons/postprocessing/RenderPass.js",
+      "bytes": 4112,
+      "hash": "fd91229aacc5830e3984b0f2bdefcf566163ea028f4c1f1ab233fa6665a133ac"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/UnrealBloomPass.js",
+      "path": "dist/vendor/addons/postprocessing/UnrealBloomPass.js",
+      "bytes": 14388,
+      "hash": "d92742959879b461f25348b2abddc7ca0d48527e7718340bcfa29fa771e2799a"
+    },
+    {
+      "original": "dist/vendor/addons/shaders/LuminosityHighPassShader.js",
+      "path": "dist/vendor/addons/shaders/LuminosityHighPassShader.js",
+      "bytes": 1291,
+      "hash": "5044f780b6e6cf863947f64c36fe1587132f7fbe395ada863cd1e5f0388dcf1e"
+    },
+    {
+      "original": "dist/vendor/addons/postprocessing/OutputPass.js",
+      "path": "dist/vendor/addons/postprocessing/OutputPass.js",
+      "bytes": 4029,
+      "hash": "f5b81c96e76b6b28b4b3ba8c41c4aeb982b1e03f3d82883242d951b2ab082fa2"
+    },
+    {
+      "original": "dist/vendor/addons/shaders/OutputShader.js",
+      "path": "dist/vendor/addons/shaders/OutputShader.js",
+      "bytes": 1876,
+      "hash": "353479f77a8d7e2629d49ccac9fc2f5dbfdda5442e0adf867b00377a2fcb0cb2"
+    },
+    {
+      "original": "dist/world.js",
+      "path": "dist/world.js",
+      "bytes": 7970,
+      "hash": "60b09246fe93cf0ec4ded31c90937535449993b71f61054c6207ab8c939d4865"
+    },
+    {
+      "original": "dist/vendor/addons/utils/BufferGeometryUtils.js",
+      "path": "dist/vendor/addons/utils/BufferGeometryUtils.js",
+      "bytes": 35539,
+      "hash": "fda7e946b8e0b5ab39b779206589e7a1079a22eb24efb89d7223e03fdfb1f751"
+    },
+    {
+      "original": "dist/store.js",
+      "path": "dist/store.js",
+      "bytes": 119,
+      "hash": "24afe11a3ca4370b22449d20fdbd3e2351ec8d36c6798f033c6fc8f8949625bc"
+    },
+    {
+      "original": "dist/town/assets/convenience/store.js",
+      "path": "dist/town/assets/convenience/store.js",
+      "bytes": 13655,
+      "hash": "5b7c1131b3ff7609d6a77bad766f1d23b5ee9844ac7d9472c87b29fe318e2853"
+    },
+    {
+      "original": "dist/street.js",
+      "path": "dist/street.js",
+      "bytes": 11651,
+      "hash": "0a0461cf1c92d6eca524520527f4297a971660ff80bb7a509220f10a6ef52ede"
+    },
+    {
+      "original": "dist/weather.js",
+      "path": "dist/weather.js",
+      "bytes": 6551,
+      "hash": "103190100211da2c6fafa6b2d8f95231b2f961c76a3160f31d479047f9fd6a66"
+    },
+    {
+      "original": "dist/vendor/addons/objects/Reflector.js",
+      "path": "dist/vendor/addons/objects/Reflector.js",
+      "bytes": 9476,
+      "hash": "0908d87a7251268dd6d12310b9633f08fd3be9c6faf2e2a4076fce0e87bdd26d"
+    },
+    {
+      "original": "dist/walk/main.js",
+      "path": "dist/walk/main.js",
+      "bytes": 7709,
+      "hash": "c746a451053be1cbdab820befb8d4019cd361a6fd0f0c0761ad4b2859e2655e6"
+    },
+    {
+      "original": "dist/walk/map.js",
+      "path": "dist/walk/map.js",
+      "bytes": 5459,
+      "hash": "b74d6c56d43a992adfdfc83239ceba96be95364bf426dd31afc24639323af720"
+    },
+    {
+      "original": "dist/walk/buildings.js",
+      "path": "dist/walk/buildings.js",
+      "bytes": 178,
+      "hash": "29e1b38e312f201a049dfb2b3b923c950326fd34e02a5c4570b820be40ae62ab"
+    },
+    {
+      "original": "dist/town/assets/index.js",
+      "path": "dist/town/assets/index.js",
+      "bytes": 1574,
+      "hash": "9ac81303a65c0ace2da8909de41ea222831e149a8495b09ca0b998d628d14756"
+    },
+    {
+      "original": "dist/town/assets/convenience/index.js",
+      "path": "dist/town/assets/convenience/index.js",
+      "bytes": 1115,
+      "hash": "5941621f6c79bb57e059b48a86fabb5c5ca3dab3f0b6c18601bb3a4705c07321"
+    },
+    {
+      "original": "dist/town/assets/shared/building-parts.js",
+      "path": "dist/town/assets/shared/building-parts.js",
+      "bytes": 1861,
+      "hash": "1ee9d1b21d8fbe57eb3bfa6a2e29790c3bbac030d422b13a559b906bc6d4b91b"
+    },
+    {
+      "original": "dist/town/assets/cafe/index.js",
+      "path": "dist/town/assets/cafe/index.js",
+      "bytes": 2745,
+      "hash": "debb0b5d0c85b4b83598f71909d4cce432840cf26ead6f74e3f6c24e1dbb8bd0"
+    },
+    {
+      "original": "dist/town/assets/bookshop/index.js",
+      "path": "dist/town/assets/bookshop/index.js",
+      "bytes": 2746,
+      "hash": "48506dce6cd748fe71fb7f098dcb92b4c4b4c3f935c752319167d1fd22f3b954"
+    },
+    {
+      "original": "dist/town/assets/home/index.js",
+      "path": "dist/town/assets/home/index.js",
+      "bytes": 2167,
+      "hash": "d006190f8c2d98a424f5c3d1a9b1ae6186a86f7744e8a09012ee90bc96d3e265"
+    },
+    {
+      "original": "dist/town/assets/garden/index.js",
+      "path": "dist/town/assets/garden/index.js",
+      "bytes": 1334,
+      "hash": "a6e852328fe9f5431dc162585059c228e7e682adf5a822a05baa4308a6f46a5a"
+    },
+    {
+      "original": "dist/walk/character.js",
+      "path": "dist/walk/character.js",
+      "bytes": 5620,
+      "hash": "31cf19862ff6e8ad48ae2f55b331f0f4359f39a5ed4d4fb3d38caef39f44b6ea"
+    },
+    {
+      "original": "dist/walk/environment.js",
+      "path": "dist/walk/environment.js",
+      "bytes": 11749,
+      "hash": "4963ecd4752884ce72a14d47ce8a46efe26351d01047ec98d1303dc25f2a6a8d"
+    },
+    {
+      "original": "dist/index.html",
+      "path": "dist/index.html",
+      "bytes": 1618,
+      "hash": "5d93c843f717e40846022ebeb313f8359155b0b4683661187dca9b992ed7d141"
+    },
+    {
+      "original": "dist/walk/index.html",
+      "path": "dist/walk/index.html",
+      "bytes": 1485,
+      "hash": "22b0b0096944e8a361e5f9fad4de1e4fe0bc58f8ad57cc65e82baefc957a7878"
+    },
+    {
+      "original": "dist/vendor/LICENSE.three",
+      "path": "dist/vendor/LICENSE.three",
+      "bytes": 1081,
+      "hash": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+    },
+    {
+      "original": "package.json",
+      "path": "package.json",
+      "bytes": 249,
+      "hash": "ef97699e47cf5d7618286412e4a1daf021e2c4531ca8532cabfb47bd1d05e73a"
+    },
+    {
+      "original": "package-lock.json",
+      "path": "package-lock.json",
+      "bytes": 2056,
+      "hash": "6e3505c94125940f23ac5e76a09d9abf81784c44a020546e935c9605d603a4da"
+    },
+    {
+      "original": "README.md",
+      "path": "README.original.md",
+      "bytes": 6024,
+      "hash": "79eca04b3688e4ef4bdd6209da43cfba3ae67834573e4f3ab1bb722e1ce24f54"
+    },
+    {
+      "original": "scripts/serve.mjs",
+      "path": "scripts/serve.mjs",
+      "bytes": 1125,
+      "hash": "d3706eafcfce16a0cc37d57cbfaffa8ea9c3345debb4f668409e035eb3c3feae"
+    },
+    {
+      "original": "scripts/standalone.mjs",
+      "path": "scripts/standalone.mjs",
+      "bytes": 1870,
+      "hash": "b258b485f58eb7faf5a300867300529ed235db6a6e7556736041231536caddcd"
+    },
+    {
+      "original": "scripts/inspect.mjs",
+      "path": "scripts/inspect.mjs",
+      "bytes": 3161,
+      "hash": "09a8041bded890efef644608a90cfeb8599919f154794673b37cee83e53997e9"
+    },
+    {
+      "original": "scripts/inspect-walk.mjs",
+      "path": "scripts/inspect-walk.mjs",
+      "bytes": 3918,
+      "hash": "47435d0054a1252b44f07343bf03ec5e0456b339a615bc8f5e52ef852fabe414"
+    },
+    {
+      "original": "scripts/inspect-walk-states.mjs",
+      "path": "scripts/inspect-walk-states.mjs",
+      "bytes": 2473,
+      "hash": "8c5349cf5ced7c127ebc4563034fde382362b472d766aa865e90fb6e7c44e5c0"
+    }
+  ]
+}

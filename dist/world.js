@@ -6,7 +6,6 @@ export const world = new THREE.Group();
 export const dynamic = [];
 let seed = 73105;
 export function random() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
-export const palette = { ink: '#182e3c', cream: '#d5d6bb', teal: '#3b8981', darkTeal: '#24575c', coral: '#e77c61', gold: '#e8b666' };
 const bands = new THREE.DataTexture(new Uint8Array([0, 125, 195, 255]), 4, 1, THREE.RedFormat);
 bands.minFilter = bands.magFilter = THREE.NearestFilter; bands.needsUpdate = true;
 const materials = new Map();

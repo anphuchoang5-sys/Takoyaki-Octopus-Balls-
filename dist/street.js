@@ -1,5 +1,5 @@
 import { THREE, world, random, box, cyl, sphere, tube, group, toon, glow, white, dark, metal, glass, canvasMap, face, label, point, halo, groundGlow } from './world.js';
-import { poster } from './store.js';
+import { poster } from './town/assets/convenience/store.js';
 
 export const signalLights=[];
 const curb=toon('#8a9f9f');

@@ -1,0 +1,130 @@
+{
+  "recordedBefore": "C v2.4: B exterior-03-states verified against pre-weather snapshot; authorized C runtime/scene/UI changes. Other protected entries retained.",
+  "files": [
+    {
+      "path": "dist/town/assets/bookshop/index.js",
+      "bytes": 2746,
+      "hash": "48506dce6cd748fe71fb7f098dcb92b4c4b4c3f935c752319167d1fd22f3b954"
+    },
+    {
+      "path": "dist/town/assets/cafe/index.js",
+      "bytes": 2745,
+      "hash": "debb0b5d0c85b4b83598f71909d4cce432840cf26ead6f74e3f6c24e1dbb8bd0"
+    },
+    {
+      "path": "dist/town/assets/convenience/index.js",
+      "bytes": 1115,
+      "hash": "5941621f6c79bb57e059b48a86fabb5c5ca3dab3f0b6c18601bb3a4705c07321"
+    },
+    {
+      "path": "dist/town/assets/convenience/store.js",
+      "bytes": 13655,
+      "hash": "5b7c1131b3ff7609d6a77bad766f1d23b5ee9844ac7d9472c87b29fe318e2853"
+    },
+    {
+      "path": "dist/town/assets/garden/index.js",
+      "bytes": 1334,
+      "hash": "a6e852328fe9f5431dc162585059c228e7e682adf5a822a05baa4308a6f46a5a"
+    },
+    {
+      "path": "dist/town/assets/home/index.js",
+      "bytes": 2167,
+      "hash": "d006190f8c2d98a424f5c3d1a9b1ae6186a86f7744e8a09012ee90bc96d3e265"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/geometry.js",
+      "bytes": 5644,
+      "hash": "5db520bd087f822aa2f43ce0fdb56779d79201416e52b92ab693780ca3214ed1"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/index.js",
+      "bytes": 15776,
+      "hash": "2446424a020037c3766d54496f535b444a37b0825f5f39125ebe87b64e59a44c"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/preview.html",
+      "bytes": 6033,
+      "hash": "5909d59f71d346e3ae2013b267ceba70cb9cf4fee9654e953261f53eea3fbdaf"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/preview.js",
+      "bytes": 9608,
+      "hash": "0346c667d6fa90d4f77cf4d2cc146cc714608ef39937f3f54624c8d39e00913f"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/README.md",
+      "bytes": 7403,
+      "hash": "339a52e75c67d70a27d1fe1f6a5434d70034bd10dec2c21c126e0242c2953fe9"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/sakura-house.glb",
+      "bytes": 8705228,
+      "hash": "af2e866f5e014a3d6b998c318a10dab23e75c6dd873f4ee9e9435fd3d25a7c05"
+    },
+    {
+      "path": "dist/town/assets/shared/building-parts.js",
+      "bytes": 1861,
+      "hash": "1ee9d1b21d8fbe57eb3bfa6a2e29790c3bbac030d422b13a559b906bc6d4b91b"
+    },
+    {
+      "path": "dist/town/editor/camera.js",
+      "bytes": 4966,
+      "hash": "6ab018c2424715a31792c36cc938a7a3021ef745c098700f93b1d85f7373213d"
+    },
+    {
+      "path": "dist/town/editor/editor.css",
+      "bytes": 8107,
+      "hash": "99575901a194216a6df8ea5230619ac6322ed8ba2843f4e5b35f8bea3a4d4a98"
+    },
+    {
+      "path": "dist/town/editor/grass.js",
+      "bytes": 8304,
+      "hash": "3e2559ab87c87aadf124fdfae26eb171a5af994a64b0807a215a2ff3f7dd1e7b"
+    },
+    {
+      "path": "dist/town/editor/lighting.js",
+      "bytes": 2537,
+      "hash": "105c3eb15dcca11ca94686636e88c6867522b0c7d12b5c285bb8731a20c7f2ed"
+    },
+    {
+      "path": "dist/town/editor/persistence.js",
+      "bytes": 1507,
+      "hash": "23e031e8e3d304fa654161f87f904c6b7be06e7a8c5307b28548f24de742a5b5"
+    },
+    {
+      "path": "dist/town/editor/roads.js",
+      "bytes": 2621,
+      "hash": "92b2d72867bb3aa50f01b5374f1502c3866ed9492c2dc9feaed5b48d2ecd4bcc"
+    },
+    {
+      "path": "dist/town/editor/runtime.js",
+      "bytes": 2766,
+      "hash": "03df31905380018cda2239ec1342f078ddee4f500431b13eddc3d2fa63f9ac1a"
+    },
+    {
+      "path": "dist/town/editor/scene.js",
+      "bytes": 11215,
+      "hash": "dd93fdfee72dac9d6db6d72626774ff30dfd2996ed160c988eb27408b6981f98"
+    },
+    {
+      "path": "dist/town/editor/state.js",
+      "bytes": 7550,
+      "hash": "da7d4c0bc99e03a5febefe9ce1d49883f15040ba097eb85483a4d86b83024f4e"
+    },
+    {
+      "path": "dist/town/editor/ui-shell.js",
+      "bytes": 4532,
+      "hash": "b4e04d0338f6fcfb51dc2269fac917924fa307442d4de8fa4b7fe71cac8c4a50"
+    },
+    {
+      "path": "dist/town/editor/ui.js",
+      "bytes": 21664,
+      "hash": "87efdb2b8a61b1b3de306f1d8ae08d30a9f0081d12f26c2e8de3325e9dc8bb08"
+    },
+    {
+      "path": "dist/town/assets/sakura-house/environment.js",
+      "bytes": 10676,
+      "hash": "a7539a876cec66ef23f8bbe4d112e410cb72d26454dc4353bd4964a4f11bc676"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "file": "01-plan.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/16/haruko2023/e8/6e/j/o1143083915293089513.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "02-exterior.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/17/haruko2023/d9/d8/j/o1413082715293092663.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "03-whole.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/17/haruko2023/45/13/j/o1270082715293092986.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "04-corridor.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230614/11/haruko2023/f6/34/j/o1214082715298708392.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "05-living.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/17/haruko2023/39/52/j/o1214082715293092981.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "06-kitchen.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230614/11/haruko2023/bd/49/j/o1143082715298706259.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "07-sisters.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/17/haruko2023/5d/05/j/o1214082715293092975.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "08-grandparents.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230602/17/haruko2023/3e/18/j/o1214082715293092967.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "09-parents.jpg",
+    "url": "https://stat.ameba.jp/user_images/20230614/11/haruko2023/48/c2/j/o1143082715298706271.jpg",
+    "page": "https://ameblo.jp/haruko2023/entry-12805827438.html",
+    "role": "primary layout"
+  },
+  {
+    "file": "anime-living.png",
+    "url": "https://manechikuunauyo.wordpress.com/wp-content/uploads/2024/11/e5908de7a7b0_e69caa_e8a8ade5ae9a-3.png?w=1024",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "anime-kitchen.jpg",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260416/20260416213704.jpg",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "anime-sisters.jpg",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260416/20260416213843.jpg",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "anime-grandparents.jpg",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260416/20260416215150.jpg",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "anime-grandparents-detail.png",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260416/20260416215226.png",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "anime-toilet.png",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260416/20260416215440.png",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "animation detail; not layout"
+  },
+  {
+    "file": "author-parents.png",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260717/20260717194131.png",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "secondary author 3D reconstruction; not animation; not used as layout"
+  },
+  {
+    "file": "author-bath.png",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260717/20260717194301.png",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "secondary author 3D reconstruction; not animation; not used as layout"
+  },
+  {
+    "file": "author-wash.png",
+    "url": "https://cdn-ak.f.st-hatena.com/images/fotolife/m/manechiku/20260717/20260717194349.png",
+    "page": "https://manechiku.hatenablog.com/entry/2026/04/16/212338",
+    "role": "secondary author 3D reconstruction; not animation; not used as layout"
+  }
+]

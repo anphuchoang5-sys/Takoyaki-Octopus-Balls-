@@ -1,4 +1,4 @@
-import { THREE, world, dynamic, random, box, cyl, tube, group, toon, glow, white, dark, metal, glass, canvasMap, face, label, point, halo } from './world.js';
+import { THREE, world, dynamic, random, box, cyl, tube, group, toon, glow, white, dark, metal, glass, canvasMap, face, label, point, halo } from '../../../world.js';
 
 export const doors = [];
 export const shopSign = glow('#fff0c8', 1.25);
