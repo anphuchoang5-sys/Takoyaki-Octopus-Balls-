@@ -1,0 +1,29 @@
+[
+  {
+    "file": "D-anime-exterior.png",
+    "source": "User attached color animation screenshot, episode title まる子、将棋を指したい の巻",
+    "originalLocalFile": "C:/WINDOWS/TEMP/codex-clipboard-18b45437-6f6f-4649-a11f-0a7dd64d46ea.png",
+    "status": "Actually opened and viewed; primary exterior reference for revision 02",
+    "scope": "Visible shape, proportions and palette; dimensions and hidden structure inferred"
+  },
+  {
+    "file": "A-anime-interior.jpg",
+    "url": "https://www.chibimaru.tv/news/media/20200107_SP_06.jpg",
+    "bytes": 70091,
+    "contentType": "image/jpeg"
+  },
+  {
+    "file": "C-manga-facade.jpg",
+    "url": "https://stat.ameba.jp/user_images/20200916/18/2001notabidati/e6/81/j/o0600040214820424257.jpg",
+    "bytes": 73756,
+    "contentType": "image/jpeg",
+    "usage": "Supplement only; color anime D overrides all conflicts in revision 02"
+  },
+  {
+    "file": null,
+    "url": "https://image.p-c2-x.abema-tv.com/image/programs/6-2rbxhaepkcc_s1_p45/thumb001.png?height=504&quality=75&version=1627642451&width=896",
+    "status": "unavailable",
+    "observed": "SSL handshake/connection timeout twice; web cache miss",
+    "usage": "User written prop list only; image not viewed"
+  }
+]

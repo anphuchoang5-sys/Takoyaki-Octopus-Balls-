@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "no browser errors",
+      "passed": true,
+      "data": []
+    }
+  ],
+  "errors": [],
+  "scope": "Rig and skinning only; static test poses; no motion clips or editor integration."
+}

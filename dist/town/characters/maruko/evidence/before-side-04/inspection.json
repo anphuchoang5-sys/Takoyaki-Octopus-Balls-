@@ -1,0 +1,594 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "body, outfit geometry and joint positions unchanged from static-02",
+      "passed": true,
+      "data": {
+        "meshes": 89,
+        "identical": true,
+        "jointGuideIdentical": true
+      }
+    },
+    {
+      "name": "mouth colour meshes lie on skin within 1 mm",
+      "passed": true,
+      "data": {
+        "sampleCount": 48,
+        "allSupported": true,
+        "minOffset": 0.0002568722819675795,
+        "maxOffset": 0.0005762092453276413
+      }
+    },
+    {
+      "name": "finite, nondegenerate original geometry",
+      "passed": true
+    },
+    {
+      "name": "GLB geometry, unlit palette, outlines and bounds round trip",
+      "passed": true
+    },
+    {
+      "name": "soles at floor and nominal 1.24 m height",
+      "passed": true
+    },
+    {
+      "name": "no animation and independent idempotent disposal",
+      "passed": true
+    },
+    {
+      "name": "real pointer orbit",
+      "passed": true
+    },
+    {
+      "name": "real wheel zoom",
+      "passed": true
+    },
+    {
+      "name": "real right-button pan",
+      "passed": true
+    },
+    {
+      "name": "Home restores full body",
+      "passed": true
+    },
+    {
+      "name": "view button front",
+      "passed": true
+    },
+    {
+      "name": "view button quarter",
+      "passed": true
+    },
+    {
+      "name": "view button side",
+      "passed": true
+    },
+    {
+      "name": "view button left-side",
+      "passed": true
+    },
+    {
+      "name": "view button back",
+      "passed": true
+    },
+    {
+      "name": "view button face",
+      "passed": true
+    },
+    {
+      "name": "view button side-face",
+      "passed": true
+    },
+    {
+      "name": "five reference images load including user side screenshot",
+      "passed": true
+    },
+    {
+      "name": "source and GLB quarter-view pixels identical",
+      "passed": true,
+      "data": {
+        "exactPNGMatch": true,
+        "sourceBytes": 63925,
+        "glbBytes": 63925
+      }
+    },
+    {
+      "name": "GLB button opens actual exported file",
+      "passed": true
+    },
+    {
+      "name": "source and GLB side-face pixels identical",
+      "passed": true,
+      "data": {
+        "exactPNGMatch": true,
+        "sourceBytes": 69676,
+        "glbBytes": 69676
+      }
+    },
+    {
+      "name": "comparison scene house",
+      "passed": true
+    },
+    {
+      "name": "actual sole support house",
+      "passed": true,
+      "data": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "name": "comparison scene store",
+      "passed": true
+    },
+    {
+      "name": "actual sole support store",
+      "passed": true,
+      "data": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "name": "comparison scene interior",
+      "passed": true
+    },
+    {
+      "name": "actual sole support interior",
+      "passed": true,
+      "data": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.004000000189989805,
+          "footY": 0.004000000189989805,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.004000000189989805,
+          "footY": 0.004000000189989805,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 5.364417798858767e-10,
+          "footY": 0.004000000189989805,
+          "delta": 0.003999999653548025
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 5.364417798858767e-10,
+          "footY": 0.004000000189989805,
+          "delta": 0.003999999653548025
+        }
+      ]
+    },
+    {
+      "name": "interior inspection wall toggle",
+      "passed": true
+    },
+    {
+      "name": "narrow viewport keeps full face width",
+      "passed": true
+    },
+    {
+      "name": "no browser errors",
+      "passed": true,
+      "data": []
+    },
+    {
+      "name": "pre-existing tracked files unchanged",
+      "passed": true,
+      "data": []
+    }
+  ],
+  "errors": [],
+  "scope": "Independent static character only; no player save or editor runtime.",
+  "glb": {
+    "bytes": 6963256,
+    "original": {
+      "meshes": 107,
+      "vertices": 171664,
+      "triangles": 327084,
+      "nonfinite": 0,
+      "degenerate": 0,
+      "outlines": 27,
+      "unlit": 107,
+      "palette": [
+        "171a20",
+        "182b38",
+        "25252b",
+        "303039",
+        "383038",
+        "73383f",
+        "a9273d",
+        "ac2540",
+        "b4adb0",
+        "b6263f",
+        "b6343c",
+        "b97c71",
+        "c80f35",
+        "c96772",
+        "df173c",
+        "ed9b9e",
+        "ffdbc4",
+        "fffdf5",
+        "fffef8"
+      ],
+      "bounds": {
+        "min": [
+          -0.32828375697135925,
+          5.315523593659409e-11,
+          -0.37506237403641757
+        ],
+        "max": [
+          0.32828155159950256,
+          1.2397998903274536,
+          0.27380791528929654
+        ],
+        "size": [
+          0.6565653085708618,
+          1.2397998902742984,
+          0.6488702893257141
+        ]
+      }
+    },
+    "roundTrip": {
+      "meshes": 107,
+      "vertices": 171664,
+      "triangles": 327084,
+      "nonfinite": 0,
+      "degenerate": 0,
+      "outlines": 27,
+      "unlit": 107,
+      "palette": [
+        "171a20",
+        "182b38",
+        "25252b",
+        "303039",
+        "383038",
+        "73383f",
+        "a9273d",
+        "ac2540",
+        "b4adb0",
+        "b6263f",
+        "b6343c",
+        "b97c71",
+        "c80f35",
+        "c96772",
+        "df173c",
+        "ed9b9e",
+        "ffdbc4",
+        "fffdf5",
+        "fffef8"
+      ],
+      "bounds": {
+        "min": [
+          -0.32828375697135925,
+          5.315523593659409e-11,
+          -0.37506237403641757
+        ],
+        "max": [
+          0.32828155159950256,
+          1.2397998903274536,
+          0.27380791528929654
+        ],
+        "size": [
+          0.6565653085708618,
+          1.2397998902742984,
+          0.6488702893257141
+        ]
+      }
+    },
+    "animations": 0,
+    "disposeOnce": true,
+    "resources": 127
+  },
+  "renderComparison": {
+    "exactPNGMatch": true,
+    "sourceBytes": 63925,
+    "glbBytes": 63925
+  },
+  "sideRenderComparison": {
+    "exactPNGMatch": true,
+    "sourceBytes": 69676,
+    "glbBytes": 69676
+  },
+  "comparisons": [
+    {
+      "specification": {
+        "id": "maruko",
+        "revision": "static-03",
+        "height": 1.24,
+        "units": "metres (project design)",
+        "front": "+Z",
+        "up": "+Y",
+        "origin": "centre between soles on floor",
+        "outdoorScale": 1,
+        "indoorScale": 1,
+        "stage": "静态样板 · 长相和比例待认可",
+        "rigged": false,
+        "animations": [],
+        "outfit": "白色翻领长袖 / 红背带裙（前白衣、背 X）/ 白袜 / 红鞋"
+      },
+      "frames": 756,
+      "scene": "house",
+      "view": "front",
+      "source": "editable",
+      "placement": [
+        0,
+        0.358,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "camera": {
+        "position": [
+          0,
+          1.5279999999999998,
+          1.8
+        ],
+        "target": [
+          0,
+          1.3780000000000001,
+          0
+        ],
+        "zoom": 1
+      },
+      "stats": {
+        "calls": 149,
+        "triangles": 402396
+      },
+      "supports": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 0.358,
+          "footY": 0.358,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "specification": {
+        "id": "maruko",
+        "revision": "static-03",
+        "height": 1.24,
+        "units": "metres (project design)",
+        "front": "+Z",
+        "up": "+Y",
+        "origin": "centre between soles on floor",
+        "outdoorScale": 1,
+        "indoorScale": 1,
+        "stage": "静态样板 · 长相和比例待认可",
+        "rigged": false,
+        "animations": [],
+        "outfit": "白色翻领长袖 / 红背带裙（前白衣、背 X）/ 白袜 / 红鞋"
+      },
+      "frames": 884,
+      "scene": "store",
+      "view": "front",
+      "source": "editable",
+      "placement": [
+        0,
+        0.2750877204694246,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "camera": {
+        "position": [
+          0,
+          1.4450877204694244,
+          1.8
+        ],
+        "target": [
+          0,
+          1.2950877204694247,
+          0
+        ],
+        "zoom": 1
+      },
+      "stats": {
+        "calls": 286,
+        "triangles": 363292
+      },
+      "supports": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 0.2750877204694246,
+          "footY": 0.2750877204694246,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "specification": {
+        "id": "maruko",
+        "revision": "static-03",
+        "height": 1.24,
+        "units": "metres (project design)",
+        "front": "+Z",
+        "up": "+Y",
+        "origin": "centre between soles on floor",
+        "outdoorScale": 1,
+        "indoorScale": 1,
+        "stage": "静态样板 · 长相和比例待认可",
+        "rigged": false,
+        "animations": [],
+        "outfit": "白色翻领长袖 / 红背带裙（前白衣、背 X）/ 白袜 / 红鞋"
+      },
+      "frames": 1010,
+      "scene": "interior",
+      "view": "front",
+      "source": "editable",
+      "placement": [
+        0,
+        0.004000000189989805,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "camera": {
+        "position": [
+          0,
+          1.1740000001899895,
+          1.8
+        ],
+        "target": [
+          0,
+          1.0240000001899898,
+          0
+        ],
+        "zoom": 1
+      },
+      "stats": {
+        "calls": 295,
+        "triangles": 337972
+      },
+      "supports": [
+        {
+          "x": -0.065,
+          "z": -0.04,
+          "y": 0.004000000189989805,
+          "footY": 0.004000000189989805,
+          "delta": 0
+        },
+        {
+          "x": -0.065,
+          "z": 0.04,
+          "y": 0.004000000189989805,
+          "footY": 0.004000000189989805,
+          "delta": 0
+        },
+        {
+          "x": 0.065,
+          "z": -0.04,
+          "y": 5.364417798858767e-10,
+          "footY": 0.004000000189989805,
+          "delta": 0.003999999653548025
+        },
+        {
+          "x": 0.065,
+          "z": 0.04,
+          "y": 5.364417798858767e-10,
+          "footY": 0.004000000189989805,
+          "delta": 0.003999999653548025
+        }
+      ]
+    }
+  ],
+  "protected": {
+    "count": 167,
+    "changes": []
+  }
+}
