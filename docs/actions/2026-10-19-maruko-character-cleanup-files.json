@@ -1,0 +1,1092 @@
+{
+  "date": "2026-10-19",
+  "scope": "Retired Maruko character only",
+  "entries": [
+    {
+      "path": "artifacts/github-onboarding-20261018/checkout-verification/docs/prompts/character-artist-init.md",
+      "bytes": 2676,
+      "sha256": "47a972ddcea34f97a2fd7b74d36784a15b74d9a5eeb1e2e7d19b3f3ff0a6808d",
+      "operation": "delete"
+    },
+    {
+      "path": "artifacts/github-onboarding-20261018/checkout-verification/docs/prompts/maruko-character-model.md",
+      "bytes": 3463,
+      "sha256": "dedd3598255122dcb3f1d5936ec595a5b046c6722a123daa635090f71793b841",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/ACTION.md",
+      "bytes": 31887,
+      "sha256": "9b179f1b34827c087523ba8b7b58787e7d6d2b8cc70f723b1b7ff56b6e696bb1",
+      "operation": "relocate-history"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/01-front.png",
+      "bytes": 95694,
+      "sha256": "edcea86ad89a7a0cdd5696f8ed252d770ae6400420fa793cd4738e37bfb1b2e3",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/02-quarter.png",
+      "bytes": 99594,
+      "sha256": "61ccaea779cfef3a4473458451089fe2f1951039e4a1791e8b389dd3848c290a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/03-side.png",
+      "bytes": 82804,
+      "sha256": "f8cde82ae624a1a9c0cf6b1d71ec2853099da073aa47aae12fab2ddaf793df5c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/04-back.png",
+      "bytes": 88642,
+      "sha256": "bc782988c9261806b380c30cf9da3fadea22aa114c68805e052598ca769151d0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/05-face.png",
+      "bytes": 119519,
+      "sha256": "a28aece54c8b4eaafeddca29650c799296c1165d42504da1164a5e1602daaffd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/06-source-canvas.png",
+      "bytes": 63679,
+      "sha256": "f925f150cc67a1bd44e8ca78f31330ea24da0bdbeacbede3e9f5bd629d101b6a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/07-glb-canvas.png",
+      "bytes": 63679,
+      "sha256": "f925f150cc67a1bd44e8ca78f31330ea24da0bdbeacbede3e9f5bd629d101b6a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/08-house-scale-wide.png",
+      "bytes": 219908,
+      "sha256": "7c613380beecd373db5b2b7de3fc25333224d2281808f009074d62a858e653bb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/08-house-scale.png",
+      "bytes": 89234,
+      "sha256": "fe0aa6d0da423977feffce13272bf5c32af78fa67c75e49c7c5fc789b4cc0863",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/09-store-scale-wide.png",
+      "bytes": 288272,
+      "sha256": "172a1cddce84e89e99ccd7c3a3c0ffa7163df2808c5b0b9f16339fc2f1159eb7",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/09-store-scale.png",
+      "bytes": 224069,
+      "sha256": "03751ea35dd6748c931d322b69b6d60b3fc917bfea101cb728d1e1273a7bf8ad",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/10-interior-scale-wide.png",
+      "bytes": 194537,
+      "sha256": "3a1c542bcc33bbc7ed81b44b10abaf02ef3c39c394261705ab82a273ddaf9b6d",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/10-interior-scale.png",
+      "bytes": 85752,
+      "sha256": "612deaa360891211f0e693d9243607a6e2d39d41d0556e593cae783fc2a97807",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/11-viewer.png",
+      "bytes": 99594,
+      "sha256": "61ccaea779cfef3a4473458451089fe2f1951039e4a1791e8b389dd3848c290a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/12-small-viewer.png",
+      "bytes": 84732,
+      "sha256": "09529433cabc545d8d0e7b4a0ce11a5942a8daeaa1da8ad273c012294aae9747",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/13-small-face.png",
+      "bytes": 90234,
+      "sha256": "2d0db6a0af01c1a5626142aa0341b259437157607f6feb29817feeb909553d19",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/14-left-side.png",
+      "bytes": 81751,
+      "sha256": "f524600fb7401c62c2e9820ba6187891178429e00a4c438d63eba348b0f8357f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/15-side-face.png",
+      "bytes": 101664,
+      "sha256": "490131947088971826ac6612148dc507234efb3141daf0584e68e045e8e48fbb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/16-side-source-canvas.png",
+      "bytes": 65968,
+      "sha256": "e13dc9a40709eb89b06d5ee3bb7c3e306ba3ee96fbb0d0acc8963d9994ddd2f1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/17-side-glb-canvas.png",
+      "bytes": 65968,
+      "sha256": "e13dc9a40709eb89b06d5ee3bb7c3e306ba3ee96fbb0d0acc8963d9994ddd2f1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/18-side-static-03.png",
+      "bytes": 69676,
+      "sha256": "a37fb005adc667be7b78da5aa584080c3f7eaa0162946e89f255c6458852a237",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/20-rear-quarter.png",
+      "bytes": 91133,
+      "sha256": "25eaebb463667ff6dce712162ec0b0ea47d34e114c78e5492b3c231d5eced429",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/21-side-static-04.png",
+      "bytes": 68502,
+      "sha256": "789fc827cd07eddd219e55a50f0d5ca1de47c8b42878c6d3557cd8016154d193",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/22-back-source-canvas.png",
+      "bytes": 54635,
+      "sha256": "3f21cc0119d1c3b5f8aca6b2f989299a2226769b9fabacbde039e0618b548d8a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/23-back-glb-canvas.png",
+      "bytes": 54635,
+      "sha256": "3f21cc0119d1c3b5f8aca6b2f989299a2226769b9fabacbde039e0618b548d8a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/24-side-static-05.png",
+      "bytes": 67541,
+      "sha256": "8d4ab91520573fa96783023747e292c0c78a49d61d4801ce97e08f5ad89e84c2",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/25-back-static-05.png",
+      "bytes": 56589,
+      "sha256": "4c0dba794b7716b42bb9eab5b053b7e006058a2c5a40e8d2b95cc7e0ae4e2d82",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/26-head-under-hair-side.png",
+      "bytes": 79282,
+      "sha256": "055651a29b20cedcd94a6176af524c8d4a67c405963f8e4616aa6547f154b392",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/27-head-under-hair-rear.png",
+      "bytes": 71221,
+      "sha256": "24be08e243055325702cb9b2dda258e71c0a5ef95b62a6795cd12e56e6de18e1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/28-profile-comparison-static-06.png",
+      "bytes": 86244,
+      "sha256": "98daf0f04ec9f05706c4c290355d9d472bc52f5a8657b6b0d5740ae26b1b0638",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/01-front.png",
+      "bytes": 95694,
+      "sha256": "edcea86ad89a7a0cdd5696f8ed252d770ae6400420fa793cd4738e37bfb1b2e3",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/02-quarter.png",
+      "bytes": 99594,
+      "sha256": "61ccaea779cfef3a4473458451089fe2f1951039e4a1791e8b389dd3848c290a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/03-side.png",
+      "bytes": 82804,
+      "sha256": "f8cde82ae624a1a9c0cf6b1d71ec2853099da073aa47aae12fab2ddaf793df5c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/04-back.png",
+      "bytes": 88642,
+      "sha256": "bc782988c9261806b380c30cf9da3fadea22aa114c68805e052598ca769151d0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/05-face.png",
+      "bytes": 119519,
+      "sha256": "a28aece54c8b4eaafeddca29650c799296c1165d42504da1164a5e1602daaffd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/17-side-glb-canvas.png",
+      "bytes": 65968,
+      "sha256": "e13dc9a40709eb89b06d5ee3bb7c3e306ba3ee96fbb0d0acc8963d9994ddd2f1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/inspection.json",
+      "bytes": 13790,
+      "sha256": "dd61e17e03565236baf66237cf07de73a534ee6f53ba9aea2e17ce0c80b62625",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/maruko.glb",
+      "bytes": 7180976,
+      "sha256": "4b426171a47e88e534e5fb1a35ed4fa4d37c54aaab18f4f615c8fa640b708295",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/model.js",
+      "bytes": 15628,
+      "sha256": "7f271a4a7627a5c5f1738425211ac6a2e0a215db6dd0dd1643fa75f0835859a7",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/preview.html",
+      "bytes": 6275,
+      "sha256": "bb8bb5164cb311f3fef1091c7c15b18629ac30e0bcaa547f2986812339d6c95d",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/preview.js",
+      "bytes": 10518,
+      "sha256": "3f5bd78d2a5f8083dedd883d05633ea7fb1bc5ae5bfb7ff556e7b4dae3079728",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/approved-static-06/README.md",
+      "bytes": 7565,
+      "sha256": "277f484498d3d23700eb76daf6c53e30b32bea6ae65036e29e8d0b423784c96b",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/01-front.png",
+      "bytes": 93852,
+      "sha256": "4ab1a785b1aa3c948422c2ecfd4fdc9412abfa876610861e0f9fad39c70c21bb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/02-quarter.png",
+      "bytes": 97982,
+      "sha256": "5053a89df64140c583611a3b72b52bd0454e5f9e469284e35f8047132c5e21d4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/03-side.png",
+      "bytes": 79930,
+      "sha256": "cb1215a519a7b5bf08e241a2c3c57b68af61dfb96b16d758d5be4024b0eb9bbf",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/04-back.png",
+      "bytes": 87197,
+      "sha256": "89138816c5a4c928731bb586462ec92d0b1389958a47213ade7c4923c1ec5fa7",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/05-face.png",
+      "bytes": 114309,
+      "sha256": "3360b2475fccd969ed7cb48398b1c67381267bfcb66550b19fb602ec904ed1c6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/inspection.json",
+      "bytes": 11370,
+      "sha256": "6d61f50dc8ab49b92a0889daf9fc9de43a4d128c3f1d7d50e53e9e3e19d03343",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/maruko.glb",
+      "bytes": 6282212,
+      "sha256": "96bec51823c692a4496d93ec7e8d36dd8ca0bb495a4644d94e151a9fd47678b4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-02/model.js",
+      "bytes": 12449,
+      "sha256": "b718a2816552db3aa33dbb14e8a9b4e9dc1aca4f152b990c12fcfd0003e7e016",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/01-front.png",
+      "bytes": 96007,
+      "sha256": "2b0e9f905e4b93d56c18348292d98c55ed7da36c504c89b06f601bfdefdb67dd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/02-quarter.png",
+      "bytes": 99760,
+      "sha256": "3f3f4d137f742c7ec60a4b24591f60b68ad8f03e800f44fbbb0bb01eb2fa9f5c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/03-side.png",
+      "bytes": 84966,
+      "sha256": "85b64a1d5d29be5db077e0a4e1252503eb12fcd305151c908ee44fab81d4ae25",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/04-back.png",
+      "bytes": 88156,
+      "sha256": "e5c52df87e12d754ed6ebb8738b95716678faa3415f621479d9c2a47a914bf3e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/05-face.png",
+      "bytes": 120733,
+      "sha256": "fe854232bfec144d770d7aae409c20db82de1b9f9e33590089723bc615e36f2a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/14-left-side.png",
+      "bytes": 81988,
+      "sha256": "faea00207e6ac897a952104dceedc40879b0162a03e9f20416a42d6e6152a34a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/15-side-face.png",
+      "bytes": 106703,
+      "sha256": "a0977535f941a36958b84b4ca43319ec3b7dc04fb5e78b05c91104960d13e855",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/17-side-glb-canvas.png",
+      "bytes": 71126,
+      "sha256": "22f9e0de2c1d13ffc2a553216fab698e65f849e739869cea4eae06c4cfe4485b",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/inspection.json",
+      "bytes": 12302,
+      "sha256": "5d34335d866bcb549d855a44012ab4b74b5c45dd486408041d97f9e5169c1f3b",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/maruko.glb",
+      "bytes": 7333396,
+      "sha256": "e27a71d1a3c21b8ecd4ea6e7c46f9b29e6da86ef8e31ebf44779f48897882bd7",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-03/model.js",
+      "bytes": 13333,
+      "sha256": "283d3962c0e315796f4e249baf80be7cbfaa6849ec8fe293248af11c67d7ab0d",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/01-front.png",
+      "bytes": 96263,
+      "sha256": "ed1ed2f8d1972e9c75604c389a2e9f1d76605683da08e5ac0380741f0ee5f8dd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/02-quarter.png",
+      "bytes": 100292,
+      "sha256": "4099a45f4245bc1df56eb48c0a0c516bd7fe87d55639e6ec9eb35b66357c5484",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/03-side.png",
+      "bytes": 84511,
+      "sha256": "ed2ec7a19c3607b250cbdb64791adc47aed402ac0aac7b510eaea1cb8df9e40a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/04-back.png",
+      "bytes": 88484,
+      "sha256": "c42795079f0ac4c81cdc53a4558abd917410b6fe213da29d794204decf5faf04",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/05-face.png",
+      "bytes": 120382,
+      "sha256": "8d1850efda62b5dc0d99eae045e6c357b3e76b3dc4d58348526ea003b9718207",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/14-left-side.png",
+      "bytes": 81828,
+      "sha256": "f886f3802f552c5c8ee33e228e47ab26f72048a9a9ffa3282b77eaa23513af3f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/15-side-face.png",
+      "bytes": 105855,
+      "sha256": "2eb2dc792511067058daab23dbd64cc81f6527b2d42a9c9676aff9204aee7f4d",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/17-side-glb-canvas.png",
+      "bytes": 69676,
+      "sha256": "a37fb005adc667be7b78da5aa584080c3f7eaa0162946e89f255c6458852a237",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/inspection.json",
+      "bytes": 12569,
+      "sha256": "b0a0090287e268c75252160a5de4a8fa785746c5d96d054b07a4a410cfd1a562",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/maruko.glb",
+      "bytes": 6963256,
+      "sha256": "b3230fca88f7cc24b075b5019df802e83c1bfaba335ddbd50f1ca21cfacc999c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-04/model.js",
+      "bytes": 13550,
+      "sha256": "fc3ba416d8cd96eec36e2436ed775aa60373af61804e0ca1ada30c4850a645d0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/01-front.png",
+      "bytes": 95426,
+      "sha256": "6e68f6bd04eebd12d2b74a7fcc43ab89e9176b79fab587c5f4ba183a17dcb7f3",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/02-quarter.png",
+      "bytes": 99813,
+      "sha256": "2628b57c9f9accdfc7f35aae1c57b17348cad249fb51411bdd88ba85e1b2155a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/03-side.png",
+      "bytes": 83354,
+      "sha256": "4e513482d12ce0985786b1d3dec240ae248b62947a8db066ac6f2fd49941ef53",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/04-back.png",
+      "bytes": 88048,
+      "sha256": "099cf2cc9d65b21c6ad92b0c3b61822b712f29091f2426ea6c9936239a57cece",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/05-face.png",
+      "bytes": 119424,
+      "sha256": "ac9cd112da4d919f4c0d79b4aeba06df4bf1c097302228a0a57b3c03a4d25e0c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/14-left-side.png",
+      "bytes": 81105,
+      "sha256": "2cb207190966372ac76d565dd28e3fc1491fa62fad4449325a448392c77feb17",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/15-side-face.png",
+      "bytes": 103817,
+      "sha256": "7e7a0842b4d6723a85bba495d4835ed2a1ace9db71c4962c9df7d24286dcc10f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/17-side-glb-canvas.png",
+      "bytes": 68502,
+      "sha256": "789fc827cd07eddd219e55a50f0d5ca1de47c8b42878c6d3557cd8016154d193",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/20-rear-quarter.png",
+      "bytes": 91786,
+      "sha256": "c8d38d09581a354aebd430b8d28a6a15fff758ebfd95695d6295a4124d711492",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/inspection.json",
+      "bytes": 12578,
+      "sha256": "d3bf6d8328a9c4546a0505a5dbced1efe786f29473c31c3623030586084c8fa6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/maruko.glb",
+      "bytes": 6992820,
+      "sha256": "3883bc7e08c42cd817152e5298b1454d6c0a20504c8b25fd1911bf9872686b24",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-05/model.js",
+      "bytes": 14164,
+      "sha256": "4cb7e2468cbd2d0e2af148af90fe60b5c2fdf1aebf8a71941a05a8de183e002e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/01-front.png",
+      "bytes": 95069,
+      "sha256": "422d335d5b23a54405d3705dc3a2c5526fbbc9fb6e21bea13a0c1d9da6128d98",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/02-quarter.png",
+      "bytes": 99292,
+      "sha256": "fa2fe340bad04b074ee2d4d2dc11858794f737beaf0d638c6e144ba75901770b",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/03-side.png",
+      "bytes": 82870,
+      "sha256": "87230c22e7d72bd77e466bd0c420f7ce6052f2dc1ba734b7f8a5ea026df384f0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/04-back.png",
+      "bytes": 89165,
+      "sha256": "3141a42d3599aa199d716817c7848815da2889845c8ed0add8e69a05a701379c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/05-face.png",
+      "bytes": 118207,
+      "sha256": "343e6244b8806b00d55f8189b97ff92b6bcad383b6d4e0c4106076bad3c69133",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/14-left-side.png",
+      "bytes": 81591,
+      "sha256": "4c50f24c0d34b96852f7451404950ffdde8af3aedbe299324d4e39a688e3a61e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/15-side-face.png",
+      "bytes": 102782,
+      "sha256": "b09704c225db0a3acf715e661c9ca1f4f2c137e0db1272c6fd0074b35489f070",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/17-side-glb-canvas.png",
+      "bytes": 67541,
+      "sha256": "8d4ab91520573fa96783023747e292c0c78a49d61d4801ce97e08f5ad89e84c2",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/20-rear-quarter.png",
+      "bytes": 91547,
+      "sha256": "37544bcebdc603adf1625589a7d90e4a95b4e5bc7b2b6941086f802158fa4d41",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/23-back-glb-canvas.png",
+      "bytes": 56589,
+      "sha256": "4c0dba794b7716b42bb9eab5b053b7e006058a2c5a40e8d2b95cc7e0ae4e2d82",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/inspection.json",
+      "bytes": 12894,
+      "sha256": "ccf62b0dbd40bd759b323b1fc26c8100d664b7687749dc6b94a1d9bc32ab3ecd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/maruko.glb",
+      "bytes": 6992824,
+      "sha256": "9a98fe7273d26016ece6c3e2e6df1bf7c37d111b245b12a8745866530c726fcf",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/before-side-06/model.js",
+      "bytes": 14453,
+      "sha256": "6acb7f9fdafd808a2c1f44df1807d3869a697a5c5917a230bdae66f9e9b6e590",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-back.png",
+      "bytes": 88642,
+      "sha256": "bc782988c9261806b380c30cf9da3fadea22aa114c68805e052598ca769151d0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-errors.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-face.png",
+      "bytes": 120951,
+      "sha256": "77521ce6d41e220ce57753c18ba108c8bcb48fea750bc217a4b297bf6d863daf",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-front.png",
+      "bytes": 95694,
+      "sha256": "edcea86ad89a7a0cdd5696f8ed252d770ae6400420fa793cd4738e37bfb1b2e3",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-left-side.png",
+      "bytes": 81717,
+      "sha256": "58eddedf367df2bf79bfd2babe992aa306c62c61f64473c084f9ef952ec2f2ff",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-quarter.png",
+      "bytes": 99594,
+      "sha256": "61ccaea779cfef3a4473458451089fe2f1951039e4a1791e8b389dd3848c290a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-side-face.png",
+      "bytes": 101664,
+      "sha256": "490131947088971826ac6612148dc507234efb3141daf0584e68e045e8e48fbb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/draft-side.png",
+      "bytes": 82870,
+      "sha256": "87230c22e7d72bd77e466bd0c420f7ce6052f2dc1ba734b7f8a5ea026df384f0",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/head-fit.json",
+      "bytes": 16776,
+      "sha256": "13caaf74d59cc0a51ce6bd5fef660086c83f35e14d7813b27efb7c467c71feb1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/inspection.json",
+      "bytes": 13790,
+      "sha256": "dd61e17e03565236baf66237cf07de73a534ee6f53ba9aea2e17ce0c80b62625",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/protected-before.json",
+      "bytes": 20440,
+      "sha256": "901de844cbfc15ae3785e1b91753f44d464cb029a6e69d2168495db3109ef605",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/01-neutral-front.png",
+      "bytes": 95831,
+      "sha256": "a4c10d55b2e3c6a2133ade4208a47bf6de434b515b4b5c1e1eeb4f06ba0deccd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/02-neutral-side.png",
+      "bytes": 82254,
+      "sha256": "e4d66c692bc6d7454e06dbb2bd76f94cf52f17327ccaab3995ca7a35c54ad7b5",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/03-neutral-back.png",
+      "bytes": 88439,
+      "sha256": "749df02725e27a98ecf8c7059d17f4171eac88c747fa5552a87dd6e92107e3fc",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/04-head.png",
+      "bytes": 98590,
+      "sha256": "8b9b8937f46d99ff531b45c809c2cececefce2323def23f45a4241c0186b21cb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/05-arms-front.png",
+      "bytes": 95127,
+      "sha256": "dc594253fbaf1789923efd928c56619e1aed5727b3c0869285f2a7138bc6e171",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/06-arms-side.png",
+      "bytes": 84538,
+      "sha256": "8f563ce87fb3bd42d9f6993650b532a745fb30494ad8d22150614875e15a3ab6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/07-leg-side.png",
+      "bytes": 86003,
+      "sha256": "136e2ebbe14935d2c56153ef9d1217ed5dcd801f8beac7b2c0babcd46fb10da4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/08-leg-front.png",
+      "bytes": 96707,
+      "sha256": "d95c1bec6fdb063dbfd4a7483edff03c69434debd527176480b69d9f438f3cd4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/09-skirt-back.png",
+      "bytes": 89733,
+      "sha256": "015d5419d53d4c1b2483238c138b80e7701cd9de865ee82a6882c6ed542b45ac",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/10-torso.png",
+      "bytes": 99487,
+      "sha256": "3dff6576823d9cd4f9dac5c45c0dcdcd2e74168bfcdf718ca5342dd09b85a185",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/11-skeleton.png",
+      "bytes": 117826,
+      "sha256": "2cee44195ab2a254d08a442557d3d9bcb4b5bfc608fe921fee96d084d67f0155",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/12-arms-source.png",
+      "bytes": 58260,
+      "sha256": "a9259f0d0157e5e34115b0c8a50f4957360cd07477beffa0dd9b206a2dade937",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/12-head-source.png",
+      "bytes": 74691,
+      "sha256": "018f7f9b93b2136fe3187289139bdaaa6631ed168615cece1bd4abb6fe7f9e7c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/12-legs-source.png",
+      "bytes": 50243,
+      "sha256": "3dc2bd676abb530cc9b72d7b5da0b84c239cf2bf3ee4f2771474d8781c03cd24",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/12-neutral-source.png",
+      "bytes": 61164,
+      "sha256": "535cee37f2e5cbbaa887d01a0203e1fda507f290bc618bf229f6f591463a2ed4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/13-arms-glb.png",
+      "bytes": 58262,
+      "sha256": "756b981dd1c69fadd1ed68f8a3f02bfe98ef6c7b3e6e83a1756f76bd690c6ee6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/13-head-glb.png",
+      "bytes": 74710,
+      "sha256": "1e2b6a3a96c7c9a9a4efca0965b583857291127045c0b5a4833dc9437617d926",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/13-legs-glb.png",
+      "bytes": 50250,
+      "sha256": "3cadfd57ba0f70489951090d698690bf2ed0de4d5dc500ef7afb320b6b8eac99",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/13-neutral-glb.png",
+      "bytes": 61156,
+      "sha256": "38c0a0a37373db485ec3b039f96a5a3eb0f96fac6bb7015c1b137dc6985c4e5b",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/14-small-preview.png",
+      "bytes": 84637,
+      "sha256": "cf3bdf0a19769aa8b955e6d63639a5a19d5c440df6a3a71546de22cc571ff312",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-01-neutral-front.png",
+      "bytes": 95831,
+      "sha256": "a4c10d55b2e3c6a2133ade4208a47bf6de434b515b4b5c1e1eeb4f06ba0deccd",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-02-neutral-side.png",
+      "bytes": 82254,
+      "sha256": "e4d66c692bc6d7454e06dbb2bd76f94cf52f17327ccaab3995ca7a35c54ad7b5",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-03-neutral-back.png",
+      "bytes": 88439,
+      "sha256": "749df02725e27a98ecf8c7059d17f4171eac88c747fa5552a87dd6e92107e3fc",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-04-head.png",
+      "bytes": 98590,
+      "sha256": "8b9b8937f46d99ff531b45c809c2cececefce2323def23f45a4241c0186b21cb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-05-arms-front.png",
+      "bytes": 95127,
+      "sha256": "dc594253fbaf1789923efd928c56619e1aed5727b3c0869285f2a7138bc6e171",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-06-arms-side.png",
+      "bytes": 84538,
+      "sha256": "8f563ce87fb3bd42d9f6993650b532a745fb30494ad8d22150614875e15a3ab6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-07-leg-side.png",
+      "bytes": 86003,
+      "sha256": "136e2ebbe14935d2c56153ef9d1217ed5dcd801f8beac7b2c0babcd46fb10da4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-08-leg-front.png",
+      "bytes": 96707,
+      "sha256": "d95c1bec6fdb063dbfd4a7483edff03c69434debd527176480b69d9f438f3cd4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-09-skirt-back.png",
+      "bytes": 89733,
+      "sha256": "015d5419d53d4c1b2483238c138b80e7701cd9de865ee82a6882c6ed542b45ac",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-10-torso.png",
+      "bytes": 99487,
+      "sha256": "3dff6576823d9cd4f9dac5c45c0dcdcd2e74168bfcdf718ca5342dd09b85a185",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-11-skeleton.png",
+      "bytes": 117826,
+      "sha256": "2cee44195ab2a254d08a442557d3d9bcb4b5bfc608fe921fee96d084d67f0155",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/draft-report.json",
+      "bytes": 236,
+      "sha256": "bf1ce4bc0df9577a14393064c467df9b8d740ccca53f1be70c6d217decbf11b6",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/inspection.json",
+      "bytes": 7556,
+      "sha256": "79d748867be00a0271291217a66763342e9af76034284f2c3ea91a7f046ebf70",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/protected-before.json",
+      "bytes": 25207,
+      "sha256": "44e96078227becfeeafe6bbb43be5d93e7d2c9cda5cb5bfcd469385d9990ffd4",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/server-error.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/evidence/rig-01/server.log",
+      "bytes": 74,
+      "sha256": "ec1bfc583988a40cd191b48e7430e4123c66cdd3c7c4e5eb7d75f358d334c985",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/gallery.html",
+      "bytes": 4621,
+      "sha256": "1a1db51ecc2db8e9c91e7e4fb372b2e64dfdea5a6fc68de74a6df5fe0f2b3d81",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/geometry.js",
+      "bytes": 6295,
+      "sha256": "51c415061cce1b32b93ea1982d3f4aca3a2819c12e2ddec295d16fd32d17e52f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/maruko-rigged.glb",
+      "bytes": 11854568,
+      "sha256": "fdfe3762e9a5b803cd9dd5166f3b374de12c2b3248041682b40558503b06940f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/maruko.glb",
+      "bytes": 7180976,
+      "sha256": "4b426171a47e88e534e5fb1a35ed4fa4d37c54aaab18f4f615c8fa640b708295",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/model.js",
+      "bytes": 15628,
+      "sha256": "eb362e4a5e11d5f1b8b5415f2121c8f756455f2b85f9a3f2f56b09fa2d9d9c5e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/preview.html",
+      "bytes": 6317,
+      "sha256": "84d55f07b693db1e6387924103ae559ab11bde9959f87635dc7f49930b317cf5",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/preview.js",
+      "bytes": 10518,
+      "sha256": "3f5bd78d2a5f8083dedd883d05633ea7fb1bc5ae5bfb7ff556e7b4dae3079728",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/README.md",
+      "bytes": 12051,
+      "sha256": "ee12187ccacddb52e306dd0d0ef0f1071d5f14e21e94ed6184163b710d4b1130",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/01-front.webp",
+      "bytes": 23384,
+      "sha256": "2bd7f7e7c0703d5f7a1a2505e6966d587d6186d42a498372304e0cfae597bba1",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/02-sofvips-front.jpg",
+      "bytes": 64086,
+      "sha256": "111cced9490e07d358a9093fa10a17306b396cc4013fb3e447e1e118e5821180",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/03-sofvips-side.jpg",
+      "bytes": 54641,
+      "sha256": "d6f885db96948f6461e44c5ce333e6b3f6392eb3f143f70045ae21afe311873e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/04-sofvips-back.jpg",
+      "bytes": 54268,
+      "sha256": "e2d94c7dfe64c76d9dd41f5ec8da20654bdb93693ca0822482f58b9cffbb4f0e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/05-user-side.jpg",
+      "bytes": 725059,
+      "sha256": "9cac9da494a21c587c3f22d25f017e325d9394153e55fa43f47730e43c265218",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/06-user-hair-feedback.png",
+      "bytes": 159649,
+      "sha256": "8b59e80452024880a81e442d09b64e994c03291e758fa41dfcf94ef8d4745ebb",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/07-user-shell-feedback.png",
+      "bytes": 38316,
+      "sha256": "b9193af3e3a5fbf1221810e7a1ac50f0fac61f4a481c8e9132a5a84aab0a9976",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/references/SOURCES.md",
+      "bytes": 4676,
+      "sha256": "02dd7886d850caa84a91fb122c2446de3b0acaae58fb26130d428c22048e1afc",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/rig-preview.html",
+      "bytes": 5376,
+      "sha256": "8f774a9404852fd5c219f2ad19eabe0c7521da26025a0ae9ac24dce96ec087ba",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/rig-preview.js",
+      "bytes": 8036,
+      "sha256": "6d61e53fc91fbb75460a77e409c16928afbc5a5085bb5a658d515da28639d373",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/rig.js",
+      "bytes": 9577,
+      "sha256": "92b335bb1af05b0dcd2db0aae41769970bcd3c9e3d1be64ffd0b10d43fc62919",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/capture-head-fit.mjs",
+      "bytes": 3325,
+      "sha256": "22d22e60b53ee4f40d9937496c74017b4f57332c471f678b06488340c31d3e1a",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/capture.mjs",
+      "bytes": 1690,
+      "sha256": "8c421e14d0961b450863e27e6f9865485ddbe62afdcc3b322c0ae45711cbe25f",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/GLTFLoader.js",
+      "bytes": 114751,
+      "sha256": "ce325b2ca99b8d675b30ccb7b49fb960e62c54d56b1209c77940916353f252b9",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/inspect-rig.mjs",
+      "bytes": 16097,
+      "sha256": "a2d82bfaa5a95d31ba596d9f0bf5ca8262679fffc4a0569e0b894b7c01405d9c",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/inspect.mjs",
+      "bytes": 16432,
+      "sha256": "218382570910cae67ead44b5de8714ea6659fe4d2d3389d06e338f5c22d9ee4e",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/LICENSE.three",
+      "bytes": 1081,
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+      "operation": "delete"
+    },
+    {
+      "path": "dist/town/characters/maruko/tools/serve.mjs",
+      "bytes": 1208,
+      "sha256": "c4139dd139d38f1aeee6aa23b462df9ec384751ac50ce2c3f25ecec98ef83950",
+      "operation": "delete"
+    },
+    {
+      "path": "docs/prompts/character-artist-init.md",
+      "bytes": 2676,
+      "sha256": "47a972ddcea34f97a2fd7b74d36784a15b74d9a5eeb1e2e7d19b3f3ff0a6808d",
+      "operation": "delete"
+    },
+    {
+      "path": "docs/prompts/maruko-character-model.md",
+      "bytes": 5345,
+      "sha256": "1ac22443b486126f5df8cbd51b179cfeb693e75bbcc8b9dfb2156b60d56b8022",
+      "operation": "delete"
+    }
+  ]
+}

@@ -12,7 +12,7 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 
 `.gitattributes` 保留原文件换行字节，避免 Windows 拉取时自动改写文件而使资产保护指纹和归档清单失效。
 
-建筑与人物美术分别工作。人物先交可旋转的静态样板，用户确认长相和比例后再制作走路、跑步动画。两份可直接转交的提示词：[人物美术初始化](docs/prompts/character-artist-init.md)、[小丸子人物建模](docs/prompts/maruko-character-model.md)。它们是任务说明，不代表人物模型已经完成。
+建筑与人物美术分别工作。用户已于 2026-10-19 取消“樱桃小丸子本人”方案，该人物资产、专属代码、预览与任务入口已清理，旧走路/跑步制作计划取消。B 方案方块人尚未确认，本轮不启动新人物或正式场景接入。见[人物清理记录](docs/actions/2026-10-19-maruko-character-cleanup.md)。
 
 工作区上层三份建筑参考文档已原样保留在 `docs/references/`；樱家室内最新状态见其 [独立说明](dist/town/assets/sakura-house/interior/README.md)。仓库接入过程与验证见 [行动记录](docs/actions/2026-10-18-character-prompts-and-github.md)。
 
@@ -36,7 +36,8 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 
 ## 建筑与后续功能
 
-- 编辑器当前可用：完整 AME MART 便利店街角、小丸子的家，以及直路、转角、丁字路、十字路。
+- 编辑器当前可用：完整 AME MART 便利店街角、小丸子的家、みつや小店，以及直路、转角、丁字路、十字路。学校、公园仍待接入。
+- みつや小店使用 B `anime-facade-landscape-09` 源码工厂，稳定 `assetId=mitsuya`，外观原比例占一格 14×14。狗屋、长凳、右侧松卷竹帘、左后低灌木粉花和门口陈设原样保留；全格遮罩地图长草。现有晴雨按实际屋顶与地面计算落点，门口暖光使用最多两家店/四盏有阴影下照灯。小店自身没有时间天气接口，不增加营业状态动画；独立室内继续保留，正式进出门、人物、碰撞和购物未接入。用户许可本阶段接入，后续美术可继续细化。
 - 小丸子的家使用 B 交付的樱家 `exterior-03-states`，房屋、院落、植栽和院外电灯占一格 14×14，支持重复摆放、旋转、搬动和存档。原源码、GLB 和[独立预览](http://127.0.0.1:4173/town/assets/sakura-house/preview.html)保留在 `dist/town/assets/sakura-house/`。局部檐口滴水已通过 [B 当前接口](docs/handoffs/B-sakura-house.md)接入统一晴雨；原有夜灯、完整梯形光束和地面光斑保留，完整室内与全镇时段控制尚未实现。
 - 咖啡店、书店、普通住宅和小公园仍作为旧样稿保留在各自建筑文件夹，通用创建入口仍可使用；正式编辑器不加载它们。
 - C v2.4 已接入全地图晴天/下雨：雨丝按实体模型的首个接触面停止，在屋顶、院子、道路产生小水花；编辑建筑后同步更新。樱家已有檐口滴水复用原接口，所有实例共用累计秒数。人物、散步、全镇时段和其他天气仍待接入，本轮不发布网站。
@@ -70,5 +71,7 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 `npm run check` 检查首页宿主语法；本地服务运行后，`npm run check:editor` 使用本机 Chrome/Playwright 执行完整编辑器检查，输出到 `artifacts/editor/current/`。检查使用隔离浏览器，不修改用户浏览器的存档。
 
 `node scripts/inspect-weather.mjs` 检查晴雨控件、实体遮挡、四向旋转及搬动/删除/撤销、累计时钟、灯光保留和存档；结果、近景和录像在 `artifacts/editor/v2.4/weather/`。本轮实际结果与限制见 [C v2.4 天气行动记录](docs/actions/2026-10-17-C-town-weather.md)，技术检查与用户美术认可分别记录。
+
+`node scripts/inspect-mitsuya-editor.mjs` 验证小店原模型、真实编辑交互、存档、资源隔离、暖光与雨面，输出到 `artifacts/editor/v2.5/mitsuya/`。小店接入及本轮完整回归结果见 [C v2.5 行动记录](docs/actions/2026-10-19-C-mitsuya-editor.md)。未向用户地图自动摆入建筑，布局格式和存档键不变；后续美术换版继续使用 `mitsuya`。
 
 本次整理和实际验证见 [行动记录](docs/actions/2026-10-17-editor-home-and-legacy-archive.md)；[C 当前交接](docs/handoffs/C-town-editor.md)说明编辑器接口。自动检查不代表用户新的美术认可、完整人物玩法或真实移动设备验收。

@@ -11,7 +11,7 @@ await mkdir(output, {recursive: true});
 const report = {startedAt: new Date().toISOString(), layers: [], errors: [], limitations: [
   'Headless Chrome with real WebGL and DOM pointer/drag/keyboard/file input; not user manual acceptance.',
   'Clear/rain use the real C runtime; traveler and time-of-day adapter checks use a contract stub only.',
-  'AME MART and B Sakura exterior-03-states are integrated. Three other buildings, walking and town day/night remain pending; no complete house interior.'
+  'AME MART, B Sakura exterior-03-states and Mitsuya anime-facade-landscape-09 are integrated. School, park, walking and town day/night remain pending.'
 ]};
 let browser, page;
 async function check(name, action) {
@@ -19,7 +19,7 @@ async function check(name, action) {
   try { await action(); report.layers.push({name, passed: true, elapsedMs: Date.now() - start}); }
   catch (error) { report.layers.push({name, passed: false, error: error.stack}); throw error; }
 }
-const ids = new Set(['convenience', 'sakura-house', 'road-straight', 'road-corner', 'road-tee', 'road-cross']);
+const ids = new Set(['convenience', 'sakura-house', 'mitsuya', 'road-straight', 'road-corner', 'road-tee', 'road-cross']);
 const equal = (a, b) => assert.deepEqual(a, b);
 const nearVector = (a, b) => assert.ok(a.every((value,i)=>Math.abs(value-b[i])<.001),`Vector moved: ${a} vs ${b}`);
 try {
@@ -121,12 +121,12 @@ try {
     await page.screenshot({path: `${output}/01-empty-scene.png`});
     for (const [x,z] of [[2,2],[7,2],[2,7],[7,7]]) { const p=await point(x,z);assert.ok(p.x>0&&p.x<1440&&p.y>0&&p.y<1000); }
     await openEditor(); await topView();
-    assert.equal((await layout()).instances.length, 0); assert.equal(await page.locator('[data-asset]').count(), 6);
-    assert.equal(await page.locator('[data-asset].building').count(), 2);
-    assert.equal(await page.locator('#building-count').innerText(), '2 件可用');
+    assert.equal((await layout()).instances.length, 0); assert.equal(await page.locator('[data-asset]').count(), 7);
+    assert.equal(await page.locator('[data-asset].building').count(), 3);
+    assert.equal(await page.locator('#building-count').innerText(), '3 件可用');
     assert.equal(await page.locator('[data-asset="sakura-house"] strong').innerText(), '小丸子的家');
     assert.equal(await page.locator('[data-asset] img').evaluateAll(images => images.every(img => img.complete && img.naturalWidth === 280 && img.src.startsWith('data:image/png'))), true);
-    assert.equal(await page.locator('.pending-row').count(), 3);
+    assert.equal(await page.locator('.pending-row').count(), 2);
     await page.screenshot({path: `${output}/01-empty-map.png`});
   });
   await check('browser: click placement, repeated assets, occupied and out-of-map rejection', async () => {

@@ -76,8 +76,8 @@ export function makeStreetProps(w,parent){
 }
 
 export function makeLandscape(w,parent){
- const {THREE,group,box,ball,beam,solid,batch}=w,g=group('14×14 草地与门前石板路',0,0,0,parent);g.userData.kind='landscape';
- g.userData.zones={frontStone:[-6.975,6.975,3.45,6.975],entryStone:[-2.90,4.05,2.40,3.45],grass:'sides and rear',reference:'D left pink-white flowers and right low shrubs; rear planting designed'};
+ const {THREE,group,box,ball,solid,batch}=w,g=group('14×14 草地与门前石板路',0,0,0,parent);g.userData.kind='landscape';
+ g.userData.zones={frontStone:[-6.975,6.975,3.45,6.975],entryStone:[-2.90,4.05,2.40,3.45],grass:'sides and rear',reference:'D pink blossoms and low shrubs; existing rear-left low shrub flowered at user request on 2026-10-19; hidden bloom distribution designed'};
  box(14,.14,14,0,-.07,0,'#8d9f78',g);
  // Coplanar grass and stone are separate solids; no transparent lawn overlays.
  function patch(x0,x1,z0,z1,c){box(x1-x0,.045,z1-z0,(x0+x1)/2,.0225,(z0+z1)/2,c,g,false);}
@@ -95,25 +95,31 @@ export function makeLandscape(w,parent){
   if(z>2.40&&x>-2.95&&x<4.10)continue;
   const tuft=group('低草簇',x,.045,z,g);for(let k=0;k<3;k++){const h=.065+rand()*.13,blade=solid([[-.024,0],[-.008,h*.61],[.040,h],[.026,h*.40],[.020,0]],.006,['#8aab5e','#9db96b','#c0d18b'][(i+k)%3],tuft);blade.clear();blade.rotation.y=k*1.05+rand();blade.rotation.z=(rand()-.5)*.5;}batch(tuft);
  }
- function shrub(name,x,z,r,h){const plant=group(name,x,.045,z,g);const lobes=[[-.38,.18,.63,.71],[.15,0,.75,1],[.52,.12,.51,.64]];
+ function shrub(name,x,z,r,h,flowering=false){const plant=group(name,x,.045,z,g);const lobes=[[-.38,.18,.63,.71],[.15,0,.75,1],[.52,.12,.51,.64]];
   lobes.forEach(([dx,dz,scale,tall],j)=>{const rx=r*scale,ry=h*tall*.5,zz=dz*r,xx=dx*r;ball(rx,ry,rx*.72,xx,ry,zz,['#719a58','#7da45c','#88ac61'][j],plant);for(let k=0;k<7;k++){const angle=-1.05+k*.30,up=.25+(k%3)*.18,py=ry+up*ry,fac=Math.sqrt(1-up*up);const leaf=ball(.015,.045,.008,xx+Math.sin(angle)*rx*fac,py,zz+Math.cos(angle)*rx*.72*fac+.004,['#b3c878','#a2bf6b'][k%2],plant);leaf.rotation.z=.12*Math.sin(k);}});batch(plant);
+  if(flowering){
+   // Short, solid blossoms follow the existing leaf canopy; no tall stalks or new mound.
+   const surfaces=lobes.map(([dx,dz,scale,tall])=>({x:dx*r,z:dz*r,rx:r*scale,ry:h*tall*.5,rz:r*scale*.72}));
+   const petalGeometry=new THREE.SphereGeometry(1,8,6),normalAxis=new THREE.Vector3(0,0,1);let count=0;
+   function petal(rx,ry,rz,x,y,z,color,parent){const m=w.mesh(petalGeometry,color,parent);m.scale.set(rx,ry,rz);m.position.set(x,y,z);return m;}
+   surfaces.forEach((s,j)=>{const n=[23,36,18][j];for(let i=0;i<n;i++){
+    const up=.12+.87*(i+.5)/n,a=i*2.399963+j*.81,side=Math.sqrt(1-up*up),dx=Math.cos(a)*side,dz=Math.sin(a)*side;
+    const p=new THREE.Vector3(s.x+dx*s.rx,s.ry+up*s.ry,s.z+dz*s.rz);
+    if(surfaces.some((other,k)=>k!==j&&((p.x-other.x)/other.rx)**2+((p.y-other.ry)/other.ry)**2+((p.z-other.z)/other.rz)**2<1.04))continue;
+    const normal=new THREE.Vector3(dx/s.rx,up/s.ry,dz/s.rz).normalize();p.addScaledVector(normal,.017);
+    const head=group('低灌木粉色小花',p.x,p.y,p.z,plant);head.quaternion.setFromUnitVectors(normalAxis,normal);head.rotateZ(a);
+    const size=.80+.22*((i*7+j*3)%11)/10,color=['#e8a5c5','#efb8d1','#e59bbc','#f2ccdc'][(i+j)%4];
+    petal(.025,.025,.015,0,0,-.016,'#719a58',head);
+    for(let k=0;k<8;k++){const t=k*Math.PI/4,part=petal(.017*size,.038*size,.008,Math.sin(t)*.029*size,Math.cos(t)*.029*size,0,color,head);part.rotation.z=-t;}
+    petal(.016*size,.016*size,.011,0,0,.008,'#e9d78b',head);count++;
+   }});
+   plant.userData={kind:'flowering-shrub',flowerCount:count,reference:'D anime pink flowers; placement on existing low shrub chosen by user; hidden distribution designed'};batch(plant);
+  }
+  return plant;
  }
- shrub('参考右侧矮灌木',5.94,.40,.76,.89);shrub('后方低灌木补全',1.90,-4.65,.90,.61);shrub('左后草丛补全',-4.54,-3.95,.58,.47);
+ shrub('参考右侧矮灌木',5.94,.40,.76,.89);shrub('后方低灌木补全',1.90,-4.65,.90,.61);
+ const floweringShrub=shrub('左后草丛补全',-4.54,-3.95,.58,.47,true);floweringShrub.removeFromParent();
  batch(g);
- // Existing flowering mound relocated intact to the user-selected rear-left lawn.
- const flowers=group('地块左后侧盛开的粉白花丛',-5.15,.045,-5.15,g);flowers.userData.kind='flower-bed';flowers.rotation.y=-Math.PI/2;
- g.userData.flowerBed={center:[-5.15,.045,-5.15],position:'rear-left corner of the plot, beside the low shrub',yawDegrees:-90,flowerFront:'+Z toward street, slightly upward',flowerCount:94,reference:'Flower form from D; placement, horizontal arrangement and street-facing blooms selected by user on 2026-10-19'};
- const lobes=[[-.27,.33,.03,.51,.33,.48,'#648e52'],[.22,.40,.01,.57,.40,.56,'#719d57'],[-.08,.60,-.08,.57,.47,.45,'#80a75e'],[-.49,.26,.22,.30,.26,.31,'#7ba65d'],[.52,.26,.22,.31,.26,.32,'#8caf65']];
- for(const [x,y,z,rx,ry,rz,color] of lobes)ball(rx,ry,rz,x,y,z,color,flowers);
- // Preserve the existing flowering shoulder when relocating the whole plant group.
- ball(.26,.49,.59,-.57,.49,.91,'#749d58',flowers);ball(.24,.43,.42,-.56,.43,1.24,'#85ac63',flowers);ball(.25,.35,.43,-.56,.72,.63,'#80a75e',flowers);
- for(let i=0;i<30;i++){const a=i*2.399963,r=.20+rand()*.54,x=Math.cos(a)*r,z=Math.sin(a)*r*.73,y=.33+.53*Math.sqrt(Math.max(0,1-r*r/.65));const leaf=ball(.13,.075,.19,x,y,z,['#6e9954','#88b168','#99ba73'][i%3],flowers);leaf.rotation.y=a;leaf.rotation.z=(rand()-.5)*.6;}
- const petalGeometry=new THREE.SphereGeometry(1,8,6);
- function petal(rx,ry,rz,x,y,z,color,parent){const m=w.mesh(petalGeometry,color,parent);m.scale.set(rx,ry,rz);m.position.set(x,y,z);return m;}
- for(let i=0;i<94;i++){const shoulder=i>=64,j=shoulder?i-64:i,a=j*2.399963,r=Math.sqrt((j+.5)/(shoulder?30:64))*.96,x=shoulder?-.57+Math.cos(a)*r*.16:Math.cos(a)*r*.77,z=shoulder?.93+Math.sin(a)*r*.57:Math.sin(a)*r*.56,h=(shoulder?.65:.46)+(shoulder?.63:.85)*Math.sqrt(1-r*r)+(rand()-.5)*.09;
-  // Aim flower faces toward street +Z independently of the bed's horizontal turn.
-  beam([x-.016,h-.19,z],[x,h,z],.007,'#648f4f',flowers);const head=group('盛开粉白小花',x,h,z,flowers),normal=new THREE.Vector3(x*.18,.68,.75).applyAxisAngle(new THREE.Vector3(0,1,0),-flowers.rotation.y).normalize();head.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),normal);head.rotateZ(rand()*Math.PI);const scale=.82+rand()*.35,color=['#f1efdf','#e4a9cd','#d98bb9','#f1efdf'][i%4];
-  for(let k=0;k<7;k++){const t=k*Math.PI*2/7,part=petal(.030*scale,.062*scale,.016*scale,Math.sin(t)*.055*scale,Math.cos(t)*.055*scale,0,color,head);part.rotation.z=-t;}petal(.028*scale,.028*scale,.022,0,0,.015,'#e3c667',head);
- }
- batch(flowers);return g;
+ g.add(floweringShrub);
+ return g;
 }

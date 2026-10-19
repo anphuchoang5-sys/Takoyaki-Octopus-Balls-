@@ -1,5 +1,5 @@
 {
-  "recordedBefore": "C v2.4: B exterior-03-states verified against pre-weather snapshot; authorized C runtime/scene/UI changes. Other protected entries retained.",
+  "recordedBefore": "C v2.5: delivered Mitsuya anime-facade-landscape-09; authorized catalog/lighting/preview-shader edits. Existing other protected entries retained.",
   "files": [
     {
       "path": "dist/town/assets/bookshop/index.js",
@@ -83,8 +83,8 @@
     },
     {
       "path": "dist/town/editor/lighting.js",
-      "bytes": 2537,
-      "hash": "105c3eb15dcca11ca94686636e88c6867522b0c7d12b5c285bb8731a20c7f2ed"
+      "bytes": 4243,
+      "hash": "231a3a90f9baf78470946f913fad1144bfd63a25a3df498399d5f031459c3bea"
     },
     {
       "path": "dist/town/editor/persistence.js",
@@ -103,8 +103,8 @@
     },
     {
       "path": "dist/town/editor/scene.js",
-      "bytes": 11215,
-      "hash": "dd93fdfee72dac9d6db6d72626774ff30dfd2996ed160c988eb27408b6981f98"
+      "bytes": 11462,
+      "hash": "11b09c6cdd896c65be6ae0dee5ed4706b88299167f71bdb3ed9172689f4f4832"
     },
     {
       "path": "dist/town/editor/state.js",
@@ -125,6 +125,46 @@
       "path": "dist/town/assets/sakura-house/environment.js",
       "bytes": 10676,
       "hash": "a7539a876cec66ef23f8bbe4d112e410cb72d26454dc4353bd4964a4f11bc676"
+    },
+    {
+      "path": "dist/town/editor/catalog.js",
+      "bytes": 2275,
+      "hash": "2460090f21bf17537b91edc906fc663bd73b990f458effeca8a9262dc046ba23"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/index.js",
+      "bytes": 10328,
+      "hash": "bfa561294095b00e55cc0ce8049d2d2c9f89ac720fd7580d6858f50ce8ac2408"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/facade.js",
+      "bytes": 17871,
+      "hash": "af44c69bb5a5e54a3e1ca3a5c00c7a7c6a66cab5cd70f2d78d6ce14ca37f5b4b"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/props.js",
+      "bytes": 8244,
+      "hash": "494f34481902dea3f6ebb468a1519810565adabe03c1ff6f6a1cfa367d61d9f7"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/workshop.js",
+      "bytes": 5773,
+      "hash": "19513c4393fd8b62bc02c58d60de9d03be5d74f42bb7ef280d3b644f65382b00"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/README.md",
+      "bytes": 11211,
+      "hash": "9345c0e88f58d73491e32a9b6756c7303f59fb57f996d3c9900e17c3d1166020"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/mitsuya.glb",
+      "bytes": 9311896,
+      "hash": "c22c8b705a3224b9d6cbc21d51bfa788c153301ead61946caf5f0eb73d9eae23"
+    },
+    {
+      "path": "dist/town/assets/mitsuya/mitsuya-interior.glb",
+      "bytes": 4888060,
+      "hash": "15e8be091e96a44780fa27b1165f790eae7b5086a462ddec28102383de494d6e"
     }
   ]
 }

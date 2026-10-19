@@ -3,7 +3,7 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {chromium} from 'playwright';
 
-const output='artifacts/editor/v2.4/weather';await mkdir(output,{recursive:true});
+const output=process.env.WEATHER_ARTIFACT_DIR||'artifacts/editor/v2.4/weather';await mkdir(output,{recursive:true});
 const report={startedAt:new Date().toISOString(),checks:[],errors:[],limitations:[
   'Real Chrome/WebGL and browser interaction in isolated storage; art acceptance remains with the user.',
   'Vertical rain, static authored geometry. No wind-driven rain, runoff simulation, puddle accumulation or other weather.',

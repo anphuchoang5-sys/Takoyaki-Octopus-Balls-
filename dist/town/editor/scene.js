@@ -99,7 +99,12 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
       ghost.setEnvironment?.(environment); ghost.updateEnvironment?.(elapsedSeconds);
       ghost.root.traverse(node => {
         if (!node.material) return;
-        const clone = material => { const m = material.clone(); m.transparent = true; m.opacity = .48; m.depthWrite = false; return m; };
+        const clone = material => {
+          const m = material.clone();
+          // Three's clone does not copy shader callbacks; B's toon-band response must survive previews.
+          m.onBeforeCompile = material.onBeforeCompile; m.customProgramCacheKey = material.customProgramCacheKey;
+          m.transparent = true; m.opacity = .48; m.depthWrite = false; return m;
+        };
         node.material = Array.isArray(node.material) ? node.material.map(clone) : clone(node.material);
       });
       hints.add(ghost.root);

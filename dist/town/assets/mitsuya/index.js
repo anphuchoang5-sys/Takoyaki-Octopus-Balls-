@@ -2,7 +2,7 @@ import {workshop} from './workshop.js';
 import {makeProps,palette as P} from './props.js';
 import {makeEntrance,makeStreetProps,makeLandscape,entryLayout} from './facade.js';
 
-export const specification=Object.freeze({id:'mitsuya',revision:'anime-facade-landscape-07',name:'甘味処 みつや',plot:[14,14],body:[6.6,4.8],interior:[7.4,6.2],floorHeight:.32,ceilingHeight:3.52,entry:{x:-.325,y:.32,z:2.4,facing:'+Z',clearWalkWidth:1.27},space:'Separate street exterior and independent compact shop interior; shared entrance prop source',referenceStatus:{D:'user color anime screenshot viewed; primary exterior',A:'image viewed; selected indoor furniture reference, complete shop plan unconfirmed',B:'image connection timed out; user item description only',C:'superseded where D shows a different structure'}});
+export const specification=Object.freeze({id:'mitsuya',revision:'anime-facade-landscape-09',name:'甘味処 みつや',plot:[14,14],body:[6.6,4.8],interior:[7.4,6.2],floorHeight:.32,ceilingHeight:3.52,entry:{x:-.325,y:.32,z:2.4,facing:'+Z',clearWalkWidth:1.27},space:'Separate street exterior and independent compact shop interior; shared entrance prop source',referenceStatus:{D:'user color anime screenshot viewed; primary exterior',A:'image viewed; selected indoor furniture reference, complete shop plan unconfirmed',B:'image connection timed out; user item description only',C:'superseded where D shows a different structure'}});
 
 export function createModel({space='exterior'}={}){
  const interior=space==='interior',w=workshop(),{THREE,root,group,box,cyl,beam,solid,face,texture,batch}=w,p=makeProps(w);
