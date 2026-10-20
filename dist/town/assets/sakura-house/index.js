@@ -1,8 +1,8 @@
 import {createWorkshop} from './geometry.js';
 import {createEnvironment} from './environment.js';
 
-export const specification=Object.freeze({id:'sakura-house',name:'さくら家 · 樱家',tileSize:14,front:'+Z',placementRotations:[0,90,180,270],revision:'exterior-03-states',interior:false});
-const C={wall:'#ee8fae',seam:'#c87691',frame:'#d8e8eb',gable:'#edf7f4',green:'#169ba4',edge:'#66677c',roof:'#d5cdd3',tileLine:'#a6a0b2',wood:'#78836b',foundation:'#b1b5b6',fence:'#d0eee0',fenceJoint:'#879e9b',earth:'#ddd1b5',glass:'#2633cf',glassLight:'#354be8',leaf:'#249b39',leafLight:'#41ba36',leafDark:'#197c3d',trunk:'#72764d'};
+export const specification=Object.freeze({id:'sakura-house',name:'さくら家 · 樱家',tileSize:14,front:'+Z',placementRotations:[0,90,180,270],revision:'exterior-04-roof',interior:false});
+const C={wall:'#ee8fae',seam:'#c87691',frame:'#d8e8eb',gable:'#edf7f4',green:'#169ba4',edge:'#66677c',roof:'#c4c3c9',roofBed:'#83818f',tileLine:'#a4a1ad',wood:'#78836b',foundation:'#b1b5b6',fence:'#d0eee0',fenceJoint:'#879e9b',earth:'#ddd1b5',glass:'#2633cf',glassLight:'#354be8',leaf:'#249b39',leafLight:'#41ba36',leafDark:'#197c3d',trunk:'#72764d'};
 
 export function createModel(){
   const W=createWorkshop(),{THREE,root,group,box,cylinder,ellipsoid,beam,tube,solid,plaque}=W;
@@ -73,28 +73,60 @@ export function createModel(){
     g.setIndex([0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,1,2,6,1,6,5,2,3,7,2,7,6,3,0,4,3,4,7]);g.computeVertexNormals();
     return W.mesh(g,color,parent);
   }
-  slab(-5.2,4.3,-4.05,ridgeZ,(_,z)=>roofY(z),.15,C.roof);
-  slab(-5.2,4.3,ridgeZ,3.25,(_,z)=>roofY(z),.15,C.roof);
-  for(const side of [-1,1])for(let row=0;row<8;row++){
-    const near=ridgeZ+side*row*3.65/8,far=ridgeZ+side*(row+1)*3.65/8;
-    for(let col=0;col<14;col++){
-      const xa=-5.2+col*9.5/14+.012,xb=xa+9.5/14-.024;
-      slab(xa,xb,Math.min(near,far)+.009,Math.max(near,far)-.009,(_,z)=>roofY(z)+.022,.022,C.roof);tileCount++;
-      for(let k=0;k<5;k++){const a=k/5,b=(k+1)/5,za=far-side*.04*Math.sin(a*Math.PI),zb=far-side*.04*Math.sin(b*Math.PI);beam([xa+.04+(xb-xa-.08)*a,roofY(za)+.027,za],[xa+.04+(xb-xa-.08)*b,roofY(zb)+.027,zb],.007,C.tileLine,roof);}
-      if(row%3===1)beam([xa+.045,roofY(far-side*.085)+.024,far-side*.085],[xa+.18,roofY(far-side*.085)+.024,far-side*.085],.005,C.tileLine,roof);
+  // Continuous grey bedding shows only in the narrow downslope channels.
+  // Overlapping closed tiles keep the original roof slope and eave position.
+  slab(-5.2,4.3,-4.05,ridgeZ,(_,z)=>roofY(z),.15,C.roofBed);
+  slab(-5.2,4.3,ridgeZ,3.25,(_,z)=>roofY(z),.15,C.roofBed);
+  function tile(a,b,near,far,map,parent,mark=false){
+    const points=[],indices=[],side=Math.sign(far-near),segments=6;
+    function point(u,t){
+      const across=a+(b-a)*u,run=near+(far-near)*t-side*.025*Math.sin(u*Math.PI)*t;
+      const p=map(across,run);p[1]+=.026+.014*Math.sin(u*Math.PI)+.014*t;return p;
     }
+    for(let layer=0;layer<2;layer++)for(let t=0;t<2;t++)for(let k=0;k<=segments;k++){
+      const p=point(k/segments,t);if(layer)p[1]-=.021;points.push(...p);
+    }
+    const stride=segments+1,lower=stride*2;
+    function quad(a,b,c,d,up){
+      const p=i=>new THREE.Vector3().fromArray(points,i*3),normal=p(b).sub(p(a)).cross(p(c).sub(p(a)));
+      if(up!==undefined&&(normal.y>0)!==up)[b,d]=[d,b];indices.push(a,b,c,a,c,d);
+    }
+    for(let k=0;k<segments;k++){
+      quad(k,k+1,stride+k+1,stride+k,true);
+      quad(lower+k,lower+stride+k,lower+stride+k+1,lower+k+1,false);
+      const f=[k,lower+k,lower+k+1,k+1],e=[stride+k,stride+k+1,lower+stride+k+1,lower+stride+k];
+      // Side winding follows the already oriented top; geometry is closed.
+      const first=map(a,near),second=map(b,near),third=map(b,far);
+      const positive=new THREE.Vector3(...second).sub(new THREE.Vector3(...first)).cross(new THREE.Vector3(...third).sub(new THREE.Vector3(...first))).y>0;
+      if(!positive){f.reverse();e.reverse();}quad(...f);quad(...e);
+    }
+    const left=[0,stride,lower+stride,lower],right=[segments,lower+segments,lower+stride+segments,stride+segments];
+    const va=new THREE.Vector3(...map(b,near)).sub(new THREE.Vector3(...map(a,near))),vb=new THREE.Vector3(...map(b,far)).sub(new THREE.Vector3(...map(a,near)));
+    if(va.cross(vb).y<0){left.reverse();right.reverse();}quad(...left);quad(...right);
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(points,3));geometry.setIndex(indices);geometry.computeVertexNormals();W.mesh(geometry,C.roof,parent);
+    // Fine, slightly curved overlap marks remain lighter than the long channels.
+    const line=[];for(let k=0;k<=6;k++){const p=point(.09+.82*k/6,.975);p[1]+=.003;line.push(p);}
+    for(let k=1;k<line.length;k++)beam(line[k-1],line[k],.0045,C.tileLine,parent);
+    if(mark){const p=point(.66,.79),q=point(.91,.79);p[1]+=.003;q[1]+=.003;beam(p,q,.0035,C.tileLine,parent);}
+  }
+  for(const side of [-1,1])for(let row=0;row<7;row++)for(let col=0;col<12;col++){
+    const near=ridgeZ+side*(row*3.65/7-(row?.025:0)),far=ridgeZ+side*(row+1)*3.65/7;
+    const xa=-5.2+col*9.5/12+.024,xb=-5.2+(col+1)*9.5/12-.024;
+    tile(xa,xb,near,far,(x,z)=>[x,roofY(z),z],roof,(row+col)%3===1);tileCount++;
   }
   for(const x of [-5.2,4.3])for(const end of [-4.05,3.25])beam([x,peak+.015,ridgeZ],[x,eave+.015,end],.065,C.edge,roof);
   for(const z of [-4.05,3.25])box(9.5,.13,.09,-.45,eave-.045,z,C.edge,roof,true);
   beam([-5.2,peak+.02,ridgeZ],[4.3,peak+.02,ridgeZ],.075,C.edge,roof);
-  for(let x=-5.12;x<4.3;x+=.4){const cap=cylinder(.073,.073,.36,x,peak+.045,ridgeZ,C.roof,roof,10);cap.rotation.z=Math.PI/2;}
+  for(let x=-5.12;x<4.3;x+=.4){const cap=cylinder(.073,.073,.376,x,peak+.045,ridgeZ,C.roof,roof,16);cap.rotation.z=Math.PI/2;const joint=cylinder(.074,.074,.014,x-.188,peak+.045,ridgeZ,C.roofBed,roof,16);joint.rotation.z=Math.PI/2;}
   const annex=group('右侧低附屋斜屋顶'),annexY=x=>3.07-(x-3.82)*.145;
-  slab(3.82,6.04,-3.15,3.2,x=>annexY(x),.12,C.roof,annex);
+  slab(3.82,6.04,-3.15,3.2,x=>annexY(x),.12,C.roofBed,annex);
   for(const z of [-3.15,3.2]){beam([3.82,annexY(3.82),z],[6.04,annexY(6.04),z],.06,C.edge,annex);
     const g=group('附屋屋檐下封板',0,0,z,0,annex);solid([[3.82,2.62],[5.6,2.62],[5.6,annexY(5.6)-.12],[3.82,annexY(3.82)-.12]],.1,C.wall,g);}
   box(.16,.14,5.5,5.6,2.71,-.05,C.wall,annex);
-  for(let i=0;i<20;i++){const z=-3.12+i*.315;beam([3.85,3.09,z],[6,annexY(6)+.02,z],.009,C.tileLine,annex);}
-  for(const x of [4.4,5.05,5.7])beam([x,annexY(x)+.02,-3.13],[x,annexY(x)+.02,3.18],.008,C.tileLine,annex);
+  for(let row=0;row<3;row++)for(let col=0;col<12;col++){
+    const near=3.82+row*2.22/3-(row?.025:0),far=3.82+(row+1)*2.22/3;
+    tile(-3.15+col*6.35/12+.024,-3.15+(col+1)*6.35/12-.024,near,far,(z,x)=>[x,annexY(x),z],annex,(row+col)%3===1);
+  }
   const vent=group('参考可见的蓝灰排气筒');
   box(.52,.12,.5,5.55,2.86,1.4,'#7392aa',vent,true);
   box(.3,.95,.34,5.55,3.3,1.4,'#8db1ca',vent,true);

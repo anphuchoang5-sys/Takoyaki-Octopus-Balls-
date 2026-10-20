@@ -1,8 +1,9 @@
 import {workshop} from './workshop.js';
 import {makeProps,palette as P} from './props.js';
 import {makeEntrance,makeStreetProps,makeLandscape,entryLayout} from './facade.js';
+import {createEnvironment,environmentSupport} from './environment.js';
 
-export const specification=Object.freeze({id:'mitsuya',revision:'anime-facade-landscape-09',name:'甘味処 みつや',plot:[14,14],body:[6.6,4.8],interior:[7.4,6.2],floorHeight:.32,ceilingHeight:3.52,entry:{x:-.325,y:.32,z:2.4,facing:'+Z',clearWalkWidth:1.27},space:'Separate street exterior and independent compact shop interior; shared entrance prop source',referenceStatus:{D:'user color anime screenshot viewed; primary exterior',A:'image viewed; selected indoor furniture reference, complete shop plan unconfirmed',B:'image connection timed out; user item description only',C:'superseded where D shows a different structure'}});
+export const specification=Object.freeze({id:'mitsuya',revision:'anime-facade-night-10',name:'甘味処 みつや',plot:[14,14],body:[6.6,4.8],interior:[7.4,6.2],floorHeight:.32,ceilingHeight:3.52,entry:{x:-.325,y:.32,z:2.4,facing:'+Z',clearWalkWidth:1.27},space:'Separate street exterior and independent compact shop interior; shared entrance prop source',referenceStatus:{D:'user color anime screenshot viewed; primary exterior',A:'image viewed; selected indoor furniture reference, complete shop plan unconfirmed',B:'image connection timed out; user item description only',C:'superseded where D shows a different structure'}});
 
 export function createModel({space='exterior'}={}){
  const interior=space==='interior',w=workshop(),{THREE,root,group,box,cyl,beam,solid,face,texture,batch}=w,p=makeProps(w);
@@ -55,5 +56,6 @@ export function createModel({space='exterior'}={}){
  let cut=false,roofVisible=true;function setCutaway(value){cut=!!value;Object.values(walls).forEach(g=>g.visible=!cut);menu.visible=!cut;utilities.visible=!cut;return cut;}
  function setInspection(view){setCutaway(false);if(['inside','top','looking-out','table'].includes(view)){walls['背墙'].visible=false;walls['右墙'].visible=false;cut=true;}else if(['counter','jars'].includes(view)){walls['左墙'].visible=false;walls['背墙'].visible=false;cut=true;}menu.visible=walls['左墙'].visible;utilities.visible=!cut;}
  function setRoof(value){roofVisible=!!value;roof.visible=ceiling.visible=fixtures.visible=roofVisible;return roofVisible;}
- return {root,specification,space,roof,ceiling,walls,front:entrance.front,furnishings,fixtures,entrance,street,lamps:lampPositions,previewLamps:lampPositions.map(l=>['#ffd8a6',8,4.3,l.x,l.y-.08,l.z]),floors:[{x:cx,z:cz,w:width-.12,d:depth-.12,height:.32}],entry:specification.entry,setCutaway,setInspection,setRoof,getViewState:()=>({cutaway:cut,roof:roofVisible}),dispose:w.dispose,textures:w.textures};
+ const environment=createEnvironment(root,{lampPositions,glow:w.glow,glass:w.glass});
+ return {root,specification,space,roof,ceiling,walls,front:entrance.front,furnishings,fixtures,entrance,street,lamps:lampPositions,previewLamps:lampPositions.map(l=>['#ffd8a6',8,4.3,l.x,l.y-.08,l.z]),floors:[{x:cx,z:cz,w:width-.12,d:depth-.12,height:.32}],entry:specification.entry,setCutaway,setInspection,setRoof,getViewState:()=>({cutaway:cut,roof:roofVisible}),environmentSupport,setEnvironment:environment.setEnvironment,getEnvironment:environment.inspect,getLightingDescriptors:environment.getLightingDescriptors,dispose(){environment.dispose();w.dispose();},textures:w.textures};
 }

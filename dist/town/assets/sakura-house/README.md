@@ -1,4 +1,14 @@
-# 樱家 · 外观与环境响应 03
+# 樱家 · 屋顶 04
+
+2026-10-20，当前 revision 为 `exterior-04-roof`。按用户动画拍屏／地图对照，只调整主屋顶和低附屋的瓦面、瓦缝及脊瓦：浅灰带弱灰紫、灰色纵缝、较淡的弧形搭接线与低浅立体起伏。主屋面为每坡 12 列 × 7 排，共 168 块，附屋 36 块；排列和具体厚度为项目补全，不称官方测绘。
+
+屋顶坡度、轮廓、檐口位置以及所有墙窗、山墙、院落、植栽、路灯、排水和独立室内保留。原 `environment.js` 及状态接口未修改；编辑器原有工厂引用会读取新屋面，但本轮未改编辑器或天气文件。
+
+本轮查看：`artifacts/buildings/sakura-house/roof-04/樱家-屋顶04-三维预览.html`（可离线旋转缩放）、同目录 `屋顶对照.html`（参考、同机位前后、侧后与近景）。开发预览沿用原 `preview.html`；旧 03 源码、GLB、预览及说明保存在 `roof-04/before/`，旧图册保留为历史证据。
+
+当前检查及用户美术待审状态见 `docs/actions/2026-10-20-B-sakura-roof.md` 和 `roof-04/inspection.json`；屋顶 04 不沿用以下 03 的历史检查作为本轮结果。
+
+## 外观与环境响应 03 · 历史记录
 
 2026-10-17，revision 为 exterior-03-states。已认可的 exterior-02-lamp 完整保存在 artifacts/buildings/sakura-house/archive-exterior-02-lamp-approved/。本轮技术验证完成；新增状态和细节等待用户美术认可，不开始其他建筑，不发布。
 
