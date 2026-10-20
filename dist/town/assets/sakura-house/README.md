@@ -10,7 +10,7 @@
 
 ## 外观与环境响应 03 · 历史记录
 
-2026-10-17，revision 为 exterior-03-states。已认可的 exterior-02-lamp 完整保存在 artifacts/buildings/sakura-house/archive-exterior-02-lamp-approved/。本轮技术验证完成；新增状态和细节等待用户美术认可，不开始其他建筑，不发布。
+2026-10-17，revision 为 exterior-03-states。当时曾将已认可的 exterior-02-lamp 存档至 artifacts/buildings/sakura-house/archive-exterior-02-lamp-approved/；该目录与另外四个旧 archive 已按用户 2026-10-20 的授权删除。当前保留 roof-04、室内、参考资料及根目录交付，清理范围见 `docs/actions/2026-10-20-building-commit-and-backup-cleanup.md`。以下为 03 历史记录：当时技术验证完成，新增状态和细节待用户认可，不代表屋顶 04 已获认可。
 
 ## 打开与操作
 
