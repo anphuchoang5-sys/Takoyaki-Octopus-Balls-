@@ -64,7 +64,7 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 
 原雨夜便利店观赏页和固定地图散步页已移出正式运行目录，完整源码、依赖和专用脚本保存在 [旧原型归档](archive/2026-10-17-legacy-prototypes/README.md)。旧 `/walk/` 不再是当前站点入口；可按归档说明在独立端口查看。
 
-当前建筑离线预览、截图和检查结果仍保留在 `artifacts/`。2026-10-20 已按用户授权删除五个樱家旧 archive 目录，保留 `roof-04/`、`interior/`、`references/` 及根目录资料；其他建筑和编辑器旧备份未删除。实际范围见[清理执行记录](docs/actions/2026-10-20-building-commit-and-backup-cleanup.md)，后续候选见[清理清单](docs/actions/2026-10-20-backup-cleanup-candidates.md)。本次没有发布网站，既有线上地址的内容不由本地文件变更自动更新。
+当前建筑离线预览、截图和检查结果仍保留在 `artifacts/`。2026-10-20 已按用户授权删除五个樱家旧 archive 目录，随后又按 Codex 清理清单删除其余 12 个旧备份目录（みつや `history`、编辑器 v2–v2.5 的 `before`、目录整理/改名/签出验证副本），共 361 个文件、约 35.34 MiB；保留 `roof-04/`（含 `before`）、`interior/`、`references/`、`night-10/` 当前交付及旧原型归档。首轮范围见[清理执行记录](docs/actions/2026-10-20-building-commit-and-backup-cleanup.md)，12 项执行与核对见[后续执行记录](docs/actions/2026-10-20-backup-cleanup-execution.md)，删除前清单见[清理清单](docs/actions/2026-10-20-backup-cleanup-candidates.md)。本次没有发布网站，既有线上地址的内容不由本地文件变更自动更新。
 
 ## 检查与记录
 

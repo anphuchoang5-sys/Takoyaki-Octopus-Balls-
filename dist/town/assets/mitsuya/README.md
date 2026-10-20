@@ -120,7 +120,7 @@ outside.setEnvironment({time:'afternoon'}); // 恢复原日间材质，weather �
 | `textures/` | Canvas 图案导出的 PNG；本次有效清单见 `delivery-inspection.json`，旧版闲置图案不加载 |
 | `references/` | 外观主参考 D、室内 A、旧漫画 C 及来源状态 |
 
-旧版已备份在 `artifacts/buildings/mitsuya/history/01-before-color-reference.zip`，不作为另一份有效成品。
+旧版备份目录 `artifacts/buildings/mitsuya/history/`（含 01 旧版 ZIP）已按 2026-10-20 清理授权删除，不再作为另一份有效成品或可访问备份；历史制作记录保留原文。
 
 ## 依据和合理补全
 
