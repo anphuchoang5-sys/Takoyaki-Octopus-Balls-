@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {nightStrength} from '../shared/environment-rules.js';
 
 export const environmentSupport=Object.freeze({
   times:Object.freeze(['morning','afternoon','dusk','night']),
@@ -24,7 +25,7 @@ export function createEnvironment(root,{lampPositions,glow,glass}){
   }
   function getLightingDescriptors(){
     if(disposed)return [];
-    const strength=state.time==='night'?1:state.time==='dusk'?.45:0;
+    const strength=nightStrength(state.time);
     return lampPositions.map((p,i)=>({
       id:i===0?'counter-pendant':'room-pendant',type:'spot',color:'#ffd8a6',
       intensity:8+strength*(i===0?5:3),
@@ -45,7 +46,7 @@ export function createEnvironment(root,{lampPositions,glow,glass}){
     if(!environmentSupport.times.includes(value.time)||!environmentSupport.weathers.includes(value.weather))
       throw new RangeError('みつや环境值无效，保留现有状态。');
     state=value;
-    const strength=state.time==='night'?1:state.time==='dusk'?.45:0;
+    const strength=nightStrength(state.time);
     for(const [material,base] of originals){
       if(base.color)material.color.copy(base.color);
       material.opacity=base.opacity;

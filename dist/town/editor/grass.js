@@ -29,13 +29,13 @@ export function createGrass({tileSize = 14} = {}) {
   const root = new THREE.Group(); root.name = 'living-grass';
   const pulses = Array.from({length: PULSES}, () => new THREE.Vector4(0, 0, -100, 0));
   const directions = Array.from({length: PULSES}, () => new THREE.Vector2());
-  const uniforms = {uGrassTime: {value: 0}, uWindPulses: {value: pulses}, uWindDirections: {value: directions}, uBreeze: {value: 1}};
+  const uniforms = {uGrassTime: {value: 0}, uWindPulses: {value: pulses}, uWindDirections: {value: directions}, uBreeze: {value: 1}, uSnow: {value: 0}};
   let mesh = null, key = '', layout = null, pulseIndex = 0, lastEmit = -100, emitted = 0, bladeCount = 0;
   const material = new THREE.MeshStandardMaterial({color: '#72904b', roughness: 1, side: THREE.DoubleSide});
   material.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = `attribute vec2 aRoot; attribute vec4 aShape; attribute float aTone;
-      uniform float uGrassTime; uniform float uBreeze; uniform vec4 uWindPulses[${PULSES}]; uniform vec2 uWindDirections[${PULSES}];
+      uniform float uGrassTime; uniform float uBreeze; uniform float uSnow; uniform vec4 uWindPulses[${PULSES}]; uniform vec2 uWindDirections[${PULSES}];
       varying float vBladeTip; varying float vBladeTone;
       ${shader.vertexShader}`;
     shader.vertexShader = shader.vertexShader.replace('#include <beginnormal_vertex>', `
@@ -54,7 +54,7 @@ export function createGrass({tileSize = 14} = {}) {
       float force = min(length(bend), 1.5);
       vec3 transformed = vec3(aRoot.x, .012, aRoot.y);
       transformed.xz += vec2(cos(aShape.x),sin(aShape.x))*position.x*aShape.z;
-      transformed.y += tip*aShape.y*(1.0-force*.38*tip);
+      transformed.y += tip*aShape.y*(1.0-force*.38*tip)*(1.0-pow(uSnow,2.65)*.36);
       transformed.xz += (bend*aShape.y*1.6 + vec2(sin(aShape.x),cos(aShape.x))*.055)*tip*tip;
       vBladeTip=tip; vBladeTone=aTone;`);
     shader.fragmentShader = `varying float vBladeTip; varying float vBladeTone;\n${shader.fragmentShader}`;
@@ -65,7 +65,7 @@ export function createGrass({tileSize = 14} = {}) {
     shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
       diffuseColor.rgb *= mix(.82, 1.16, vBladeTip) * vBladeTone;`);
   };
-  material.customProgramCacheKey = () => 'c-grass-v2-2';
+  material.customProgramCacheKey = () => 'c-grass-surface-snow-2';
   function rebuild(next) {
     layout = next;
     const nextKey = JSON.stringify([next.rows, next.instances.map(p => [p.assetId,p.x,p.z,p.rotation])]);
@@ -96,6 +96,7 @@ export function createGrass({tileSize = 14} = {}) {
   }
   return {
     root, rebuild,
+    setSnowAmount(value){uniforms.uSnow.value=value;},
     update(time) { uniforms.uGrassTime.value=time; },
     stroke(from,to) {
       const dx=to.x-from.x,dz=to.z-from.z,length=Math.hypot(dx,dz),time=uniforms.uGrassTime.value;

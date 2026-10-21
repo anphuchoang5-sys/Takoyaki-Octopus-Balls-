@@ -1,3 +1,4 @@
+import {addSakuraSnow} from './snow.js';
 import {createWorkshop} from './geometry.js';
 import {createEnvironment} from './environment.js';
 
@@ -233,7 +234,8 @@ export function createModel(){
   root.userData.specification=specification;root.userData.tileCount=tileCount;root.userData.openings=openings;
   root.userData.design={roof:'single-gable',gate:{axis:'corner',x:-6.45,z:4.05,width:3.3,frontReturnGap:.85,railings:false},door:{x:-3.3,z:2.7,normal:'+Z'},roofTop:5.02,treeTop:7.5,windowColor:C.glass,westWindowBars:2,entranceTuftsRemoved:true,shrubTones:3,treeTrunkRadius:.36};
   const b=(x,z,w,d,height)=>({x,z,w,d,height});
-  return {root,type:'sakura-house',specification,colliders:[b(-.45,-.4,8.5,6.2,2.95),b(4.7,-.05,1.8,5.5,2.65),b(-6.45,-2.025,.2,8.85,1.56),b(.425,5.7,12.05,.2,1.56),b(6.45,-.375,.2,12.15,1.56),b(0,-6.45,12.9,.2,1.56)],occluders:[b(-.45,-.4,9.5,7.3,5.02),b(4.93,.025,2.22,6.35,3.1)],roofs:[],lamps:[],floors:[{x:0,z:0,w:14,d:14,height:.045}],setEnvironment:environment.setEnvironment,updateEnvironment:environment.update,getEnvironmentState:environment.inspect,dispose(){environment.dispose();W.dispose();}};
+  const asset = {root,type:'sakura-house',specification,colliders:[b(-.45,-.4,8.5,6.2,2.95),b(4.7,-.05,1.8,5.5,2.65),b(-6.45,-2.025,.2,8.85,1.56),b(.425,5.7,12.05,.2,1.56),b(6.45,-.375,.2,12.15,1.56),b(0,-6.45,12.9,.2,1.56)],occluders:[b(-.45,-.4,9.5,7.3,5.02),b(4.93,.025,2.22,6.35,3.1)],roofs:[],lamps:[],floors:[{x:0,z:0,w:14,d:14,height:.045}],setEnvironment:environment.setEnvironment,updateEnvironment:environment.update,getEnvironmentState:environment.inspect,dispose(){environment.dispose();W.dispose();}};
+  return addSakuraSnow(asset);
 }
 
 

@@ -2,6 +2,8 @@ import {THREE, world, batchStatic, halo} from '../../world.js';
 import {buildStreet, updateStreet} from '../../street.js';
 import {createBuildingInstance,TILE_SIZE} from '../assets/shared/instances.js';
 import {createModel} from '../assets/convenience/index.js';
+import {addConvenienceSnow} from '../assets/convenience/snow.js';
+import {nightStrength} from '../assets/shared/environment-rules.js';
 
 // C's composition adapter. The authored building and street files stay untouched.
 // The original miniature has a 14.25-wide outer lip; retain it all inside one 14-wide cell.
@@ -33,6 +35,8 @@ function getStreet() {
   }
   const lights=[];root.traverse(n=>{if(n.isLight)lights.push(n);});
   for(const light of lights) {const p=light.getWorldPosition(new THREE.Vector3());streetLamps.push(['#'+light.color.getHexString(),light.intensity,light.distance,p.x,p.y,p.z]);light.removeFromParent();}
+  const pole=root.children.find(n=>n.isGroup&&Math.abs(n.position.x+5.87)<.001&&Math.abs(n.position.z-2.9)<.001);
+  if(pole){pole.name='convenience-street-lamp';pole.userData.dynamic=true;}
   halo(-.4,2.5,1.8,'#ffda96',5,.065,root);
   batchStatic(root);streetTemplate=root;return root;
 }
@@ -51,5 +55,13 @@ export function createConvenienceScene() {
   asset.previewLamps=[...STORE_LAMPS,...streetLamps];
   asset.focus={target:[0,1.6,0],distance:33};
   asset.updateDecorations=updateStreet;
-  return asset;
+  const pole=root.getObjectByName('convenience-street-lamp'),owned=[],optical=[];
+  pole?.traverse(n=>{if(n.isSprite)optical.push(n);if(n.isMesh&&n.material?.emissiveIntensity>0){n.material=n.material.clone();owned.push([n.material,n.material.emissiveIntensity]);}});
+  let environment={time:'afternoon',weather:'clear'};
+  asset.setEnvironment=next=>{environment={...environment,...next};const strength=nightStrength(environment.time);
+    optical.forEach(n=>n.visible=strength>0);owned.forEach(([m,intensity])=>m.emissiveIntensity=intensity*strength);return {...environment};};
+  asset.getLightingDescriptors=()=>asset.previewLamps.map((s,i)=>({id:i<4?`business-${i}`:'street-lamp',type:'point',color:s[0],intensity:s[1]*(i<4?1:nightStrength(environment.time)),distance:s[2],position:s.slice(3),decay:2}));
+  const dispose=asset.dispose?.bind(asset);asset.dispose=()=>{owned.forEach(([m])=>m.dispose());dispose?.();};
+  asset.setEnvironment(environment);
+  return addConvenienceSnow(asset);
 }

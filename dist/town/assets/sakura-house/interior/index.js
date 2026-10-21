@@ -1,11 +1,14 @@
 import {workshop} from './workshop.js';
+import {createSistersRoom} from './sisters-room.js';
+import {createLivingRoom,livingColors} from './living-room.js';
 import {rooms,walls,connections,routes,entry,HEIGHT,WALL,sources} from './plan.js';
 
-export const specification={id:'sakura-house-interior',revision:'interior-01-layout',title:'按参考方案复原樱家',stage:'第一阶段 · 结构样板',units:'metres',independentScene:true,officialLayout:false};
+export const specification={id:'sakura-house-interior',revision:'interior-03-living',title:'按参考方案复原樱家',stage:'客厅精修待审 · 姐妹房保留 · 其余结构样板',units:'metres',independentScene:true,officialLayout:false};
 export function createInterior(){
  const W=workshop(),{THREE,root,group,box,cyl,ellipsoid,tube,batch}=W;
  const floors=group('房间地面'),fullWalls=group('完整墙体'),cutWalls=group('剖视低墙'),doors=group('门扇'),ceilings=group('完整天花顶盖'),furniture=group('主要家具'),storageShelves=group('壁橱层板',furniture);
  const wallParts=[],obstacles=[],doorLeaves=[],furnitureItems=[];
+ const living=createLivingRoom();
  const C={wood:'#a9784d',dark:'#705742',trim:'#927052',wall:'#f0e7cc',paper:'#f6efd4',green:'#6c8e74',mint:'#8dcba6',pink:'#e9b9b5',metal:'#b1c2c1',blue:'#638db2'};
  function addObj(name,x,z,rot,fn,footprint=null){const g=group(name,furniture),floor=rooms.find(r=>x>r.r[0]&&x<r.r[2]&&z>r.r[1]&&z<r.r[3]),y=floor?.y||0;g.position.set(x,y,z);g.rotation.y=rot;fn(g);batch(g);furnitureItems.push({name,position:[x,y,z],rotation:rot});if(footprint){const [w,d]=footprint,c=Math.abs(Math.cos(rot)),s=Math.abs(Math.sin(rot));obstacles.push({name,x,z,w:w*c+d*s,d:d*c+w*s});}return g;}
  const base=group('独立室内底座');box(10.25,.34,7.52,4.995,-.27,3.64,'#b8afa1',base);box(1.94,.34,5.58,10.98,-.27,4.61,'#b8afa1',base);box(1.94,.34,1.94,10.98,-.43,.85,'#b8afa1',base);box(2.06,.34,1.03,.91,-.27,-.455,'#b8afa1',base);box(2.06,.34,1.03,.91,-.27,7.735,'#b8afa1',base);batch(base);
@@ -13,15 +16,16 @@ export function createInterior(){
   if(r.floor==='tatami8'){const a=wi/4,b=de/4;tiles=[[0,0,2*a,b],[2*a,0,2*a,b],[0,b,a,2*b],[3*a,b,a,2*b],[a,b,2*a,b],[a,2*b,2*a,b],[0,3*b,2*a,b],[2*a,3*b,2*a,b]];}
   else if(r.floor==='tatami6'){const a=wi/4,b=de/3;tiles=[[0,0,2*a,b],[2*a,0,2*a,b],[0,b,a,2*b],[a,b,2*a,b],[a,2*b,2*a,b],[3*a,b,a,2*b]];}
   else {const a=wi/3,b=de/4;tiles=[[0,0,a,2*b],[0,2*b,a,2*b],[a,0,2*a,b],[a,b,a,2*b],[2*a,b,a,2*b],[a,3*b,2*a,b]];}
-  for(const [tx,tz,w,d] of tiles){box(w-.013,.052,d-.013,x+tx+w/2,-.026,z+tz+d/2,r.color,g,false);const border=r.id==='sisters'?'#af8d94':'#78896a';
+  for(const [tx,tz,w,d] of tiles){box(w-.013,.052,d-.013,x+tx+w/2,-.026,z+tz+d/2,r.color,g,false);const border=r.id==='living'?livingColors.floorLine:r.id==='sisters'?'#af8d94':'#78896a';
    for(const dx of [-1,1])box(.026,.004,d-.012,x+tx+w/2+dx*(w-.04)/2,.002,z+tz+d/2,border,g,false);
    // Fine geometry rhythm is retained in source; no flat room-photo textures.
-   for(let v=.06;v<d;v+=.085)box(w-.075,.002,.003,x+tx+w/2,.001,z+tz+v,r.id==='sisters'?'#d8b6b5':'#bec493',g,false);
+   if(r.id==='living'){for(let v=.07;v<d;v+=.095)for(const dx of [.025,w-.055])box(.028,.001,.004,x+tx+dx,.003,z+tz+v,'#aaa078',g,false);}
+   else for(let v=.06;v<d;v+=.085)box(w-.075,.002,.003,x+tx+w/2,.001,z+tz+v,r.id==='sisters'?'#d8b6b5':'#bec493',g,false);
   }
  }
  for(const r of rooms){const [a,b,c,d]=r.r,w=c-a,dep=d-b,y=r.y||0,g=group('floor:'+r.id,floors);g.userData={room:r.id};
   box(w,.1,dep,(a+c)/2,y-.052,(b+d)/2,r.color,g,false);
-  if(r.floor.startsWith('tatami'))tatami(r,g);
+  if(r.floor.startsWith('tatami')&&r.id!=='sisters')tatami(r,g);
   else if(r.floor==='wood'){for(let z=b+.16;z<d;z+=.20)box(w-.03,.003,.008,(a+c)/2,y+.001,z,'#b58d61',g,false);for(let z=b+.06,k=0;z<d;z+=.6,k++)for(let x=a+.5+(k%2)*.65;x<c;x+=1.4)box(.006,.003,.19,x,y+.001,z,'#bd966a',g,false);}
   else if(r.floor==='tile'){for(let x=a+.23;x<c;x+=.24)box(.008,.002,dep,x,y+.001,(b+d)/2,'#e3e6d9',g,false);for(let z=b+.23;z<d;z+=.24)box(w,.002,.008,(a+c)/2,y+.001,z,'#e3e6d9',g,false);}
   batch(g);
@@ -31,7 +35,11 @@ export function createInterior(){
  const step=group('玄关上框台阶');box(1.70,.16,.14,10.92,-.08,1.82,C.dark,step);box(1.74,.045,.20,10.92,.012,1.88,C.wood,step);batch(step);
  function wallColor(x,z){const r=rooms.find(r=>x>r.r[0]&&x<r.r[2]&&z>r.r[1]&&z<r.r[3]);return r?.id==='sisters'?C.pink:r?.id==='kitchen'?C.mint:r?.id==='bath'?'#bdcfd7':r?.id==='parents'?'#ece0b1':C.wall;}
  function wallBox(w,a,b,y0,y1,c,g,thick=WALL,offset=0){if(b-a<.001||y1-y0<.001)return;const x=w.axis==='x'?(a+b)/2:w.at+offset,z=w.axis==='x'?w.at+offset:(a+b)/2;return box(w.axis==='x'?b-a:thick,y1-y0,w.axis==='x'?thick:b-a,x,(y0+y1)/2,z,c,g);}
- function chunk(w,a,b,y0,y1,g){wallBox(w,a,b,y0,y1,C.wall,g);const mid=(a+b)/2;for(const s of [-1,1]){const color=wallColor(w.axis==='x'?mid:w.at+s*.15,w.axis==='x'?w.at+s*.15:mid);wallBox(w,a,b,y0,y1,color,g,.006,s*(WALL/2+.003));}if(y0===0)wallBox(w,a,b,0,.08,C.trim,g,WALL+.014);}
+ function chunk(w,a,b,y0,y1,g){wallBox(w,a,b,y0,y1,C.wall,g);const mid=(a+b)/2;for(const s of [-1,1]){const side=w.at+s*.15,color=wallColor(w.axis==='x'?mid:side,w.axis==='x'?side:mid),inside=w.axis==='x'?side>3.64&&side<7.28:side>8.19&&side<11.83;
+   // Split only the living-facing skin at its room boundaries; all other faces retain their prior colour.
+   const cuts=inside?[a,...(w.axis==='x'?[8.19,11.83]:[3.64,7.28]).filter(v=>v>a&&v<b),b]:[a,b];
+   for(let i=1;i<cuts.length;i++){const lo=cuts[i-1],hi=cuts[i],m=(lo+hi)/2,x=w.axis==='x'?m:side,z=w.axis==='x'?side:m,isLiving=x>8.19&&x<11.83&&z>3.64&&z<7.28;wallBox(w,lo,hi,y0,y1,isLiving?livingColors.wall:color,g,.006,s*(WALL/2+.003));}
+  }if(y0===0)wallBox(w,a,b,0,.08,C.trim,g,WALL+.014);}
  function panel(w,o,g,kind){const len=o.b-o.a,h=o.h,base=o.sill;
   for(const p of [o.a+.025,o.b-.025])wallBox(w,p-.025,p+.025,base,base+h,C.trim,g,WALL+.025);
   wallBox(w,o.a,o.b,base-.025,base+.025,C.trim,g,WALL+.045);wallBox(w,o.a,o.b,base+h-.025,base+h+.025,C.trim,g,WALL+.025);
@@ -49,9 +57,10 @@ export function createInterior(){
    for(const xx of [.02,pw-.02])box(.035,ph,.06,xx,ph/2+.025,0,C.trim,p,false);
    for(const yy of [.04,ph+.01])box(pw,.04,.06,pw/2,yy,0,C.trim,p,false);
    if(shoji||isEntry){for(let xx=.20;xx<pw;xx+=.20)box(.016,ph,.062,xx,ph/2+.025,0,C.trim,p,false);for(let yy=.25;yy<ph;yy+=.26)box(pw,.016,.062,pw/2,yy,0,C.trim,p,false);}
-   else if(!hinge){box(pw,.24,.05,pw/2,.83,0,w.id==='living-corridor'?'#b59b51':'#b4ad79',p,false);}
+   else if(w.id==='living-corridor'){living.decorateDoor(p,pw,ph);}
+   else if(!hinge){box(pw,.24,.05,pw/2,.83,0,'#b4ad79',p,false);}
    else {box(pw-.13,ph-.22,.05,pw/2,ph/2+.025,0,'#c69d70',p);}
-   box(.045,.08,.085,pw-.08,1.03,.01,C.dark,p);batch(p);
+   if(w.id!=='living-corridor')box(.045,.08,.085,pw-.08,1.03,.01,C.dark,p);batch(p);
    const closedPosition=[.035+i*pw,0,i*.052];leaf.position.fromArray(closedPosition);
    const stackRight=w.id==='parents-corridor'||w.id==='grandparents-corridor'||w.id==='grandparents-engawa';
    const openPosition=hinge?[.035,0,0]:[.035+(stackRight?pw:0),0,i*.064];
@@ -74,16 +83,10 @@ export function createInterior(){
  function table(g,w,d,h,color=C.wood){box(w,.065,d,0,h-.0325,0,color,g);box(w-.09,.08,d-.09,0,h-.10,0,C.trim,g,false);for(const x of [-w/2+.09,w/2-.09])for(const z of [-d/2+.09,d/2-.09])box(.055,h-.065,.055,x,(h-.065)/2,z,C.trim,g);}
  function chair(g,c='#a68158'){box(.39,.05,.39,0,.42,0,c,g);for(const x of [-.155,.155])for(const z of [-.155,.155])box(.035,.43,.035,x,.215,z,C.dark,g,false);for(const x of [-.155,.155])box(.035,.44,.035,x,.63,-.16,c,g,false);box(.35,.18,.035,0,.78,-.16,c,g);}
  function desk(g){table(g,1.02,.61,.72,'#6f9d8c');box(.32,.59,.56,-.31,.315,0,'#bb9a71',g);for(let y=.19;y<.65;y+=.19){box(.27,.16,.025,-.31,y,.29,'#ceb38e',g);box(.09,.018,.025,-.31,y,.315,C.dark,g,false);}box(.98,.32,.07,0,.9,-.26,'#a98b61',g);box(.98,.035,.21,0,1.04,-.19,'#bb9a71',g);}
- addObj('客厅矮桌',10.01,5.48,0,g=>table(g,1.43,1.05,.36,'#b8844d'),[1.43,1.05]);
- addObj('客厅东墙食器柜',11.48,5.27,-Math.PI/2,g=>cabinet(g,1.10,1.08,.46,'#a87e4f'),[1.10,.46]);
- addObj('客厅西北角电视',8.68,4.13,Math.PI/4,g=>{cabinet(g,.72,.4,.45,'#9c7858');box(.68,.52,.43,0,.68,0,'#ded6b9',g);box(.50,.37,.025,-.035,.70,.23,'#536f75',g);box(.43,.29,.02,-.035,.71,.25,'#729496',g);cyl(.035,.035,.025,.276,.75,.24,C.dark,g).rotation.x=Math.PI/2;for(let y=.5;y<.7;y+=.045)box(.08,.006,.012,.27,y,.23,C.dark,g,false);},[.75,.62]);
- // Cushions are deliberate size markers, not a completed dressing pass.
- addObj('客厅坐垫',10.02,6.32,0,g=>box(.48,.055,.44,0,.03,0,'#d5b374',g),[.48,.44]);
- addObj('姐姐书桌',4.98,6.61,Math.PI/2,g=>desk(g),[1.02,.61]);
- addObj('小丸子书桌',7.76,6.61,-Math.PI/2,g=>desk(g),[1.02,.61]);
- addObj('姐姐椅子',5.52,6.61,-Math.PI/2,g=>chair(g,'#c6a6a2'),[.4,.4]);
- addObj('小丸子椅子',7.22,6.61,Math.PI/2,g=>chair(g,'#8daeba'),[.4,.4]);
- for(const [name,x] of [['姐妹房左书柜',5.16],['姐妹房右书柜',7.64]])addObj(name,x,3.94,0,g=>cabinet(g,.76,1.54,.35,'#669683',true),[.76,.35]);
+ furniture.add(living.root);obstacles.push(...living.obstacles);
+ for(const e of living.entries)furnitureItems.push({name:e.name,checklist:e.id,room:'living',position:e.group.position.toArray(),rotation:e.group.rotation.y});
+ const sisters=createSistersRoom();furniture.add(sisters.root);obstacles.push(...sisters.obstacles);
+ for(const e of sisters.entries)furnitureItems.push({name:e.name,checklist:e.id,room:'sisters',position:e.group.position.toArray(),rotation:e.group.rotation.y});
  addObj('父母房衣柜',2.18,.55,Math.PI/2,g=>cabinet(g,.85,1.78,.46,'#a17d59'),[.85,.46]);
  addObj('父母房镜台',2.25,2.34,Math.PI,g=>{table(g,.70,.40,.56);box(.49,.83,.045,0,.99,-.16,C.trim,g);box(.40,.72,.022,0,.99,-.132,'#b4cdcb',g);},[.70,.40]);
  addObj('祖父母房南窗低柜',1.75,6.94,Math.PI,g=>cabinet(g,.88,.52,.42,'#a48256'),[.88,.42]);
@@ -111,11 +114,11 @@ export function createInterior(){
  // Closet intermediate shelves, retained separately from sliding doors.
  for(const r of rooms.filter(r=>r.storage)){const g=group('closet-shelves:'+r.id,storageShelves),[a,b,c,d]=r.r;box(c-a-.13,.05,d-b-.13,(a+c)/2,.95,(b+d)/2,'#c5a87f',g);batch(g);}
  let wallMode='cut',ceilingVisible=false,doorsOpen=true;
- function setWalls(mode){if(!['cut','full','outer-hidden','hidden'].includes(mode))throw new Error('Unknown wall mode');wallMode=mode;fullWalls.visible=mode==='full'||mode==='outer-hidden';cutWalls.visible=mode==='cut';for(const p of wallParts)p.group.visible=!(mode==='outer-hidden'&&p.outer);doors.visible=mode==='full'||mode==='outer-hidden';storageShelves.visible=mode==='full'||mode==='outer-hidden';return mode;}
+ function setWalls(mode){if(!['cut','full','outer-hidden','hidden'].includes(mode))throw new Error('Unknown wall mode');wallMode=mode;fullWalls.visible=mode==='full'||mode==='outer-hidden';cutWalls.visible=mode==='cut';for(const p of wallParts)p.group.visible=!(mode==='outer-hidden'&&p.outer);doors.visible=mode==='full'||mode==='outer-hidden';storageShelves.visible=mode==='full'||mode==='outer-hidden';sisters.setWallMode(mode);return mode;}
  function setCeiling(v){ceilingVisible=!!v;ceilings.visible=ceilingVisible;return ceilingVisible;}
  function setDoorsOpen(v){doorsOpen=!!v;for(const d of doorLeaves){const open=doorsOpen&&!d.closed;d.leaf.position.fromArray(open?d.openPosition:d.closedPosition);d.leaf.rotation.y=open?d.angle:0;}root.updateMatrixWorld(true);}
  setWalls('cut');setCeiling(false);setDoorsOpen(true);
  root.userData={specification,rooms:rooms.map(r=>({id:r.id,name:r.name,bounds:r.r})),entry,connections,sources};
- return {root,specification,rooms,walls,connections,routes,entry,obstacles,furnitureItems,fullWalls,cutWalls,ceilings,doors,setWalls,setCeiling,setDoorsOpen,
-  getViewState:()=>({wallMode,ceilingVisible,doorsOpen}),dispose:W.dispose};
+ return {root,specification,rooms,walls,connections,routes,entry,obstacles,furnitureItems,fullWalls,cutWalls,ceilings,doors,sisters,living,setWalls,setCeiling,setDoorsOpen,
+  getViewState:()=>({wallMode,ceilingVisible,doorsOpen}),dispose(){living.dispose();sisters.dispose();W.dispose();}};
 }

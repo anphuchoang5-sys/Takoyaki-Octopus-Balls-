@@ -1,16 +1,18 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>樱家 · 室内结构样板</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>樱家 · 完整室内预览</title>
 <style id="viewer-style"></style>
 <script type="importmap">{"imports":{"three":"../../../../vendor/three.module.js","three/addons/":"../../../../vendor/addons/"}}</script>
 </head><body>
-<aside class="sidebar"><div class="eyebrow">MARUKO TOWN / INTERIOR 01</div><h1>さくら家<span>樱家 · 室内</span></h1><div class="stage">第一阶段　结构样板</div><p class="intro">按参考方案复原樱家<br>先看房间、家具与通行空间。</p>
+<aside class="sidebar"><div class="eyebrow">MARUKO TOWN / INTERIOR 03</div><h1>さくら家<span>樱家 · 完整室内</span></h1><div class="stage">客厅精修待审 · 姐妹房保留<br>其余房间仍为结构样板</div><p class="intro">按参考方案复原樱家<br>整屋查看、客厅与姐妹房细节。</p>
 <label class="section-label">整屋查看</label><div class="buttons"><button data-view="hero" class="active">斜俯全景</button><button data-view="top">整屋俯视</button><button data-view="reference">参考视角</button><button data-view="corridor-view">走廊近看</button></div>
 <label class="section-label">逐房间聚焦</label><div class="buttons" id="room-buttons"></div>
+<label class="section-label">客厅近看</label><div class="buttons"><button data-view="living-reference">参考机位</button><button data-view="living-tv">电视与书本</button><button data-view="living-cabinet">餐具柜近看</button><button data-view="living-reverse">侧后查看</button></div>
+<label class="section-label">姐妹房近看</label><div class="buttons"><button data-desk="maruko">小丸子书桌</button><button data-desk="sakiko">姐姐书桌</button></div>
 <label class="section-label" for="walls">墙体显示</label><select id="walls"><option value="cut">低墙剖视 · 看清布局</option><option value="full">完整墙体</option><option value="outer-hidden">隐藏外墙</option><option value="hidden">隐藏全部墙体</option></select>
 <div class="checks"><label><input id="ceiling" type="checkbox">显示天花顶盖</label><label><input id="doors" type="checkbox" checked>打开通行门扇</label><label><input id="labels" type="checkbox" checked>房间名称</label><label><input id="routes" type="checkbox">通行路线</label></div>
-<button id="compare" class="primary">对照参考图</button><button id="reset" class="quiet">回到整屋　Home</button><p class="side-foot">结构确认后再逐房间精修<br>独立室内 · 现有外景保持原样</p></aside>
-<main><header><div><strong id="view-title">整屋结构</strong><span id="view-subtitle">真实三维 · 统一室内比例</span></div><div class="header-actions"><button id="rotate">自动环绕</button><a href="./sakura-interior.glb" download>模型 GLB</a></div></header>
+<button id="compare" class="primary">对照参考图</button><button id="reset" class="quiet">回到整屋　Home</button><p class="side-foot">低墙便于看布局<br>客厅与姐妹房近景显示完整墙面<br>其余房间与外景保持原样</p></aside>
+<main><header><div><strong id="view-title">樱家完整室内</strong><span id="view-subtitle">客厅精修待审 · 姐妹房保留 · 其余结构样板</span></div><div class="header-actions"><button id="rotate">自动环绕</button><a href="./sakura-interior.glb" download>整屋模型 GLB</a></div></header>
 <div class="workspace"><section id="viewport"><canvas id="world" tabindex="0" aria-label="樱家真实三维室内，可拖动旋转、滚轮缩放、右键平移"></canvas><div id="room-labels"></div><div class="view-badge">按参考方案复原樱家</div><div class="hint">拖动旋转 · 滚轮缩放 · 右键平移</div><div id="fatal" hidden></div></section>
-<aside id="reference-panel" hidden><div class="ref-heading"><span>参考对照</span><button id="close-reference" aria-label="关闭参考">×</button></div><div class="ref-tabs"><button data-ref="plan" class="active">采用平面</button><button data-ref="room">对应视角</button><button data-ref="anime">动画细节</button></div><a id="reference-image-link" target="_blank" rel="noopener"><img id="reference-image" alt="本次采用的参考图"></a><p id="reference-caption"></p><a id="reference-source" target="_blank" rel="noopener">查看原文 ↗</a><div class="ref-notes"><b>本阶段的取舍</b><p>空间连接沿用整屋方案。粉色姐妹房、绿色厨房与门窗色带取自动画局部。尺寸、墙厚和未见连接为建模补全。</p><p>另一篇文章对祖父母房的位置与窗向有不同推测；此处保留整屋方案，待你确认，不混用两套户型。</p></div></aside></div>
-<footer><span id="room-note">入口、长廊与十二处空间 · 主要家具已摆位</span><span class="status">布局待你确认</span></footer></main>
+<aside id="reference-panel" hidden><div class="ref-heading"><span>参考对照</span><button id="close-reference" aria-label="关闭参考">×</button></div><div class="ref-tabs"><button data-ref="plan" class="active">采用平面</button><button data-ref="room">对应视角</button><button data-ref="anime">动画细节</button></div><a id="reference-image-link" target="_blank" rel="noopener"><img id="reference-image" alt="本次采用的参考图"></a><p id="reference-caption"></p><a id="reference-source" target="_blank" rel="noopener">查看原文 ↗</a><div class="ref-notes"><b>本阶段的取舍</b><p>空间连接沿用整屋方案。浅黄客厅、粉色姐妹房、绿色厨房与门窗色带取自动画局部。尺寸、墙厚和未见连接为建模补全。</p><p>另一篇文章对祖父母房的位置与窗向有不同推测；此处保留整屋方案，待你确认，不混用两套户型。</p></div></aside></div>
+<footer><span id="room-note">入口、长廊与十二处空间 · 客厅与姐妹房</span><span class="status">客厅精修版 · 等你审看</span></footer></main>
 <script type="module" src="./preview.js"></script></body></html>

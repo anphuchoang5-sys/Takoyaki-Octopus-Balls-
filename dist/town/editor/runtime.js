@@ -1,4 +1,4 @@
-const allowed = {mode: ['god', 'walk'], time: ['morning', 'afternoon', 'dusk', 'night'], weather: ['clear', 'rain']};
+const allowed = {mode: ['god', 'walk'], time: ['morning', 'afternoon', 'dusk', 'night'], weather: ['clear', 'rain', 'snow']};
 const methods = {mode: 'setMode', time: 'setTime', weather: 'setWeather'};
 
 // Capability-based host adapter. Values only change after acknowledgement.
@@ -9,6 +9,7 @@ export function createRuntimeBridge() {
     capabilities: Object.fromEntries(Object.entries(methods).map(([key, method]) => [key, typeof adapter?.[method] === 'function']))});
   function emit(event) { for (const listener of listeners) listener({...event, state: snapshot()}); }
   return {
+    syncEnvironment(value) { values.time=value.time;values.weather=value.weather;emit({type:'environment'}); },
     getState: snapshot,
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
     connect(next) {

@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import {isActive} from './state.js';
+import {indexPackedTriangles} from '../assets/shared/snow-surfaces.js';
 
 // Physical meshes only. B's environment subtree contains optical effects and local drips,
 // not building surfaces. Transparent windows/beam/pools must never become rain roofs.
 export function isRainSurface(node, root) {
   if (!node.isMesh || node.isInstancedMesh) return false;
   for (let p = node; p && p !== root; p = p.parent) {
-    if (!p.visible || p.name === '樱家外部环境响应') return false;
+    if (!p.visible || p.userData.snowLayer || p.name === '樱家外部环境响应') return false;
   }
   return true;
 }
@@ -16,9 +17,7 @@ const solid = material => material && !material.transparent && material.depthWri
 // a rectangular roof envelope would incorrectly cover courtyards and roof corners.
 function indexModel(root, binSize) {
   root.updateWorldMatrix(true, true);
-  const inverse = root.matrixWorld.clone().invert(), bins = new Map();
-  let triangles = 0;
-  const key = (x, z) => `${x},${z}`;
+  const inverse = root.matrixWorld.clone().invert(), positions = [];
   root.traverse(node => {
     if (!isRainSurface(node, root)) return;
     const geometry = node.geometry, position = geometry?.attributes.position;
@@ -35,30 +34,14 @@ function indexModel(root, binSize) {
         const v = [0,1,2].map(k => new THREE.Vector3().fromBufferAttribute(position, index ? index.getX(i+k) : i+k).applyMatrix4(transform));
         const [a,b,c] = v, denominator = (b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
         if (Math.abs(denominator) < 1e-9) continue;
-        const normal = new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a)).normalize();
-        if (normal.y < 0) normal.negate();
-        const triangle = {a,b,c,denominator,normal}; triangles++;
-        const xs = v.map(p=>p.x), zs = v.map(p=>p.z);
-        for (let x = Math.floor(Math.min(...xs)/binSize); x <= Math.floor(Math.max(...xs)/binSize); x++) {
-          for (let z = Math.floor(Math.min(...zs)/binSize); z <= Math.floor(Math.max(...zs)/binSize); z++) {
-            const id = key(x,z); if (!bins.has(id)) bins.set(id, []); bins.get(id).push(triangle);
-          }
-        }
+        for(const p of v)positions.push(p.x,p.y,p.z);
       }
     }
   });
-  return {triangles, sample(x,z) {
-    let result = null;
-    for (const t of bins.get(key(Math.floor(x/binSize),Math.floor(z/binSize))) || []) {
-      const {a,b,c,denominator} = t;
-      const u = ((b.z-c.z)*(x-c.x)+(c.x-b.x)*(z-c.z))/denominator;
-      const v = ((c.z-a.z)*(x-c.x)+(a.x-c.x)*(z-c.z))/denominator, w = 1-u-v;
-      if (u < -1e-9 || v < -1e-9 || w < -1e-9) continue;
-      const y = u*a.y+v*b.y+w*c.y;
-      if (y >= 0 && (!result || y > result.y)) result = {y,normal:t.normal};
-    }
-    return result;
-  }};
+  // Preserve the original transformed double precision coordinates and rain
+  // tolerances; share the compact query index instead of object/Vector3 graphs.
+  const triangles=positions.length/9,index=indexPackedTriangles(new Float64Array(positions),new Int16Array(triangles),new Set(),binSize,{epsilon:1e-9,minArea:1e-9,minY:0,upward:true});
+  return {triangles,sample:index.sample};
 }
 
 export function createRainSurfaces({state, sceneView, tileSize = 14}) {
@@ -69,7 +52,7 @@ export function createRainSurfaces({state, sceneView, tileSize = 14}) {
       asset.root.updateWorldMatrix(true,true);
       const key = `${placement.assetId}:${asset.specification?.revision || '1'}`;
       if (!cache.has(key)) cache.set(key,indexModel(asset.root,tileSize/20));
-      cells.set(`${placement.x},${placement.z}`,{placement, index:cache.get(key), matrix:asset.root.matrixWorld.clone(),
+      cells.set(`${placement.x},${placement.z}`,{placement, asset, index:cache.get(key), matrix:asset.root.matrixWorld.clone(),
         inverse:asset.root.matrixWorld.clone().invert(), normalMatrix:new THREE.Matrix3().getNormalMatrix(asset.root.matrixWorld)});
     }
     revision++;
@@ -79,14 +62,21 @@ export function createRainSurfaces({state, sceneView, tileSize = 14}) {
     if (!isActive(rows,cellX,cellZ)) return null;
     const entry = cells.get(`${cellX},${cellZ}`);
     if (entry) {
-      const local = new THREE.Vector3(x,0,z).applyMatrix4(entry.inverse), hit = entry.index.sample(local.x,local.z);
+      const local = new THREE.Vector3(x,0,z).applyMatrix4(entry.inverse);
+      let hit=entry.index.sample(local.x,local.z);const snow=entry.asset.snow?.sample(local.x,local.z);
+      if(snow&&(!hit||snow.y>hit.y))hit={...snow,snow:true};
+      if(entry.placement.assetId.startsWith('road-')){
+        const ground=sceneView.sampleGroundSnow?.(x,z);
+        if(ground&&(!hit||ground.y>hit.y))return{point:[x,ground.y,z],normal:ground.normal.toArray(),instanceId:entry.placement.id,assetId:entry.placement.assetId,surface:'snow-terrain'};
+      }
       if (hit) {
         const point = new THREE.Vector3(local.x,hit.y,local.z).applyMatrix4(entry.matrix);
         return {point:point.toArray(),normal:hit.normal.clone().applyMatrix3(entry.normalMatrix).normalize().toArray(),
-          instanceId:entry.placement.id,assetId:entry.placement.assetId,surface:'model'};
+          instanceId:entry.placement.id,assetId:entry.placement.assetId,surface:hit.snow?'snow-model':'model'};
       }
     }
-    return {point:[x,0,z],normal:[0,1,0],instanceId:null,assetId:null,surface:'terrain'};
+    const snow=sceneView.sampleGroundSnow?.(x,z);
+    return {point:[x,snow?.y||0,z],normal:snow?.normal.toArray()||[0,1,0],instanceId:null,assetId:null,surface:snow?'snow-terrain':'terrain'};
   }
   return {rebuild,sample,getInspection:()=>({revision,indices:[...cache].map(([asset, index])=>({asset,triangles:index.triangles}))}),
     dispose(){cache.clear();cells.clear();}};

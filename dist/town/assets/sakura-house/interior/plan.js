@@ -7,7 +7,7 @@ export const rooms=[
  {id:'hall',name:'门厅',ja:'ホール',r:[10.01,1.82,11.83,3.64],floor:'wood',color:'#d9b584',ref:'03-whole.jpg',note:'连接玄关、中央长廊与客厅。'},
  {id:'corridor',name:'中央长廊',ja:'廊下',r:[0,2.73,10.01,3.64],floor:'wood',color:'#d3ac78',ref:'04-corridor.jpg',note:'沿参考横向贯通；左端转入缘侧，再通向厕所。'},
  {id:'engawa',name:'缘侧走廊',ja:'縁側',r:[0,3.64,.91,7.28],floor:'wood',color:'#d3ac78',ref:'08-grandparents.jpg',note:'祖父母房西侧的窄长通道。'},
- {id:'living',name:'客厅',ja:'茶の間 · 8帖',r:[8.19,3.64,11.83,7.28],floor:'tatami8',color:'#ced6a2',ref:'05-living.jpg',note:'中央矮桌、左上电视、右墙柜体；位置沿用主参考。'},
+ {id:'living',name:'客厅',ja:'茶の間 · 8帖',r:[8.19,3.64,11.83,7.28],floor:'tatami8',color:'#f2e5ab',ref:'05-living.jpg',note:'客厅精修待审：方桌、红电视与书格矮柜、左侧小桶、玻璃餐具柜和浅黄配色；裁切与背面为补全。'},
  {id:'kitchen',name:'厨房',ja:'台所 · 6帖',r:[6.37,0,10.01,2.73],floor:'linoleum',color:'#a9d7ad',ref:'06-kitchen.jpg',note:'北墙冰箱—水槽—灶台；左侧四人桌，右侧柜体。'},
  {id:'sisters',name:'姐妹房',ja:'さきこ・まる子 · 8帖',r:[4.55,3.64,8.19,7.28],floor:'tatami8',color:'#ead0cb',ref:'07-sisters.jpg',note:'南侧两张书桌分别靠左右墙，入口两边书柜；粉色取自动画。'},
  {id:'grandparents',name:'祖父母房',ja:'友蔵・こたけ · 6帖',r:[.91,3.64,3.64,7.28],floor:'tatami6v',color:'#c7d5a5',ref:'08-grandparents.jpg',note:'北侧与缘侧均保留障子连接；南窗下低柜。'},

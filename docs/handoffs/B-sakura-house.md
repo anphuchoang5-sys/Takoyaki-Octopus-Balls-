@@ -1,5 +1,7 @@
 # B → 用户统筹 / C / D：樱家 exterior-04-roof
 
+> 2026-10-20 协作约定补充：后续环境工作沿用[通用规则与分工](../architecture/README.md)及[环境接口约定](../architecture/environment-contract.md)。樱家既有四时段与局部灯光保留并与地图协调；这次仅整理文档，不改变本文件的历史验证与美术认可范围。
+
 2026-10-20 补充：用户授权仅修改樱家屋顶。当前 `exterior-04-roof` 调整浅灰瓦面、沿坡纵缝、弧形搭接和脊瓦分节；主屋顶／低附屋轮廓、坡度、檐口位置不变，墙窗、山墙、院子、植物、路灯、排水、独立室内与原环境接口保留。
 
 源码工厂、GLB 和本店独立预览同步。新离线交付与同机位前后图册在 `artifacts/buildings/sakura-house/roof-04/`；该目录、室内、参考资料和根目录旧交付继续保留。2026-10-20 已在最新建筑本地提交后按用户授权删除五个旧 archive，范围见 `docs/actions/2026-10-20-building-commit-and-backup-cleanup.md`。本轮屋顶检查见 `docs/actions/2026-10-20-B-sakura-roof.md` 与 roof-04 内 `inspection.json`，画面待用户认可；不将下面的历史检查当作 04 新验证。

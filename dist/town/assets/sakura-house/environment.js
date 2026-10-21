@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // No renderer, timer, global light or shared material is mutated here.
 export function createEnvironment(root,{lampMouth}){
   const times=['morning','afternoon','dusk','night'];
-  const weathers=['clear','rain','hail','wind','leaves'];
+  const weathers=['clear','rain','snow','hail','wind','leaves'];
   const materials=new Set(),geometries=new Set(),base=[];
   root.traverse(o=>{if(o.material?.color&&!base.some(b=>b.material===o.material))base.push({material:o.material,color:o.material.color.clone(),hex:o.material.color.getHexString()});});
   const effects=new THREE.Group();effects.name='樱家外部环境响应';root.add(effects);
@@ -127,7 +127,7 @@ export function createEnvironment(root,{lampMouth}){
     water.color.set(isNight?'#a9c9f0':'#beddf6');update(elapsed);
     return inspect();
   }
-  function inspect(){return {...state,elapsedSeconds:elapsed,lightsOn:night.visible,rainOn:rain.visible,dripSources:anchors.length,unsupportedWeatherEffect:!['clear','rain'].includes(state.weather),samples:sample.map(s=>({...s}))};}
+  function inspect(){return {...state,elapsedSeconds:elapsed,lightsOn:night.visible,rainOn:rain.visible,dripSources:anchors.length,unsupportedWeatherEffect:!['clear','rain','snow'].includes(state.weather),samples:sample.map(s=>({...s}))};}
   // Initialise even the hidden rain buffers so bounds never include unit spheres at origin.
   update(0);setEnvironment();
   return {setEnvironment,update,inspect,dispose(){if(disposed)return;disposed=true;effects.removeFromParent();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}};

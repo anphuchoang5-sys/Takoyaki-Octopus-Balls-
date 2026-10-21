@@ -2,6 +2,8 @@
 
 ## Status and situation
 
+2026-10-20 后续确认：用户在讨论窗口已明确认可 `anime-facade-night-10` 建筑夜景画面。正式地图夜景仍待接入与验收；下面保留制作交付时的历史状态。后续统一规则和接入缺口见[环境与建筑协作约定](../architecture/README.md)及[当前状态](../architecture/building-status.md)。
+
 状态：Completed（建筑夜晚状态、独立预览及本店定向技术验证完成；正式地图编辑器夜晚未接入，用户画面认可待定）。用户于 2026-10-20 授权本窗口完成みつや自身夜晚材质、灯光描述、环境接口、独立预览和定向验证。
 
 起始资产为 `mitsuya / anime-facade-landscape-09`，正式外观由 C v2.5 直接调用源码工厂；无建筑环境接口，预览“较暗灯光”只修改宿主光照。既有两盏局部暖灯由预览/编辑器创建。编辑器 `scene.js` 只转发天气，`lighting.js` 每店读取前两个 `previewLamps`，目标固定为灯下 Y=.4。

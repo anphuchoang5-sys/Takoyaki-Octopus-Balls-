@@ -1,5 +1,45 @@
 # C → 用户 / 后续运行层：地图编辑器、道路与统一晴雨
 
+> 2026-10-21 首雪继续提速完成：新浏览器从晴天开始，三栋首次积雪约 1.8／3.3／3.9 秒可见；直接请求满雪（含地面）4.1 秒完成。自然积满仍按 60 秒推进，本机约 67 秒全部显示满雪。310 秒两轮积雪／一轮雨融峰值 1454 MiB，比上轮 1593 MiB 再降约 9%。15 帧完整雪面数据与原算法一致，13 组功能复查、1200 屋面落点及 24 次取消重建通过；正式画面待用户认可。结果、失败尝试与性能边界见 [本轮行动记录](../actions/2026-10-21-C-snow-startup.md)；更早崩溃原因见 [历史内存修复](../actions/2026-10-21-C-snow-memory.md)。
+
+## C v2.7 贴合积雪推广（2026-10-21，当前）
+
+用户已认可第一轮三个小样并明确授权推广。通用承雪现已接入正式地图；正式街区组合画面仍待用户认可，建筑专属美术分工不变。预览：`http://127.0.0.1:4173/?review=snow`，同一正式编辑器代码，使用独立审看存储；普通入口与用户存档不替换。点击“布置街区”打开环境选项，观赏模式左键拖动旋转、滚轮缩放、右键平移。
+
+- 三栋沿用原工厂、稳定 ID、比例与原材质。每栋 `snow.js` 只选择真实朝上表面及参数；通用代码在 `assets/shared/snow*.js` 唯一维护。原手填高度的白板算法已被替换，未叠加第二份雪。
+- 零星雪斑 → 连续薄雪 → 厚雪使用真实体积与可见面查询，考虑屋顶、雨棚及陈设遮挡。道路中央薄、边缘厚；公共地面小起伏、草叶逐渐埋没。建筑外沿同时计入正式地图实际存在的 y=0 地面，避免便利店低于地图的装饰外沿形成断层。它是承雪源，不另画地板。
+- 原 `setEnvironment({time,weather,snowAmount})`、宿主累计时钟、四时段与灯池保留；布局 v1 / 街区 v2 / `rainy-corner.editor.layout.v1` 不变。环境变化不加入布局撤销。
+- `asset.snow.sample(localX,localZ)` 返回当前**已显示**雪面或空隙 `null`，不再支持旧初稿的第三参数任意雪量预测。雨滴落点在显示几何变更时刷新，雪花逐帧取当前表面。
+- `asset.snow.getInspection()` 包含 `amount`（请求值）、`shown`（已显示值）、准备/更新耗时、`parts`、共享订阅数、错误状态和 `memory`。同 revision、同雪量的不可变几何共享，材质/替换部位和资源引用归各实例。全镇至多一个计算 Worker，串行处理最新请求；准备参数用 Float64 表保留原精度，显示数据按位合并重复顶点。没有订阅的历史帧立即释放；零雪量及最后一个实例释放该模型的数据，所有模型清空后终止 Worker。缩略图与晴天零雪量不预先准备。
+- `getSnowMemoryInspection()` 从 `assets/shared/snow.js` 导出，返回 `sources/workers/queued/active/clients/frames`，供资源验收；每实例 `memory.geometryBytes` 包含当前共享显示/查询缓冲，不等于浏览器全部内存。取消中的任务仍占单个计算位置至完成，旧 token 的结果不装入重建后的实例。
+- 雪几何按 0.005 雪量档更新，实际开始计算时读取最新请求；所有雪量沿用同一体积生成器，不缓存整套不同雪量网格。底面／侧面直接合并完全相同顶点，数值查找与紧凑雨雪查询索引降低对象分配；串行 Worker 复用有界临时缓冲，所有模型满雪时释放临时工作区。保留原完整三角面与显示数据，不改变 60/300/60 秒计时。
+- 三栋各自的 `snow-support.bin.gz` 共 10.285 MiB，是无损的静态承雪准备数据，必须随正式资产交付。首次加载校验格式版本及真实源坐标／部位／选项 SHA256；缺失、损坏或来源改变自动走原生成器。动态地图地面仍现场准备；晴天零雪不提前加载。`getInspection()` 增加 `preparationMode:'asset'|'generated'` 和 `preparationFallback`，可判断是否命中准备数据。
+- 维护：B 改变原建筑几何或承雪参数后，在已有预览服务上运行 `node scripts/prepare-building-snow.mjs`，通过正式工厂调用 `asset.snow.getPreparationSource()` 提取源和选项，使用唯一生成器重建各栋数据，五档雪量对比后才写入。若改变准备算法本身，先增加 `snow-prepared.js` 的 `PREPARED_VERSION` 再重建。不得手改二进制或复用失配数据；`getPreparationSource()` 只供维护检查，不是另一套运行接口。无需另建预览或重启服务。
+- `asset.snow.replacePart(id, factory)` 按部位替换，`id` 从 `getInspection().parts` 获取，例如 `roof-main`、みつや `shrub-right`、樱家 `shrub-1`。工厂接收 `{snowAmount}`，返回 `{root,setAmount,sample,dispose}`；几何及采样均使用建筑 root 局部坐标。接入后仅隐藏对应通用部位，查询改用专属部位；`factory=null` 恢复通用。专属方不另计时、不加 RAF，仍需完整稀疏/薄/厚/融雪响应。
+- 独立小样目录 7 个文件及旧小样检查脚本已移除，共 54,363 字节；正式地图不引用已撤下入口。保留第一轮参考、截图、视频、报告与清理清单；`editor-preview/snow-review.js` 只是正式编辑器的隔离测试布局，没有另一套渲染或雪算法。
+
+最新定向检查与速度／内存见 [本轮记录](../actions/2026-10-21-C-snow-startup.md)，推广、并行室内变更及更早失败见 [历史推广记录](../actions/2026-10-20-C-snow-promotion.md)。六栋夜间自动化观察仍有绘制压力，不能宣称恒定 60 帧；动态地面／失效数据回退仍有等待。专属造型精修、樱家旧檐滴/地面光斑贴合厚雪、100 建筑压力、手机端仍未完成或未验证；不扩展人物、季节或室内。
+
+## C v2.6 环境接入（2026-10-20，历史）
+
+已接通全镇四时段及晴雨雪、原 night-10 灯描述、道路/地图地面立体雪、统一积融雪与环境存档。**建筑专属雪层初稿暂停，交建筑美术接手，不是本轮建筑美术成品。** 逐文件状态与接入要求见 [建筑雪初稿交接](C-building-snow-draft.md)。本地交付，不提交、不发布、不启停服务。
+
+- 正式入口 `http://127.0.0.1:4173/`。独立审看 `http://127.0.0.1:4173/?review=snow`：使用 `rainy-corner.editor.review.snow.v1`，首次载入三栋同街区，不读写用户正式存档；画面提示标明建筑初稿。
+- 点击“布置街区 → 环境”切换早晨/下午/黄昏/夜晚及晴雨雪。时段、天气和现存雪量独立。雪量进度可见；退出布置回到全屏观赏。散步仍未接入。
+- `townEditor.environment.get()/set(patch)/subscribe(listener)` 提供统一状态；宿主唯一累计秒数推进 `environment.advance(elapsedSeconds)`。建筑仅接收状态和同一累计秒数，不另计时。下雪60秒积满、晴天300秒/雨天60秒融完，线性、昼夜同速、后台与关闭暂停。
+- `townEditor.setTime(value)` / `setWeather(value)` 仍通过运行桥返回确认；旧 `townEditor.weather.setWeather(value)` 在正式宿主也转入统一状态，避免只改降水而漏保存。季节/人物/新天气未接入。
+- `townEditor.getLayout()/loadLayout()` 继续操作原布局v1；`townEditor.exportJSON()/importJSON(textOrObject)` 操作街区v2封装。UI导入/导出使用后一组。`onLayoutChange` 不因环境渐变触发；导入产生一个布局撤销步骤，撤销也恢复导入前环境，普通编辑撤销不回退自然积融雪。
+- 新格式为 `{format:'maruko-town',version:2,layout:{format:'rainy-corner-layout',version:1,rows,instances},environment:{time,weather,snowAmount}}`。正式存储键仍 `rainy-corner.editor.layout.v1`。旧布局导入保留当前环境；首次读取旧存档默认下午/晴/0。先校验两部分再应用，无效输入不部分更新；无法读取的原存档保留且停止自动写入。
+- 新建/撤销恢复实例继承环境；灯光池读取 `getLightingDescriptors()` 优先，无新描述才读 `previewLamps`。位置和目标都乘root世界矩阵，距离随缩放，强度不再重复乘时段系数。仍10点灯+4聚光。
+- 动态雪面由 `asset.snow.sample(localX,localZ)` 查询（返回 y、局部 normal）；动态雪组标记 `userData.snowLayer`，不混入静态实体索引。空地/道路雪由地图唯一生成，建筑格子由建筑负责。建筑未来可替换雪工具，但需保留此采样或与C协调。
+- 环境约0.003雪量步长更新几何，真实状态按经过时间推进；降雨落点按约0.008雪量步长刷新。主循环无帧率依赖的进度；相机动画仍使用限幅dt。
+
+本轮证据、检查限制及文件清单见 [行动记录](../actions/2026-10-20-C-town-snow.md)。所有全镇夜景/雪景画面待用户认可，不能沿用みつや独立夜景认可替代。以下v2.5及更早内容保留为历史接口/制作记录，环境接入现状以上述v2.6为准。
+
+## 历史交接记录
+
+> 2026-10-20 环境约定补充：后续时段／建筑夜景／雪景接入先读 [环境与建筑协作约定](../architecture/README.md)、[接口约定](../architecture/environment-contract.md)和[当前缺口](../architecture/building-status.md)。这是已确认方案的文档，不表示本轮已实现。当前源码为みつや night-10、樱家 roof-04；下面 v2.5 的“みつや没有 setEnvironment”属于 09 交付时事实，已不适用于当前建筑。正式编辑器仍未接入全镇时段及 night-10 新灯光描述；みつや建筑夜景已获用户认可，地图整体夜景仍待验收。
+
 更新日期：2026-10-19。交付标识：`C-town-editor-v2.5`；布局格式版本仍为 `1`。用户将统一天气交给 C，暂不开 D。本轮是本地文件交付，没有提交、推送或线上发布。
 
 ## v2.5 みつや小店当前接入

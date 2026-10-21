@@ -1,5 +1,7 @@
+import {getSnowRevision} from '../assets/shared/snow.js';
 import * as THREE from 'three';
 import {createRainSurfaces} from './rain-surfaces.js';
+import {createSnowfall} from './snowfall.js';
 
 const TOP = 22, SPEED = 25, SPLASH_SECONDS = .30, STRATA = 12;
 const random = seed => { const n = Math.sin(seed*127.1+311.7)*43758.5453; return n-Math.floor(n); };
@@ -24,8 +26,11 @@ function splashGeometry() {
 
 // One town clock supplied by the host; no private RAF/timer. Layout is read-only here.
 export function createTownWeather({scene,state,sceneView,tileSize=14}) {
+  let lastSnowRevision=-1;
   const root = new THREE.Group(); root.name = '全镇统一降雨'; root.visible = false; scene.add(root);
   const surfaces = createRainSurfaces({state,sceneView,tileSize});
+  const snowfall=createSnowfall(scene,{surfaces,state,tileSize});
+  let snowBand=-1,surfaceDirty=true;
   const lineGeometry = new THREE.BufferGeometry();
   const lineMaterial = new THREE.LineBasicMaterial({color:'#d1e6ee',transparent:true,opacity:.60,depthWrite:false});
   const rain = new THREE.LineSegments(lineGeometry,lineMaterial);rain.frustumCulled=false;root.add(rain);
@@ -74,7 +79,12 @@ export function createTownWeather({scene,state,sceneView,tileSize=14}) {
   function update(seconds) {
     if(!Number.isFinite(seconds)||seconds<0)throw new Error('天气累计秒数无效。');
     elapsed=seconds;splashMaterial.uniforms.uTime.value=seconds;
+    if(surfaceDirty){surfaces.rebuild();snowfall.rebuild();surfaceDirty=false;}
+    if(weather==='snow'){snowfall.update(seconds);return;}
     if(weather!=='rain')return;
+    const snowRevision=getSnowRevision();if(snowRevision!==lastSnowRevision){dirty=true;lastSnowRevision=snowRevision;}
+    const band=Math.floor((sceneView.getEnvironment?.().snowAmount||0)*125);
+    if(band!==snowBand){dirty=true;snowBand=band;}
     if(dirty)rebuild();
     for(let i=0;i<columns.length;i++){
       const c=columns[i],age=phase(c),[x,y,z]=c.point,falling=age<c.fallTime;
@@ -85,17 +95,18 @@ export function createTownWeather({scene,state,sceneView,tileSize=14}) {
     lineGeometry.attributes.position.needsUpdate=true;
   }
   function setWeather(value) {
-    if(!['clear','rain'].includes(value))return{ok:false,message:'本轮仅支持晴天和下雨。'};
+    if(!['clear','rain','snow'].includes(value))return{ok:false,message:'仅支持晴天、下雨和下雪。'};
     weather=value;sceneView.setEnvironment({weather:value});root.visible=value==='rain';
+    snowfall.setVisible(value==='snow');
     update(elapsed);return{ok:true,value};
   }
-  const unsubscribe=state.subscribe(()=>{dirty=true;if(weather==='rain')update(elapsed);});
+  const unsubscribe=state.subscribe(()=>{dirty=true;surfaceDirty=true;update(elapsed);});
   return {root,setWeather,update,
-    sampleSurface(x,z){if(dirty){surfaces.rebuild();}return surfaces.sample(x,z);},
-    getInspection(){return{weather,elapsedSeconds:elapsed,visible:root.visible,layoutRevision,columns:columns.length,
+    sampleSurface(x,z){if(surfaceDirty){surfaces.rebuild();}return surfaces.sample(x,z);},
+    getInspection(){return{weather,elapsedSeconds:elapsed,visible:root.visible,snowfall:snowfall.getInspection(),layoutRevision,columns:columns.length,
       falling:weather==='rain'?columns.filter(c=>phase(c)<c.fallTime).length:0,
       splashing:weather==='rain'?columns.filter(c=>phase(c)>=c.fallTime).length:0,surfaces:surfaces.getInspection()};},
     getRainSamples(){return columns.map((c,i)=>({...c,headY:positions[i*6+1],tailY:positions[i*6+4],splashing:weather==='rain'&&phase(c)>=c.fallTime}));},
-    dispose(){unsubscribe();root.removeFromParent();lineGeometry.dispose();lineMaterial.dispose();splash.dispose();splashMaterial.dispose();surfaces.dispose();columns=[];}
+    dispose(){unsubscribe();snowfall.dispose();root.removeFromParent();lineGeometry.dispose();lineMaterial.dispose();splash.dispose();splashMaterial.dispose();surfaces.dispose();columns=[];}
   };
 }

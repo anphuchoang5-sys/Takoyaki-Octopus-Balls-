@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#e7eee1">
+<link rel="icon" href="data:,">
+<title>小学校 · 2×2 独立预览</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;font-family:"Microsoft YaHei","Yu Gothic",sans-serif;color:#3d4738;background:#e7eee1}
+#world{position:absolute;inset:0;width:100%;height:100%;display:block;outline:none;cursor:grab}
+#world:active{cursor:grabbing}
+.masthead{position:absolute;top:32px;left:38px;pointer-events:none;max-width:560px}
+.eyebrow{font-size:9px;letter-spacing:3.4px;color:#7d8877;text-transform:uppercase}
+.masthead h1{font-size:34px;letter-spacing:7px;font-weight:500;margin:12px 0 8px;color:#35402f}
+.masthead p{font-size:12px;letter-spacing:.6px;color:#788371;margin:0;line-height:1.8}
+.panel{position:absolute;right:28px;top:28px;width:202px;padding:20px 17px 17px;background:#fffff2e8;border:1px solid #ffffffb8;border-radius:16px;box-shadow:0 18px 45px #34432b14;backdrop-filter:blur(14px)}
+.status{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:2.2px;color:#7c8875;margin-bottom:18px}
+.dot{width:6px;height:6px;border-radius:50%;background:#8ea47d;box-shadow:0 0 0 3px #8ea47d22}
+.panel label{display:block;font-size:10px;letter-spacing:2.4px;color:#8b947f;margin:0 0 9px}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.views button,.panel>button{border:1px solid #d8decb;background:#f7f8ee;border-radius:7px;padding:9px 3px;font:inherit;font-size:11px;color:#4e6049;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.views button:hover,.panel>button:hover,.views button.active,.panel>button.active{background:#647d5d;border-color:#647d5d;color:#fff}
+.time{grid-template-columns:1fr 1fr 1fr}.time button{padding:9px 1px;font-size:11px}
+.panel>button{display:block;width:100%;margin-top:7px}
+.rule{height:1px;background:#e2e5d6;margin:16px 0}
+#time-label{font-size:11px;color:#7b8573;line-height:1.7;margin:0 0 2px;min-height:18px}
+.notes{font-size:10px;color:#8a927f;line-height:1.9;margin:14px 0 0}
+.caption{position:absolute;left:40px;bottom:44px;font-size:12px;letter-spacing:.8px;color:#5a6b53;pointer-events:none}
+.hint{position:absolute;left:40px;bottom:24px;font-size:10px;letter-spacing:.9px;color:#8a947f;pointer-events:none}
+.badge{position:absolute;right:30px;bottom:25px;font-size:10px;letter-spacing:1.5px;color:#7c8875;background:#fffff2bf;border:1px solid #ffffffc9;border-radius:20px;padding:8px 15px;backdrop-filter:blur(10px)}
+#reference-panel{position:absolute;left:36px;top:150px;width:min(420px,42vw);background:#fffff2f2;border:1px solid #ffffffe0;border-radius:14px;padding:12px;box-shadow:0 18px 45px #34432b1c;backdrop-filter:blur(14px);z-index:5}
+#reference-panel[hidden]{display:none}
+.reference-title{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:1.5px;color:#6f7c68;margin-bottom:8px}
+.reference-title button{border:0;background:#eef1e4;border-radius:50%;width:26px;height:26px;cursor:pointer;color:#5a6b53;font-size:16px}
+#reference-panel img{display:block;width:100%;border-radius:8px}
+#reference-panel p{font-size:10px;line-height:1.8;color:#7d8877;margin:8px 0 0}
+#fatal{position:absolute;left:20%;right:20%;top:38%;padding:22px;background:#fff6e8;border:1px solid #efd9bd;border-radius:12px;color:#85453a;font-size:13px;z-index:9}
+body.clean .masthead,body.clean .panel,body.clean .caption,body.clean .hint,body.clean .badge,body.clean #reference-panel{display:none}
+body.night{color:#dbe2ee}
+body.night .masthead h1{color:#eef1f7}
+body.night .masthead p,body.night .eyebrow,body.night .caption,body.night .hint,body.night .badge{color:#b9c3d7}
+body.night .panel{background:#1c2940e6;border-color:#ffffff1a;color:#dbe2ee}
+body.night .panel label{color:#a6b4ca}
+body.night .views button,body.night .panel>button{background:#25344b;border-color:#3a4b65;color:#cfd8e8}
+body.night .views button.active,body.night .views button:hover,body.night .panel>button:hover{background:#7189a8;border-color:#7189a8;color:#101b2c}
+body.night #time-label,body.night .notes{color:#a9b6ca}
+body.night .rule{background:#33445e}
+body.night .badge{background:#1c2940bf;border-color:#ffffff1a}
+@media (max-width:900px){.masthead{top:20px;left:20px}.masthead h1{font-size:24px}.panel{right:14px;top:14px;width:174px;padding:14px 12px}.panel .notes,.status{display:none}.caption{left:20px;bottom:38px}.hint{display:none}.badge{right:14px;bottom:14px;font-size:9px}#reference-panel{left:14px;top:110px;width:min(360px,70vw)}}
+</style>
+<script type="importmap">{"imports":{"three":"../../../vendor/three.module.js","three/addons/":"../../../vendor/addons/"}}</script>
+</head>
+<body>
+<canvas id="world" tabindex="0" aria-label="小学校 2×2 三维预览，左键拖动环绕，滚轮缩放，右键平移"></canvas>
+<header class="masthead">
+  <div class="eyebrow">MARUKO TOWN / ELEMENTARY SCHOOL / 2×2 STUDY 01</div>
+  <h1>小学校</h1>
+  <p>三层校舍、中央钟楼、门廊与校门 · 28×28 独立外观研究<br>临时预览，尚未接入地图编辑器</p>
+</header>
+<aside class="panel">
+  <div class="status"><span class="dot"></span>STANDALONE PREVIEW</div>
+  <label>观察位置</label>
+  <div class="views">
+    <button data-view="hero" class="active">立体全景</button>
+    <button data-view="front">正立面</button>
+    <button data-view="tower">钟楼</button>
+    <button data-view="entrance">门廊</button>
+    <button data-view="gate">校门</button>
+    <button data-view="roof">屋顶</button>
+    <button data-view="top">俯视</button>
+  </div>
+  <label>时段预看</label>
+  <div class="views time">
+    <button data-time="afternoon" class="active">午后</button>
+    <button data-time="dusk">黄昏</button>
+    <button data-time="night">夜晚</button>
+  </div>
+  <p id="time-label">午后 · 日光</p>
+  <div class="rule"></div>
+  <button id="reference-toggle" aria-pressed="false">打开原图对照</button>
+  <button id="rotate">自动环绕</button>
+  <button id="reset">恢复全景</button>
+  <p class="notes">2×2 · 28×28 地块<br>三层 / 钟楼 / 校门<br>独立研究，未注册素材</p>
+</aside>
+<div class="caption" id="caption">立体全景 · 2×2 校园</div>
+<div class="hint">左键旋转　·　滚轮缩放　·　右键平移　·　Home 回全景</div>
+<div class="badge">未接入地图编辑器</div>
+<section id="reference-panel" hidden>
+  <div class="reference-title"><span>参考图 · 小学校</span><button id="reference-close" aria-label="关闭参考">×</button></div>
+  <img src="./references/school-exterior.jpg" alt="用户提供的小学校动画参考">
+  <p>先看整体体量、钟楼和三排窗的节奏，再看门廊、校门和绿篱。侧面、背面和内部为补全设计。</p>
+</section>
+<div id="fatal" hidden></div>
+<script type="module" src="./preview.js"></script>
+</body>
+</html>

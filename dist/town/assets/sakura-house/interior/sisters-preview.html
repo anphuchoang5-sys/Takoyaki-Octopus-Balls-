@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>樱家 · 姐妹房 02 三维预览</title>
+<style id="sisters-style"></style>
+<script type="importmap">{"imports":{"three":"../../../../vendor/three.module.js","three/addons/":"../../../../vendor/addons/"}}</script>
+</head><body>
+<aside class="sidebar"><div class="eyebrow">SAKURA HOUSE · SISTERS 02</div><h1>姐妹的房间</h1><p class="intro">粉色墙面、各自的书桌，<br>还有满满一柜的宝贝。</p>
+<div class="buttons"><button data-view="room" class="active">整房</button><button data-view="top">俯视</button><button data-view="cabinets">柜子墙</button><button data-view="sakiko">姐姐书桌</button><button data-view="maruko">小丸子书桌</button><button data-view="reverse">侧面与背面</button><button data-view="dolls">柜顶玩偶</button><button data-view="mirror">圆镜与窗边</button><button data-view="loose">地面小物</button></div>
+<label><input id="loose" type="checkbox" checked>显示地面散落物</label>
+<label><input id="auto-walls" type="checkbox" checked>自动隐藏挡住视线的墙</label>
+<button id="compare" class="primary">打开参考对照</button><button id="reset">回到整房 · Home</button>
+<p class="notes">拖动旋转 · 滚轮缩放<br>右键平移<br><br>59 项可辨认陈设＋本房饰面<br>画面待你审看</p>
+<a id="model-link" href="./sisters-room.glb" download>下载本房 GLB</a>
+</aside>
+<main><header><strong id="view-title">姐妹房 · 整体</strong><span>真实三维 · 可旋转与放大</span></header>
+<div class="workspace"><div id="viewport"><canvas id="world" aria-label="姐妹房三维模型，可旋转缩放和平移"></canvas><div id="fatal" hidden></div></div>
+<aside id="reference-panel" hidden><div class="ref-head"><b>参考对照</b><button id="close-reference" aria-label="关闭参考">×</button></div><div class="tabs"><button data-ref="1">柜子</button><button data-ref="2">全房</button><button data-ref="3">姐姐</button><button data-ref="4">小丸子</button></div><img id="reference-image" alt="用户提供的姐妹房参考"><p id="reference-caption"></p><p>拼图以上半部动画为主要依据。尺寸和背面为补全；没有加入人物。</p></aside></div>
+<footer>姐姐桌上按圆镜制作 · 其他房间与樱家外观保持原样</footer></main>
+<script type="module" src="./sisters-preview.js"></script>
+</body></html>

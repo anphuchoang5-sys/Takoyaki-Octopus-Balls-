@@ -4,7 +4,7 @@ import {worldToCell} from './scene.js';
 import {editorShell} from './ui-shell.js';
 import {hasGrassAt} from './grass.js';
 
-export function mountEditorUI({host, canvas, camera, state, sceneView, assets, pendingBuildings, thumbnails, runtime, onOverview = () => {}, onFocus = () => {}, onEditingChange = () => {}, isCameraBusy = () => false}) {
+export function mountEditorUI({host, canvas, camera, state, sceneView, assets, pendingBuildings, thumbnails, runtime, documentAPI=state, onOverview = () => {}, onFocus = () => {}, onEditingChange = () => {}, isCameraBusy = () => false}) {
   host.innerHTML = editorShell;
   const $ = id => host.querySelector(`#${id}`);
   $('viewport').prepend(canvas);
@@ -229,14 +229,14 @@ export function mountEditorUI({host, canvas, camera, state, sceneView, assets, p
   on(window, 'blur', () => { down = null; resetWind(); sceneView.preview(); });
   on($('view-toggle'), 'click', () => onOverview({top:true}));
   on($('view-overview'), 'click', () => onOverview());
-  on($('export'), 'click', () => { download(state.exportJSON(), '小丸子小镇-布局-v1.json'); message('已导出布局文件。'); });
+  on($('export'), 'click', () => { download(documentAPI.exportJSON(), '小丸子小镇-街区-v2.json'); message('已导出布局文件。'); });
   on($('import'), 'click', () => { if (requireEditing()) $('import-file').click(); });
   on($('import-file'), 'change', async () => {
     const file = $('import-file').files[0]; $('import-file').value = ''; if (!file) return;
     if (file.size > MAX_FILE_BYTES) { message('布局文件不能超过 1 MB；当前布局未改变。', true); return; }
     try {
       const text = await file.text(); if (disposed || !requireEditing()) return;
-      state.importJSON(text); cancelTool(); message('已导入布局，可撤销回到导入前。');
+      documentAPI.importJSON(text); cancelTool(); message('已导入布局，可撤销回到导入前。');
     } catch (error) { message(`导入失败，当前布局未改变：${error.message}`, true); }
   });
   function refreshRuntime() {

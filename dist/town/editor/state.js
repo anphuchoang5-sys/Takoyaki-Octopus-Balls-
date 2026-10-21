@@ -60,17 +60,17 @@ export function createEditorState({assetIds, initial = emptyLayout(), idFactory 
   let layout = validateLayout(initial, known), revision = 0;
   const history = [], listeners = new Set(), plans = new WeakSet();
   const getLayout = () => copy(layout);
-  function publish(reason) {
+  function publish(reason,undoContext) {
     revision++;
     for (const listener of listeners) {
-      try { listener({reason, revision, layout: getLayout(), canUndo: history.length > 0}); }
+      try { listener({reason, revision, layout: getLayout(), canUndo: history.length > 0,undoContext}); }
       catch (error) { onSubscriberError(error); }
     }
   }
-  function commit(next, reason) {
+  function commit(next, reason,undoContext) {
     const checked = validateLayout(next, known);
-    if (JSON.stringify(checked) === JSON.stringify(layout)) return false;
-    history.push(layout);
+    if (JSON.stringify(checked) === JSON.stringify(layout)&&!undoContext) return false;
+    history.push({layout,undoContext});
     if (history.length > 100) history.shift();
     layout = checked;
     publish(reason);
@@ -135,12 +135,12 @@ export function createEditorState({assetIds, initial = emptyLayout(), idFactory 
       plans.delete(plan);
       return commit({...layout, rows: plan.rows, instances: layout.instances.filter(p => isActive(plan.rows, p.x, p.z))}, 'shape');
     },
-    loadLayout(input) { return commit(input, 'load'); },
+    loadLayout(input,{undoContext}={}) { return commit(input, 'load',undoContext); },
     importJSON(text) { return commit(parseLayout(text, known), 'import'); },
     exportJSON() { return JSON.stringify(layout, null, 2); },
     undo() {
       if (!history.length) return false;
-      layout = history.pop(); publish('undo'); return true;
+      const entry=history.pop();layout = entry.layout; publish('undo',entry.undoContext); return true;
     }
   };
 }

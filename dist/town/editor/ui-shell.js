@@ -15,10 +15,10 @@ export const editorShell = `
       <button id="preview-shape" class="wide secondary">预览轮廓变化</button>
       <section id="shape-impact" class="impact" hidden><strong>确认地图变化</strong><p id="impact-description"></p><ul id="affected-list"></ul><small>红色移除 · 绿色新增 · 金框标出受影响素材</small><button id="apply-shape" class="wide primary">确认变化</button><button id="cancel-shape" class="wide">取消</button></section>
     </section>
-    <section id="panel-environment" hidden><h2>天空与漫游</h2><p class="muted">晴天与下雨已接入。雨落在屋顶、院子和道路，屋檐水滴随天气变化。时间与散步待接入。</p>
+    <section id="panel-environment" hidden><h2>天空与漫游</h2><p class="muted">四时段、晴雨雪已接入。下雪约一分钟积满；转晴约五分钟、转雨约一分钟融完。散步待接入。</p>
       <label class="setting">时间 <select id="time"><option value="">待接入</option><option value="morning">早晨</option><option value="afternoon">午后</option><option value="dusk">黄昏</option><option value="night">夜晚</option></select></label>
-      <label class="setting">天气 <select id="weather"><option value="">待接入</option><option value="clear">晴天</option><option value="rain">下雨</option></select></label>
-      <div class="mode-switch"><button id="god" class="active">上帝视角</button><button id="walk">散步 <small>待接入</small></button></div><p id="runtime-status" class="muted"></p>
+      <label class="setting">天气 <select id="weather"><option value="">待接入</option><option value="clear">晴天</option><option value="rain">下雨</option><option value="snow">下雪</option></select></label>
+      <p id="snow-status" class="muted">积雪 0%</p><div class="mode-switch"><button id="god" class="active">上帝视角</button><button id="walk">散步 <small>待接入</small></button></div><p id="runtime-status" class="muted"></p>
     </section>
     <section id="panel-save" hidden><h2>留住这个街角</h2><p id="save-status" role="status">正在读取本机存档…</p><div class="file-actions"><button id="export">↓ 导出布局</button><button id="import">↑ 导入布局</button></div><input type="file" id="import-file" accept=".json,application/json" hidden><button id="replace-save" class="wide" hidden>用当前布局替换旧存档</button><button id="backup-save" class="wide" hidden>下载保留的旧存档</button><p class="muted">自动保存在此浏览器。<br>导入也可以一步撤销。</p></section>
     </div><footer class="workbench-footer"><strong id="selection-title">尚未选择素材</strong><span id="selection-detail">点击已有素材可选中编辑</span><small id="map-count"></small></footer>

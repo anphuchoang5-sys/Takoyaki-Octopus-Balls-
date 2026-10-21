@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import {isActive, LIMIT} from './state.js';
 import {createGrass, createLawnMaterial} from './grass.js';
+import {createGroundSnow} from './ground-snow.js';
+import {validateEnvironment,DEFAULT_ENVIRONMENT} from './environment.js';
 
 export function cellToWorld(x, z, tileSize) { return {x: (x - 4.5) * tileSize, z: (z - 4.5) * tileSize}; }
 export function worldToCell(x, z, tileSize) { return {x: Math.floor(x / tileSize + 5), z: Math.floor(z / tileSize + 5)}; }
@@ -23,7 +25,8 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
   const grass = createGrass({tileSize});
   root.add(ground, grass.root, grid, models, hints);
   const instances = new Map();
-  let environment = {weather: 'clear'}, elapsedSeconds = 0;
+  const snow=createGroundSnow(root,{tileSize,getInstances:()=>state.getLayout().instances.map(placement=>({placement,asset:instances.get(placement.id)}))});
+  let environment = {...DEFAULT_ENVIRONMENT}, elapsedSeconds = 0;
   let rowsKey = '', selectedId = null, ghost = null, ghostId = null, editing = true, plan = null;
   const selection = flat(tileSize * .96, tileSize * .96, '#e7bc67', .32, 1.10);
   const cursor = flat(tileSize * .94, tileSize * .94, '#5bbf9f', .45, 1.12);
@@ -72,7 +75,7 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
       const point = cellToWorld(p.x, p.z, tileSize);
       asset.root.position.set(point.x, 0, point.z); asset.root.rotation.y = p.rotation * Math.PI / 180;
     }
-    root.updateMatrixWorld(true); select(selectedId); showShape(null);
+    snow.rebuild(layout); root.updateMatrixWorld(true); select(selectedId); showShape(null);
   }
   function select(id) {
     selectedId = id;
@@ -131,13 +134,17 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
   sync(); const unsubscribe = state.subscribe(sync);
   return {
     root, tileSize, sync, select, preview, showShape, grass,
-    setEnvironment({weather}) {
-      if (!['clear','rain'].includes(weather)) throw new Error('编辑场景仅支持晴天和下雨。');
-      environment = {weather};
-      for (const asset of instances.values()) asset.setEnvironment?.(environment);
-      // Recreate a preview on its next pointer update, keeping B's original material references valid.
-      clearGhost();
+    setEnvironment(patch) {
+      const next=validateEnvironment(patch,environment),changed=next.time!==environment.time||next.weather!==environment.weather;
+      const snowChanged=Math.abs(next.snowAmount-environment.snowAmount)>=.003||next.snowAmount===0||next.snowAmount===1;
+      if(!changed&&!snowChanged)return;
+      environment=next;
+      for(const asset of instances.values())asset.setEnvironment?.(environment);
+      snow.setAmount(environment.snowAmount);grass.setSnowAmount(environment.snowAmount);
+      if(changed)clearGhost();else ghost?.setEnvironment?.(environment);
     },
+    getEnvironment:()=>({...environment}),
+    sampleGroundSnow:(x,z)=>snow.sample(x,z),
     update(time) {
       elapsedSeconds = time; grass.update(time);
       for(const asset of instances.values()) { asset.updateDecorations?.(time); asset.updateEnvironment?.(time); }
@@ -147,10 +154,10 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
     getInstances() { return state.getLayout().instances.map(p => ({placement: p, asset: instances.get(p.id)})); },
     containsCell(x, z) { return isActive(state.getLayout().rows, x, z); },
     getGroundHeight(x, z) { const cell = worldToCell(x, z, tileSize); return isActive(state.getLayout().rows, cell.x, cell.z) ? 0 : null; },
-    getInspection() { return {instances: instances.size, groundRows: ground.children.length, grass: grass.getInspection(), gridVisible: grid.visible, previewVisible: !!ghost?.root.visible,
+    getInspection() { return {environment:{...environment},snow:snow.getInspection(),instances: instances.size, groundRows: ground.children.length, grass: grass.getInspection(), gridVisible: grid.visible, previewVisible: !!ghost?.root.visible,
       previewAsset: ghostId, previewRotation: ghost ? ghost.root.rotation.y * 180 / Math.PI : null, shapePreview: !!plan,
       impactBounds: impact.children.filter(node => node.isBox3Helper || node.type === 'Box3Helper').map(node => ({min: node.box.min.toArray(), max: node.box.max.toArray()}))}; },
-    dispose() { unsubscribe(); root.removeFromParent(); clearGhost(); grass.dispose(); disposeOwned(ground); disposeOwned(grid); disposeOwned(impact);
+    dispose() { unsubscribe(); root.removeFromParent(); clearGhost(); snow.dispose(); grass.dispose(); disposeOwned(ground); disposeOwned(grid); disposeOwned(impact);
       selection.geometry.dispose(); selection.material.dispose(); cursor.geometry.dispose(); cursor.material.dispose(); arrow.dispose();
       for(const asset of instances.values())asset.dispose?.();models.clear();instances.clear(); }
   };
