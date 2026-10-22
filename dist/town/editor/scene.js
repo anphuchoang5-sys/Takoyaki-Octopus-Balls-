@@ -145,6 +145,7 @@ export function createEditorScene({state, createAsset, tileSize = 14}) {
     },
     getEnvironment:()=>({...environment}),
     sampleGroundSnow:(x,z)=>snow.sample(x,z),
+    sampleGroundSnowInto:(x,z,out)=>snow.sampleInto(x,z,out),
     update(time) {
       elapsedSeconds = time; grass.update(time);
       for(const asset of instances.values()) { asset.updateDecorations?.(time); asset.updateEnvironment?.(time); }

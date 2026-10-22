@@ -1,12 +1,13 @@
 # flowerorangebuilding
 
-2026-10-21：外观第一版 `exterior-01` 已制作，独立预览与定向技术检查完成，用户美术认可待定；未接入正式地图。制作与验证见[本轮行动记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-model.md)，此前目录建立与读图过程见[参考分析记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-reference.md)。界面名“花满橙瓦屋”为描述性临时名，不声称是原作正式名称。
+2026-10-21：当前为 `exterior-04-hanging`，修复阳台三个挂盆和院门挂盆的枝叶穿盆壁，并补上实体盆底；花盆位置、大小、配色和其他建筑部分保持，见[挂盆修复记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-hanging-plants.md)。此前[地块闪烁修复](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-ground-flicker.md)和[入口修改](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-entry.md)保留；[第一版记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-model.md)保留当时验证事实。未接入正式地图，本轮挂盆画面待用户认可。界面名“花满橙瓦屋”为描述性临时名，不声称是原作正式名称。
 
 ## 查看当前作品
 
 - [本地三维预览](http://127.0.0.1:4184/town/assets/flowerorangebuilding/preview.html)：复用现有服务；拖动旋转、滚轮缩放、右键平移，可切换原图机位、全景、两侧、背面、俯视、屋顶、院门及阳台。
 - [离线三维预览](../../../../artifacts/buildings/flowerorangebuilding/花满橙瓦屋-三维预览.html)：双击直接打开，内嵌 8 个代码模块及参考图，已阻断 HTTP 验证操作。
-- [原图与模型对照](../../../../artifacts/buildings/flowerorangebuilding/原图与模型对照.html)：近似正面机位对照及多面截图。
+- [原图与模型对照](../../../../artifacts/buildings/flowerorangebuilding/原图与模型对照.html)：原图对照、同机位入口修改前后对照及多面截图。
+- [挂盆修复前后对照](../../../../artifacts/buildings/flowerorangebuilding/挂盆修复对照.html)：本轮阳台、院门挂盆同机位前后，以及侧面和仰视近景。
 - [静态 GLB](flowerorangebuilding.glb)：外观与庭院交换文件；不含交互、环境控制或独立室内。
 
 ## 文件与接口
@@ -26,13 +27,18 @@
 
 ## 实际验证
 
-`node scripts/inspect-flowerorangebuilding.mjs --deliver` 定向通过，报告位于 `artifacts/buildings/flowerorangebuilding/inspection.json`：
+本轮挂盆定向检查 `node scripts/inspect-flowerorangebuilding-hanging.mjs --label=after --compare` 与离线复核通过：四只挂盆穿壁采样从总计 1414 处降为 0，四只实体盆底射线命中；其他具名花木及非花木建筑分组几何指纹相同。阳台、院门正面/斜侧/仰视和前后对照已实看；这属于定向几何采样与画面检查，不替代用户美术认可。
 
-- 115 个网格、291508 个三角形，非有限坐标 0、退化三角形 0；四向旋转均在 14×14 内。
+地块闪烁定向复现使用 `node scripts/inspect-flowerorangebuilding-ground.mjs`：在 17 个旋转角度追踪 33 个固定地表点。修复前 33 个点颜色跳变；修复后在线/离线预览跳变点均为 0，最大通道变化由 41 降至 1。保留原阴影和相机设置；五个非地块分组（含院门和花木）几何指纹保持一致。GLB、离线预览和对照页已同步；已打开的旧页面需刷新或重开。
+
+本次入口修改定向检查通过，详情见[入口修改记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-entry.md)。当前报告在 `artifacts/buildings/flowerorangebuilding/{inspection,entry-inspection}.json`，交付命令为 `node scripts/inspect-flowerorangebuilding.mjs --deliver --entry`。
+
+- 当前 115 个网格、293668 个三角形，非有限坐标 0、退化三角形 0；四向旋转均在 14×14 内。
+- 新增入口抽查：两侧折墙、门柱落点、三级标高、花盆承托与中央通道通过；主体墙面、橙瓦屋顶、门窗与阳台的几何指纹与修改前相同。门口左右斜视、正面、俯视及相同机位前后对照已实看。
 - 12 处落地/墙顶花盆承托射线、4 处实际窗面凹进、15 处山墙/低屋面交接射线通过。属于定向抽查，不是穷尽全部碰撞。
 - 鼠标旋转、缩放、平移、视角按钮、原图显示、花木显示开关通过；资产 229 个可见资源各释放一次，邻居不受影响，状态非法输入原子拒绝。
 - 离线包断网启动及旋转/缩放/参考图通过，HTTP 请求 0；GLB 导出回读成功、边界一致。导出器对线条材质产生一条通用材质建议，保留在报告；GLB 尚未单独逐机位作美术验收，画面以源码预览为准。
-- 已实看正面、斜面、两侧、背面、屋面、院门、阳台和对照图；没有全项目回归、地图性能或移动设备验收。用户美术认可仍待完成。
+- 第一版曾实看正面、斜面、两侧、背面、屋面、院门与阳台；本次重点复核上述入口相关视角并生成当前多面截图。没有全项目回归、地图性能或移动设备验收。本次入口美术认可仍待完成。
 
 ## 参考与制作依据
 

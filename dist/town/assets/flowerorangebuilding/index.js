@@ -1,7 +1,7 @@
 import {createWorkshop} from './geometry.js';
 import {createGarden} from './garden.js';
 
-export const specification=Object.freeze({id:'flowerorangebuilding',name:'花满橙瓦屋',revision:'exterior-01',tileSize:14,front:'+Z',placementRotations:[0,90,180,270],interior:false,reference:'references/user-exterior.jpg'});
+export const specification=Object.freeze({id:'flowerorangebuilding',name:'花满橙瓦屋',revision:'exterior-04-hanging',tileSize:14,front:'+Z',placementRotations:[0,90,180,270],interior:false,reference:'references/user-exterior.jpg'});
 const C={wall:'#e2eeee',trim:'#b9c8c5',shadow:'#77888d',roof:'#bf502e',ridge:'#a7462b',wood:'#987335',woodLight:'#bc9348',shutter:'#d4b249',blue:'#6399e7',blueDark:'#4878b5',windowFrame:'#d8e2d5',ground:'#98ad77',stone:'#c2c8bd',wallBase:'#869ba7'};
 
 export function createModel(){
@@ -10,12 +10,15 @@ export function createModel(){
   W.material(C.blue).emissive.set(C.blue);W.material(C.blue).emissiveIntensity=.12;
   const site=group('地块与院内通道'),walls=group('白墙与凹入窗洞'),roof=group('橙瓦组合屋面'),details=group('门窗与阳台'),fence=group('砌块围墙与门屋'),plants=group('庭院花木');
   const windows=[],roofSurfaces=[];
-  box(14,.20,14,0,-.02,0,'#74856b',site,true);
+  // The base meets the underside of the turf; its top must not overlap the visible grass surface.
+  box(14,.175,14,0,-.0325,0,'#74856b',site,true);
   box(13.90,.025,13.90,0,.0675,0,C.ground,site);
-  // The street is outside the plot. This is only the entry apron and garden path.
-  box(2.93,.13,1.07,-1.05,.145,5.94,C.stone,site,true);
-  box(2.87,.065,.29,-1.05,.1125,6.57,'#a9b2b0',site,true);
-  box(2.82,.055,.27,-1.05,.1075,6.80,'#b6bfbc',site,true);
+  // Two low treads lead into a recessed landing, with a short descent to the existing garden path.
+  box(3.01,.36,.86,-.985,.26,4.67,C.stone,site,true);
+  box(3.01,.24,.37,-.985,.20,5.285,'#a9b2b0',site,true);
+  box(3.01,.12,.37,-.985,.14,5.655,'#b6bfbc',site,true);
+  box(1.32,.24,.22,-1.2,.20,4.13,'#a9b2b0',site,true);
+  box(1.32,.12,.22,-1.2,.14,3.91,'#b6bfbc',site,true);
   for(let z=5.5;z>3.05;z-=.42)box(1.32,.035,.395,-1.2,.098,z,'#c7c4ad',site,true);
   for(let x=-1.9;x>=-3.2;x-=.4)box(.38,.035,.75,x,.098,3.35,'#c7c4ad',site,true);
   box(4.7,.24,5.0,1.70,.20,-.45,'#a9b8b5',site,true);
@@ -120,24 +123,31 @@ export function createModel(){
     box(x1-x0+.025,.08,.31,(x0+x1)/2,1.72,z,'#d3e0d9',fence,true);
   }
   wallRun(-6.85,-2.49,5.47);wallRun(.52,6.85,5.47);
+  // Solid right-angle returns continue the same base, block courses and coping into the entry.
+  for(const x of [-2.61,.64]){
+    box(.25,.49,.98,x,.325,4.86,C.wallBase,fence,true);
+    for(let row=0;row<3;row++)box(.24,.355,.972,x,.7475+row*.37,4.86,'#dfe9e3',fence);
+    box(.31,.08,.97,x,1.72,4.83,'#d3e0d9',fence,true);
+  }
   // Return walls give the enclosure real depth without closing the gate path.
   for(const x of [-6.72,6.72]){box(.22,1.58,10.98,x,.87,-.12,'#c7d7ca',fence);box(.28,.07,11.02,x,1.695,-.12,'#d5dfcd',fence);}
   box(13.44,1.30,.22,0,.73,-5.61,'#bdcdbd',fence);box(13.50,.065,.27,0,1.4125,-5.61,'#d5dfcd',fence);
-  for(const x of [-2.40,.43])box(.15,2.30,.18,x,1.36,5.49,C.wood,fence,true);
-  box(2.98,.16,.22,-.985,2.49,5.49,C.woodLight,fence,true);
-  const gate=group('木栅院门',fence);
+  const gateHouse=group('内凹门屋',fence);gateHouse.position.set(0,.23,-1);
+  for(const x of [-2.40,.43])box(.15,2.30,.18,x,1.36,5.49,C.wood,gateHouse,true);
+  box(2.98,.16,.22,-.985,2.49,5.49,C.woodLight,gateHouse,true);
+  const gate=group('木栅院门',gateHouse);
   for(const x of [-1.52,.30])box(.11,1.98,.105,x,1.25,5.55,C.wood,gate,true);
   for(const y of [.29,1.02,2.19])box(1.89,.10,.11,-.61,y,5.55,C.wood,gate,true);
   for(let x=-1.40;x<.24;x+=.14)box(.047,1.82,.065,x,1.25,5.55,'#b28d45',gate);
-  for(let x=-2.28;x<-1.62;x+=.13)box(.046,2.10,.065,x,1.32,5.49,C.woodLight,fence);
-  box(.72,.075,.11,-1.98,.88,5.50,C.wood,fence);
+  for(let x=-2.28;x<-1.62;x+=.13)box(.046,2.10,.065,x,1.32,5.49,C.woodLight,gateHouse);
+  box(.72,.075,.11,-1.98,.88,5.50,C.wood,gateHouse);
   cylinder(.045,.045,.06,.18,1.11,5.63,'#534f35',gate,12).rotation.x=Math.PI/2;
   box(.43,.045,.065,-.37,1.64,5.59,C.wood,gate,true);
-  const gateRoof=group('黄褐色门屋小坡顶',fence),gx0=-2.72,gx1=.75,gr=2.91,ge=2.56;
+  const gateRoof=group('黄褐色门屋小坡顶',gateHouse),gx0=-2.72,gx1=.75,gr=2.91,ge=2.56;
   roofFacet([[gx0,5.44],[gx1,5.44],[gx1,6.04],[gx0,6.04]],(x,z)=>gr-(z-5.44)*(gr-ge)/.60,{color:'#b3993f',tileW:.45,tileD:.22},gateRoof);
   roofFacet([[gx0,4.84],[gx1,4.84],[gx1,5.44],[gx0,5.44]],(x,z)=>gr-(5.44-z)*(gr-ge)/.60,{color:'#b3993f',tileW:.45,tileD:.22},gateRoof);
   box(gx1-gx0,.075,.085,(gx0+gx1)/2,gr,5.44,'#927e34',gateRoof,true);
-  for(const x of [-2.40,.43])beam([x,2.30,5.49],[x,2.59,5.91],.045,C.wood,fence);
+  for(const x of [-2.40,.43])beam([x,2.30,5.49],[x,2.59,5.91],.045,C.wood,gateHouse);
 
   const garden=createGarden(W,plants);garden.build();
   // Preserve semantic bounds for targeted inspection even after reducing draw calls.
@@ -145,9 +155,9 @@ export function createModel(){
   const components=root.children.map(g=>g.name);
   for(const g of root.children)batch(g);
   root.updateMatrixWorld(true);
-  root.userData.design={mainHeight:6.25,front:'+Z',gateCenter:[-.985,.21,5.49],windows,potSupports:garden.supports,roofSurfaces,hiddenStructure:'Rear elevations, depths, short side roof slopes, low right wing connection and house entry reconstructed.',components};
+  root.userData.design={mainHeight:6.25,front:'+Z',gateCenter:[-.985,.44,4.49],windows,potSupports:garden.supports,roofSurfaces,hiddenStructure:'Rear elevations, depths, short side roof slopes, low right wing connection and house entry reconstructed.',components};
   let state={time:'afternoon',weather:'clear',snowAmount:0},disposed=false;
-  const asset={root,specification,roof,entry:{x:-.985,y:.21,z:5.49,facing:'+Z',clearWalkWidth:1.6},floors:[{x:0,z:0,w:14,d:14,height:.08}],
+  const asset={root,specification,roof,entry:{x:-.985,y:.44,z:4.49,facing:'+Z',clearWalkWidth:1.6},floors:[{x:0,z:0,w:14,d:14,height:.08}],
     environmentSupport:{time:['morning','afternoon','dusk','night'],weather:['clear','rain','snow'],weatherEffects:false,snow:false,lighting:false},
     setEnvironment(patch={}){if(disposed)return;const next={...state,...patch};if(!['morning','afternoon','dusk','night'].includes(next.time)||!['clear','rain','snow'].includes(next.weather)||!Number.isFinite(next.snowAmount)||next.snowAmount<0||next.snowAmount>1)throw new Error('Invalid flowerorangebuilding environment');state={time:next.time,weather:next.weather,snowAmount:next.snowAmount};},
     getEnvironment:()=>({...state,weatherEffectsImplemented:false,snowImplemented:false,localLightingImplemented:false,disposed}),

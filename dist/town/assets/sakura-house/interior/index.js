@@ -16,12 +16,8 @@ export function createInterior(){
   if(r.floor==='tatami8'){const a=wi/4,b=de/4;tiles=[[0,0,2*a,b],[2*a,0,2*a,b],[0,b,a,2*b],[3*a,b,a,2*b],[a,b,2*a,b],[a,2*b,2*a,b],[0,3*b,2*a,b],[2*a,3*b,2*a,b]];}
   else if(r.floor==='tatami6'){const a=wi/4,b=de/3;tiles=[[0,0,2*a,b],[2*a,0,2*a,b],[0,b,a,2*b],[a,b,2*a,b],[a,2*b,2*a,b],[3*a,b,a,2*b]];}
   else {const a=wi/3,b=de/4;tiles=[[0,0,a,2*b],[0,2*b,a,2*b],[a,0,2*a,b],[a,b,a,2*b],[2*a,b,a,2*b],[a,3*b,2*a,b]];}
-  for(const [tx,tz,w,d] of tiles){box(w-.013,.052,d-.013,x+tx+w/2,-.026,z+tz+d/2,r.color,g,false);const border=r.id==='living'?livingColors.floorLine:r.id==='sisters'?'#af8d94':'#78896a';
-   for(const dx of [-1,1])box(.026,.004,d-.012,x+tx+w/2+dx*(w-.04)/2,.002,z+tz+d/2,border,g,false);
-   // Fine geometry rhythm is retained in source; no flat room-photo textures.
-   if(r.id==='living'){for(let v=.07;v<d;v+=.095)for(const dx of [.025,w-.055])box(.028,.001,.004,x+tx+dx,.003,z+tz+v,'#aaa078',g,false);}
-   else for(let v=.06;v<d;v+=.085)box(w-.075,.002,.003,x+tx+w/2,.001,z+tz+v,r.id==='sisters'?'#d8b6b5':'#bec493',g,false);
-  }
+  // Preserve each room's solid mats and fine joints without added grey strips.
+  for(const [tx,tz,w,d] of tiles)box(w-.013,.052,d-.013,x+tx+w/2,-.026,z+tz+d/2,r.color,g,false);
  }
  for(const r of rooms){const [a,b,c,d]=r.r,w=c-a,dep=d-b,y=r.y||0,g=group('floor:'+r.id,floors);g.userData={room:r.id};
   box(w,.1,dep,(a+c)/2,y-.052,(b+d)/2,r.color,g,false);
@@ -45,7 +41,8 @@ export function createInterior(){
   wallBox(w,o.a,o.b,base-.025,base+.025,C.trim,g,WALL+.045);wallBox(w,o.a,o.b,base+h-.025,base+h+.025,C.trim,g,WALL+.025);
   const shoji=kind==='shoji-window';wallBox(w,o.a+.05,o.b-.05,base+.05,base+h-.05,shoji?C.paper:'#92b6cf',g,.035);
   wallBox(w,(o.a+o.b)/2-.018,(o.a+o.b)/2+.018,base,base+h,C.trim,g,.06);
-  for(let y=base+(shoji?.27:h*.55);y<base+h-.1;y+=shoji?.26:h)wallBox(w,o.a,o.b,y-.012,y+.012,C.trim,g,.06);
+  if(w.id==='south-main'&&o.a===9.0&&o.b===10.9){for(const y of [base+h/3,base+2*h/3])wallBox(w,o.a,o.b,y-.015,y+.015,C.trim,g,.06);}
+  else for(let y=base+(shoji?.27:h*.55);y<base+h-.1;y+=shoji?.26:h)wallBox(w,o.a,o.b,y-.012,y+.012,C.trim,g,.06);
   if(shoji)for(let a=o.a+.28;a<o.b;a+=.28)wallBox(w,a-.009,a+.009,base,base+h,C.trim,g,.06);
  }
  function door(w,o){if(o.kind==='open')return;const len=o.b-o.a,hinge=o.kind==='hinge',closed=o.kind==='closet',isEntry=o.kind==='entry',shoji=o.kind==='shoji';
@@ -114,7 +111,7 @@ export function createInterior(){
  // Closet intermediate shelves, retained separately from sliding doors.
  for(const r of rooms.filter(r=>r.storage)){const g=group('closet-shelves:'+r.id,storageShelves),[a,b,c,d]=r.r;box(c-a-.13,.05,d-b-.13,(a+c)/2,.95,(b+d)/2,'#c5a87f',g);batch(g);}
  let wallMode='cut',ceilingVisible=false,doorsOpen=true;
- function setWalls(mode){if(!['cut','full','outer-hidden','hidden'].includes(mode))throw new Error('Unknown wall mode');wallMode=mode;fullWalls.visible=mode==='full'||mode==='outer-hidden';cutWalls.visible=mode==='cut';for(const p of wallParts)p.group.visible=!(mode==='outer-hidden'&&p.outer);doors.visible=mode==='full'||mode==='outer-hidden';storageShelves.visible=mode==='full'||mode==='outer-hidden';sisters.setWallMode(mode);return mode;}
+ function setWalls(mode){if(!['cut','full','outer-hidden','hidden'].includes(mode))throw new Error('Unknown wall mode');wallMode=mode;fullWalls.visible=mode==='full'||mode==='outer-hidden';cutWalls.visible=mode==='cut';for(const p of wallParts)p.group.visible=!(mode==='outer-hidden'&&p.outer);doors.visible=mode==='full'||mode==='outer-hidden';storageShelves.visible=mode==='full'||mode==='outer-hidden';sisters.setWallMode(mode);living.setWallMode(mode);return mode;}
  function setCeiling(v){ceilingVisible=!!v;ceilings.visible=ceilingVisible;return ceilingVisible;}
  function setDoorsOpen(v){doorsOpen=!!v;for(const d of doorLeaves){const open=doorsOpen&&!d.closed;d.leaf.position.fromArray(open?d.openPosition:d.closedPosition);d.leaf.rotation.y=open?d.angle:0;}root.updateMatrixWorld(true);}
  setWalls('cut');setCeiling(false);setDoorsOpen(true);

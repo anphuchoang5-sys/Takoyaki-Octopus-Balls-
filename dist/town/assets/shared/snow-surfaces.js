@@ -39,7 +39,7 @@ export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsi
     minX=Math.min(minX,data[i],data[i+3],data[i+6]);maxX=Math.max(maxX,data[i],data[i+3],data[i+6]);
     minZ=Math.min(minZ,data[i+2],data[i+5],data[i+8]);maxZ=Math.max(maxZ,data[i+2],data[i+5],data[i+8]);
   }
-  if(minX===Infinity)return {sample:()=>null};
+  if(minX===Infinity)return {sample:()=>null,sampleInto:()=>null};
   const x0=Math.floor(minX/cell),z0=Math.floor(minZ/cell),nx=Math.floor(maxX/cell)-x0+1,nz=Math.floor(maxZ/cell)-z0+1;
   const offsets=new Uint32Array(nx*nz+1);
   function visit(append){
@@ -55,7 +55,8 @@ export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsi
   visit(k=>offsets[k+1]++);for(let i=1;i<offsets.length;i++)offsets[i]+=offsets[i-1];
   const entries=new Uint32Array(offsets.at(-1)),cursor=offsets.slice();
   visit((k,i)=>{entries[cursor[k]++]=i;});
-  return {sample(x,z){
+  const edge=new THREE.Vector3();
+  function sampleInto(x,z,out){
     const ix=Math.floor(x/cell)-x0,iz=Math.floor(z/cell)-z0;if(ix<0||ix>=nx||iz<0||iz>=nz)return null;
     const bin=ix*nz+iz;
     let y=-Infinity,best=-1;
@@ -68,11 +69,12 @@ export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsi
       const h=data[i+1]*u+data[i+4]*v+data[i+7]*w;if(h>=minY&&h>y){y=h;best=i;}
     }
     if(best<0)return null;
-    const i=best,normal=new THREE.Vector3(data[i+3]-data[i],data[i+4]-data[i+1],data[i+5]-data[i+2])
-      .cross(new THREE.Vector3(data[i+6]-data[i],data[i+7]-data[i+1],data[i+8]-data[i+2])).normalize();
+    const i=best,normal=out.normal.set(data[i+3]-data[i],data[i+4]-data[i+1],data[i+5]-data[i+2])
+      .cross(edge.set(data[i+6]-data[i],data[i+7]-data[i+1],data[i+8]-data[i+2])).normalize();
     if(upward&&normal.y<0)normal.negate();
-    return {y,normal,part:parts[i/9]};
-  }};
+    out.y=y;out.part=parts[i/9];return out;
+  }
+  return {sampleInto,sample:(x,z)=>sampleInto(x,z,{y:0,normal:new THREE.Vector3(),part:0})};
 }
 export function readSurface(root,colors=null){
   const triangles=[];root.updateWorldMatrix(true,true);

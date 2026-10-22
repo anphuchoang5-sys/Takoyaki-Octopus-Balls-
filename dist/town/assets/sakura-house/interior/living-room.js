@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {livingArt} from './living-art.js';
+import {addLivingWallDecor} from './living-wall-decor.js';
 
-export const livingSpecification={id:'sakura-living-room',revision:'living-02',bounds:[8.19,3.64,11.83,7.28],artApproved:false,reference:'用户客厅动画截图及后续45°/密集餐具/六块坐垫指示',supplement:'尺寸、背面、裁切柜体右侧、绿色摆件身份与餐具具体数量为补全；坐垫按用户确定的三边各两块'};
+export const livingSpecification={id:'sakura-living-room',revision:'living-04',bounds:[8.19,3.64,11.83,7.28],artApproved:false,reference:'用户碗柜与窗帘正面图；六垫改为门口、碗柜、窗户三边，垃圾桶侧留空',supplement:'尺寸、背面、方形物品身份与日历被遮挡小字为补全；四格及45°黑屏电视保留，地面灰线已去除'};
 export const livingColors={wall:'#f5df8e',floor:'#f2e5ab',floorLine:'#c5b57d'};
 export function createLivingRoom(){
  const root=new THREE.Group();root.name='客厅精修';const resources=new Set(),materials=new Map(),entries=[],obstacles=[],dishItems=[],art=livingArt(THREE,resources);
@@ -56,41 +57,67 @@ export function createLivingRoom(){
   cyl(g,.152,.117,.30,0,.15,0,'#ffffff',true,'bucket');const inner=mesh(new THREE.CylinderGeometry(.142,.109,.285,24,1,true),'#7c654b',g);inner.material=mat('#7c654b');inner.material.side=THREE.DoubleSide;inner.position.y=.1575;
   cyl(g,.111,.111,.012,0,.014,0,'#6c5944');ring(g,.149,.009,0,.303,0,'#b79a6c',Math.PI/2);ring(g,.118,.005,0,.012,0,C.edge,Math.PI/2);
  },[.32,.32]);
- const cabAnchor=[11.51,0,5.26,-Math.PI/2],cabH=1.22;
- part('客09','木框玻璃餐具柜与餐具',cabAnchor,g=>{
-  const w=1.27,d=.44;box(g,w,.045,d,0,.0225,0,C.edge);box(g,w,.042,d,0,cabH-.021,0,C.light);box(g,w-.05,cabH-.08,.025,0,cabH/2,-d/2+.013,C.edge);
-  for(const x of [-w/2+.025,w/2-.025])box(g,.05,cabH-.04,d,x,cabH/2,0,C.wood);box(g,w-.07,.045,d-.01,0,.63,0,C.wood);
-  for(const y of [.68,.91])box(g,w-.09,.02,d-.045,0,y,0,'#a5865f');box(g,.026,.54,.39,0,.919,-.005,C.wood);
-  // Two rows per shelf; every bundle stays in one half, clear of the central divider.
-  const shelves=[
-   {y:.69,rear:[['碗',6],['盘',9],['茶杯',3],['玻璃杯',1],['玻璃杯',1],['玻璃杯',1],['茶杯',3],['玻璃杯',1]],front:[['碗',5],['茶杯',2],['碗',5],['茶杯',2],['玻璃杯',1],['茶杯',2],['玻璃杯',1],['筷筒',1]]},
-   {y:.92,rear:[['碗',6],['盘',9],['茶杯',3],['玻璃杯',1],['玻璃杯',1],['茶杯',3],['玻璃杯',1],['茶杯',3]],front:[['茶杯',2],['碗',5],['茶杯',2],['玻璃杯',1],['碗',5],['茶杯',2],['玻璃杯',1],['茶杯',2]]}
-  ];
-  for(const [shelf,layout] of shelves.entries())for(const row of ['rear','front'])layout[row].forEach(([kind,count],i)=>{
-   const b=group(kind+(count>1?'叠放':''),g),x=[-.50,-.36,-.22,-.08,.08,.22,.36,.50][i];b.position.set(x,layout.y,row==='rear'?-.10:.075);
-   if(kind==='碗')for(let j=0;j<count;j++)bowl(b,0,j*.023,0,.067,.043,j%2?'#8daab9':'#a9bec6');
-   else if(kind==='盘')for(let j=0;j<count;j++)bowl(b,0,j*.012,0,.071,.026,j%2?'#a0b8c4':'#b5c9cb');
-   else if(kind==='茶杯')for(let j=0;j<count;j++){bowl(b,0,j*.042,0,.056,.080,j%2?'#b4c8cd':'#92aebb');ring(b,.050,.002,0,.064+j*.042,0,'#c4d4d2',Math.PI/2);}
-   else if(kind==='玻璃杯')tumbler(b);
-   else{
-    bowl(b,0,0,0,.039,.082,'#b1a078');
-    for(let j=0;j<8;j++){const a=j*Math.PI/4,rr=j%2?.015:.022,px=Math.cos(a)*rr,pz=Math.sin(a)*rr;tube(b,[[px,.027,pz],[px*1.12,.095,pz*1.12],[px*1.28,.166+(j%3)*.009,pz*1.28]],.0022,j%2?'#8c603a':'#bf965e');}
-   }
-   // Preserve measured geometry bounds before material batching, for shelf/contact inspection.
-   g.updateWorldMatrix(true,true);const inv=g.matrixWorld.clone().invert(),bounds=new THREE.Box3();b.traverse(o=>{if(o.isMesh){o.geometry.computeBoundingBox();bounds.union(o.geometry.boundingBox.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld)));}});
-   dishItems.push({kind,count,chopsticks:kind==='筷筒'?8:0,shelf,row,min:bounds.min.toArray(),max:bounds.max.toArray()});
-  });
-  for(const x of [-.303,.303]){
-   for(const dx of [-.274,.274])box(g,.038,.51,.025,x+dx,.925,.225,C.wood);
-   for(const yy of [.686,1.165])box(g,.585,.034,.025,x,yy,.225,C.wood);
-   plane(g,.510,.445,x,.925,.232,'#9fc6d2',null,true);
-   for(const [sx,sy] of [[-1,-1],[1,-1],[-1,1],[1,1]])polygon(g,[[x+sx*.257,.925+sy*.225],[x+sx*.210,.925+sy*.225],[x+sx*.257,.925+sy*.173]],.244,C.wood);
-   box(g,.012,.071,.018,x+(x<0?.24:-.24),.925,.250,C.edge);
+ const cabAnchor=[11.51,0,5.52,-Math.PI/2],cabH=1.22;
+ part('客09','正面参考碗柜与四格陈设',cabAnchor,g=>{
+  const wood='#967749',edge='#755d39',panel='#98794a',blue='#8197b4',rim='#95a9c0';
+  box(g,1.27,.045,.44,0,.0225,0,edge);box(g,1.27,.042,.44,0,1.199,0,wood);
+  box(g,1.22,1.14,.025,0,.61,-.207,'#474940');
+  for(const x of [-.61,.61])box(g,.05,1.18,.44,x,.61,0,wood);
+  for(const [y,h] of [[.575,.035],[.645,.020],[.845,.020]])box(g,1.18,h,.405,0,y,0,y<.6?wood:'#6a6954');
+  box(g,.027,.57,.39,0,.885,-.005,wood);
+  function lathe(parent,points,color){return mesh(new THREE.LatheGeometry(points.map(p=>new THREE.Vector2(...p)),24),color,parent);}
+  function inverted(parent,r,h){
+   lathe(parent,[[r,0],[r,h*.12],[r*.95,h*.31],[r*.83,h*.53],[r*.64,h*.70],[r*.40,h*.82],[r*.38,h*.84],[r*.38,h],[r*.28,h],[r*.28,h*.86],[.002,h*.86],[.002,h*.70],[r*.36,h*.69],[r*.57,h*.59],[r*.75,h*.43],[r-.008,h*.12],[r-.008,0],[r,0]],blue);
+   ring(parent,r-.003,.0028,0,.004,0,rim,Math.PI/2);
   }
-  // The cropped right side is a conservative continuation, documented as a supplement.
-  for(const x of [-.428,-.068]){box(g,.325,.515,.035,x,.346,.23,C.wood);box(g,.27,.445,.009,x,.346,.252,C.light);box(g,.013,.068,.015,x+.11,.36,.263,C.edge);}
-  for(let i=0;i<3;i++)drawer(g,.393,.17+i*.169,.237,.36,.152);
- },[1.27,.46]);
+  function dish(kind,count,quadrant,x,y,z,fn){
+   const b=group(kind,g);b.position.set(x,y,z);fn(b);g.updateWorldMatrix(true,true);const inv=g.matrixWorld.clone().invert(),bounds=new THREE.Box3();
+   b.traverse(o=>{if(o.isMesh){o.geometry.computeBoundingBox();bounds.union(o.geometry.boundingBox.clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld)));}});
+   dishItems.push({kind,count,quadrant,shelf:quadrant.endsWith('上')?1:0,min:bounds.min.toArray(),max:bounds.max.toArray()});
+  }
+  for(const x of [-.45,-.30,-.15])dish('茶杯',1,'左上',x,.855,.065,b=>{
+   cyl(b,.057,.050,.008,0,.004,0,blue);ring(b,.053,.002,0,.008,0,rim,Math.PI/2);
+   const cup=lathe(b,[[.002,0],[.029,0],[.035,.009],[.047,.051],[.047,.060],[.040,.060],[.030,.018],[.002,.018]],blue);cup.position.y=.009;
+   ring(b,.044,.0028,0,.069,0,rim,Math.PI/2);
+  });
+  dish('茶壶',1,'右上',.20,.855,.055,b=>{
+   lathe(b,[[.002,0],[.042,0],[.061,.020],[.067,.085],[.052,.131],[.050,.145],[.043,.145],[.052,.080],[.035,.015],[.002,.015]],blue);
+   const lid=lathe(b,[[.002,0],[.053,0],[.055,.005],[.042,.021],[.018,.035],[.002,.035]],blue);lid.position.y=.141;
+   cyl(b,.010,.014,.014,0,.182,0,blue);ell(b,.014,.009,.014,0,.192,0,blue);
+   tube(b,[[.055,.121,0],[.099,.128,0],[.113,.095,0],[.096,.059,0],[.059,.040,0]],.009,blue);
+   tube(b,[[-.046,.066,0],[-.073,.083,0],[-.095,.137,0]],.013,blue);
+   const mouth=ring(b,.012,.0028,-.095,.137,0,rim);mouth.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),new THREE.Vector3(-.45,.89,0).normalize());
+  });
+  dish('蒸炉',1,'右上',.435,.855,.055,b=>{
+   lathe(b,[[.002,0],[.079,0],[.096,.012],[.101,.066],[.102,.078],[.095,.078],[.088,.020],[.002,.020]],blue);
+   ring(b,.100,.003,0,.076,0,'#677d98',Math.PI/2);
+   const lid=lathe(b,[[.002,0],[.104,0],[.102,.008],[.087,.026],[.054,.044],[.010,.055],[.002,.055]],blue);lid.position.y=.080;
+   ell(b,.014,.010,.012,.012,.140,0,blue);
+  });
+  for(const x of [-.46,-.30])dish('倒扣碗堆',4,'左下',x,.655,.065,b=>{for(let j=0;j<4;j++){const bowl=group('倒扣碗',b);bowl.position.y=j*.034;inverted(bowl,.057,.047);}});
+  dish('倒扣盆',1,'左下',-.125,.655,.065,b=>inverted(b,.082,.126));
+  for(const x of [.125,.285])dish('方形叠层物品',1,'右下',x,.655,.065,b=>{
+   box(b,.130,.137,.158,0,.0685,0,blue,false);box(b,.132,.003,.160,0,.069,0,'#5f7490',false);box(b,.132,.004,.160,0,.135,0,'#8ba1bb',false);
+  });
+  dish('倒扣盆',1,'右下',.465,.655,.065,b=>inverted(b,.086,.126));
+  function roundedPath(path,w,h,r){const x=-w/2,y=-h/2;path.moveTo(x+r,y);path.lineTo(x+w-r,y);path.quadraticCurveTo(x+w,y,x+w,y+r);path.lineTo(x+w,y+h-r);path.quadraticCurveTo(x+w,y+h,x+w-r,y+h);path.lineTo(x+r,y+h);path.quadraticCurveTo(x,y+h,x,y+h-r);path.lineTo(x,y+r);path.quadraticCurveTo(x,y,x+r,y);return path;}
+  for(const x of [-.303,.303]){
+   const shape=new THREE.Shape();shape.moveTo(-.296,-.292);shape.lineTo(.296,-.292);shape.lineTo(.296,.292);shape.lineTo(-.296,.292);shape.closePath();shape.holes.push(roundedPath(new THREE.Path(),.414,.447,.025));
+   const frame=mesh(new THREE.ExtrudeGeometry(shape,{depth:.027,bevelEnabled:false,curveSegments:8}),panel,g,true);frame.position.set(x,.879,.215);
+   const glass=mesh(new THREE.ShapeGeometry(roundedPath(new THREE.Shape(),.414,.447,.025),16),'#414a4d',g,false,null,true);glass.position.set(x,.879,.229);glass.material.opacity=.18;
+   box(g,.020,.115,.004,x+(x<0?-.246:.246),.880,.245,'#594c36');box(g,.007,.092,.004,x+(x<0?-.250:.250),.880,.248,'#ad8e58',false);
+  }
+  box(g,1.19,.53,.010,0,.310,.200,wood,false);
+  for(const [x,handle] of [[-.413,-.558],[-.033,.112]]){
+   box(g,.368,.505,.029,x,.312,.223,panel);
+   round(g,.280,.414,.005,.027,x,.312,.241,'#685338');round(g,.268,.402,.005,.023,x,.312,.245,wood);
+   box(g,.014,.104,.008,handle,.323,.247,'#584b33');box(g,.005,.080,.003,handle-.003,.323,.253,'#ac8c58',false);
+  }
+  for(const y of [.143,.313,.483]){
+   box(g,.407,.153,.028,.402,y,.223,panel);round(g,.350,.116,.004,.023,.402,y,.240,'#6b5434');round(g,.339,.105,.004,.019,.402,y,.243,wood);
+   box(g,.120,.032,.004,.402,y,.248,'#5b4b35');box(g,.098,.010,.003,.402,y-.007,.251,'#ac8b56',false);
+  }
+ },[1.27,.48]);
  part('客10','柜顶达摩及编织容器',[cabAnchor[0],cabH,cabAnchor[2],cabAnchor[3]],g=>{
   const d=group('红色达摩',g);d.position.set(-.34,0,0);ell(d,.135,.171,.119,0,.171,0,'#b6523d');
   // Face conforms to a curved shell and leaves the surrounding red body visible.
@@ -101,13 +128,14 @@ export function createLivingRoom(){
   for(let i=0;i<18;i++){const a=i*Math.PI/9;tube(b,[[Math.cos(a)*.08,.008,Math.sin(a)*.08],[Math.cos(a)*.102,.13,Math.sin(a)*.102]],.0035,'#92734b');}
   ell(b,.082,.082,.074,0,.135,0,'#718d59');for(let i=0;i<7;i++){const a=i*Math.PI*2/7,pts=[];for(let j=0;j<13;j++){const t=.10+j*.13;pts.push([Math.cos(a)*.084*Math.sin(t),.135+.084*Math.cos(t),Math.sin(a)*.076*Math.sin(t)]);}tube(b,pts,.003,'#415f45');}
  });
- const cushionAnchors=[[9.63,0,6.49],[10.40,0,6.49],[9.04,0,5.15,Math.PI/2],[9.04,0,5.89,Math.PI/2],[10.95,0,5.15,-Math.PI/2],[10.95,0,5.89,-Math.PI/2]];
+ const cushionAnchors=[[9.63,0,6.49],[10.40,0,6.49],[9.63,0,4.53,Math.PI/2],[10.40,0,4.53,Math.PI/2],[10.95,0,5.15,-Math.PI/2],[10.95,0,5.89,-Math.PI/2]];
  for(const [i,anchor] of cushionAnchors.entries())part('客11-'+(i+1),'蓝灰色坐垫',anchor,g=>{
   if(i>=2)g.scale.z=.96;
   round(g,.51,.49,.055,.045,0,.030,0,'#91b4bd',Math.PI/2);box(g,.43,.005,.41,0,.059,0,'#9ebfc3',false);
   for(const z of [-.225,.225])tube(g,[[-.20,.044,z],[0,.046,z],[.20,.044,z]],.0028,'#587d83');
   for(const sx of [-1,1])for(const sz of [-1,1])for(const t of [-1,1])tube(g,[[sx*.227,.026,sz*.218],[sx*.267,.027,sz*.252],[sx*(.282+t*.008),.014,sz*(.264-t*.01)]],.0035,'#636650');
  },[.59,i>=2?.54:.56]);
+ const wallDecor=addLivingWallDecor({THREE,part,box,cyl,plane,mesh,tube});
  function decorateDoor(parent,pw,ph){
   parent.userData.checklist='客04';const g=group('客04 白底尖角横纹与圆拉手',parent);
   box(g,pw-.071,ph-.08,.003,pw/2,ph/2+.025,.0245,'#f1f3e8',false);
@@ -123,5 +151,5 @@ export function createLivingRoom(){
   g.clear();for(const {material,gs} of buckets.values()){const flat=gs.map(a=>a.index?a.toNonIndexed():a.clone()),geo=mergeGeometries(flat,false);gs.forEach(a=>a.dispose());flat.forEach(a=>a.dispose());resources.add(geo);g.add(new THREE.Mesh(geo,material));}if(lines.length){const geo=new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(lines,3));resources.add(geo);g.add(new THREE.LineSegments(geo,ink));}
  }
  entries.forEach(e=>finishGroup(e.group));let disposed=false;
- return {root,specification:livingSpecification,entries,obstacles,dishItems,resources,decorateDoor,dispose(){if(disposed)return;disposed=true;resources.forEach(r=>r.dispose());root.removeFromParent();root.clear();}};
+ return {root,specification:livingSpecification,entries,obstacles,dishItems,wallDecor,resources,decorateDoor,setWallMode(mode){for(const g of wallDecor)g.visible=mode==='full';},dispose(){if(disposed)return;disposed=true;resources.forEach(r=>r.dispose());root.removeFromParent();root.clear();}};
 }

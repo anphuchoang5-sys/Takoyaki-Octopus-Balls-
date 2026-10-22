@@ -1,7 +1,7 @@
 // Local graphic details redrawn from the user's animation frame; no room-photo surfaces.
 export function livingArt(THREE,resources){
  const cache=new Map();
- return function texture(id){if(cache.has(id))return cache.get(id);const canvas=document.createElement('canvas');canvas.width=512;canvas.height=id==='bucket'?256:384;const c=canvas.getContext('2d');
+ return function texture(id){if(cache.has(id))return cache.get(id);const canvas=document.createElement('canvas');canvas.width=512;canvas.height=id==='calendar'?640:id==='bucket'?256:384;const c=canvas.getContext('2d');
   const path=(pts,color,stroke=null,width=4)=>{c.beginPath();for(const [i,p] of pts.entries())i?c.lineTo(...p):c.moveTo(...p);c.closePath();c.fillStyle=color;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}};
   const ellipse=(x,y,rx,ry,color)=>{c.fillStyle=color;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill();};
   if(id==='television'){
@@ -23,7 +23,14 @@ export function livingArt(THREE,resources){
    path([[243,184],[223,237],[256,248],[289,237],[269,184]],'#ae694e');
    c.strokeStyle='#554638';c.lineWidth=8;for(const s of [-1,1])for(let i=0;i<3;i++){c.beginPath();c.moveTo(256+s*35,255+i*8);c.quadraticCurveTo(256+s*95,250+i*17,256+s*(160+i*12),213+i*29);c.stroke();}
    c.strokeStyle='#ac4e3d';c.lineWidth=8;for(const s of [-1,1]){c.beginPath();c.moveTo(256+s*156,129);c.lineTo(256+s*188,106);c.stroke();}
+  }else if(id==='calendar'){
+   c.fillStyle='#e3e5d5';c.fillRect(0,0,512,640);c.strokeStyle='#697566';c.lineWidth=4;c.strokeRect(10,10,492,620);
+   c.fillStyle='#566251';c.font='64px "Yu Gothic",sans-serif';c.fillText('10',33,80);
+   c.font='bold 38px "Yu Gothic",sans-serif';c.textAlign='center';
+   for(let day=1;day<=31;day++){const slot=day+5,col=slot%7,row=Math.floor(slot/7);c.fillStyle=col===0?'#976b62':'#566550';c.fillText(String(day),50+col*68,125+row*52);}
+   c.save();c.translate(0,430);c.scale(1,1.65);c.fillStyle='#61715e';c.font='bold 97px "Yu Gothic","Meiryo",sans-serif';c.fillText('さとう酒店',256,105,478);c.restore();
   }else if(id==='bucket'){
+
    c.fillStyle='#dec393';c.fillRect(0,0,512,256);c.strokeStyle='#a17b58';c.lineWidth=5;
    for(const x of [54,177,302,426]){c.beginPath();c.moveTo(x-12,62);c.lineTo(x+12,62);c.moveTo(x,47);c.lineTo(x,77);c.stroke();c.beginPath();c.moveTo(x+40,153);c.lineTo(x+62,153);c.moveTo(x+51,139);c.lineTo(x+51,168);c.stroke();}
    c.lineWidth=2.5;for(let i=0;i<15;i++){const x=18+(i*73)%490,y=95+(i%4)*27;c.beginPath();c.moveTo(x,y);c.lineTo(x+10+(i%3)*3,y+2);c.stroke();}

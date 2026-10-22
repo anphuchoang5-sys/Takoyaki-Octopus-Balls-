@@ -31,7 +31,9 @@ try {
   const setPrecipitation=weather.setWeather;
 
   const canvas=document.createElement('canvas');canvas.id='editor-world';canvas.tabIndex=0;
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+  // Scene edges use the four-sample offscreen target below. The output canvas
+  // only receives a full-screen pass, so a second MSAA buffer adds no detail.
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.65));renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;

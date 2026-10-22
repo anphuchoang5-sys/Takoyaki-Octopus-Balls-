@@ -19,7 +19,9 @@ try {
  const livingViews={
   'living-reference':{p:[10.01,2.46,7.15],t:[10.01,.72,4.95],zoom:.64,title:'客厅 · 动画参考机位'},
   'living-tv':{p:[10.05,1.57,5.76],t:[8.78,.65,4.28],title:'客厅 · 电视、书本与小桶'},
-  'living-cabinet':{p:[9.67,1.70,6.34],t:[11.51,.80,5.26],title:'客厅 · 餐具柜与摆件'},
+  'living-cabinet':{p:[9.67,1.70,6.60],t:[11.51,.80,5.52],title:'客厅 · 餐具柜与摆件',reference:'living-03-cabinet.jpg'},
+  'living-cabinet-front':{p:[8.55,1.80,5.24],t:[11.51,.90,5.24],zoom:1.12,title:'客厅 · 碗柜正面与日历',reference:'living-03-cabinet.jpg'},
+  'living-window':{p:[9.95,1.42,4.73],t:[9.95,1.30,7.20],zoom:1.35,title:'客厅 · 窗框窗帘正面',reference:'living-04-window.jpg'},
   'living-reverse':{p:[9.42,2.23,3.93],t:[10.25,.67,6.06],title:'客厅 · 侧后查看'}
  };
  const desks={
@@ -35,7 +37,7 @@ try {
   if(refTab==='room'){const r=rooms.find(r=>r.id===selected);file=r?.ref||'03-whole.jpg';caption=r?`${r.name} · 主参考对应视角。${r.note}`:'主参考的整屋三维俯视。使用“参考视角”对照整体空间。';}
   if(refTab==='anime'){const a=anime[selected||'living'];if(a){[file,caption]=a;source=sources.details;}else {file=rooms.find(r=>r.id===selected)?.ref||'03-whole.jpg';caption='当前房间暂显示主参考；本阶段未把文章中的作者三维图当作动画截图。';}}
   if(selected==='sisters'&&refTab==='anime'){file=desk?desks[desk].reference:'sisters-02-room.jpg';caption=desk?desks[desk].caption:'用户动画参考 · 入口两侧书柜与粉色姐妹房陈设。';source=null;}
-  if(selected==='living'&&refTab==='anime')source=null;
+  if(selected==='living'&&refTab==='anime'){source=null;const ref=livingViews[livingView]?.reference;if(ref){file=ref;caption=ref==='living-04-window.jpg'?'用户动画参考 · 两根内部横档、米白束帘及下部两道粉带。':'用户动画参考 · 碗柜四格、木框拉手、柜左日历；柜顶被裁切。';}}
   const image=document.getElementById('reference-image'),link=document.getElementById('reference-image-link');image.src=globalThis.__interiorReferences?.[file]||new URL('./references/'+file,import.meta.url).href;link.href=image.src;document.getElementById('reference-caption').textContent=caption;const sourceLink=document.getElementById('reference-source');sourceLink.hidden=!source;if(source)sourceLink.href=source;else sourceLink.removeAttribute('href');
   document.querySelectorAll('[data-ref]').forEach(b=>b.classList.toggle('active',b.dataset.ref===refTab));
  }
@@ -54,7 +56,7 @@ try {
   if(id==='sisters'||id==='living')setWallMode('full');
   document.getElementById('view-title').textContent=r.name;document.getElementById('view-subtitle').textContent=(r.ja||r.name)+(id==='sisters'?' · 已精修':id==='living'?' · 精修待审':' · 原结构样板');document.getElementById('room-note').textContent=id==='sisters'?'两张书桌、入口书柜、圆镜、玩偶与最新贴画 · 可选两张书桌近看':r.note;refTab=id==='sisters'||id==='living'?'anime':'room';updateButtons();refreshReference();}
  function focusDesk(name){if(!desks[name])throw new Error('Unknown sisters desk');const v=desks[name];selected='sisters';current='desk';desk=name;livingView=null;aim(v.p,v.t,1,true);setWallMode('full');house.setCeiling(false);document.getElementById('ceiling').checked=false;document.getElementById('view-title').textContent='姐妹房 · '+v.title;document.getElementById('view-subtitle').textContent='整屋内的实际陈设 · 拖动旋转，滚轮缩放';document.getElementById('room-note').textContent=name==='maruko'?'MoMoE贴画已加宽，重画持麦姿势与人物比例':'秀树为正方形贴画，浅蓝衣服与蓝底分开';refTab='anime';updateButtons();refreshReference();}
- function focusLiving(name){const v=livingViews[name];if(!v)throw new Error('Unknown living view');selected='living';current=name;desk=null;livingView=name;aim(v.p,v.t,v.zoom||1,true);setWallMode('full');house.setCeiling(false);document.getElementById('ceiling').checked=false;document.getElementById('view-title').textContent=v.title;document.getElementById('view-subtitle').textContent='客01—客12 · 精修待审';document.getElementById('room-note').textContent='尺寸、背面、裁切柜体和绿色摆件为补全 · 原图人物不在场景中';refTab='anime';updateButtons();refreshReference();}
+ function focusLiving(name){const v=livingViews[name];if(!v)throw new Error('Unknown living view');selected='living';current=name;desk=null;livingView=name;aim(v.p,v.t,v.zoom||1,true);setWallMode('full');house.setCeiling(false);document.getElementById('ceiling').checked=false;document.getElementById('view-title').textContent=v.title;document.getElementById('view-subtitle').textContent='客01—客16 · 精修待审';document.getElementById('room-note').textContent='尺寸、背面、裁切柜体和绿色摆件为补全 · 原图人物不在场景中';refTab='anime';updateButtons();refreshReference();}
  function updateButtons(){document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===current));document.querySelectorAll('[data-room]').forEach(b=>b.classList.toggle('active',b.dataset.room===selected));document.querySelectorAll('[data-desk]').forEach(b=>b.classList.toggle('active',b.dataset.desk===desk));}
  function compare(show){document.getElementById('reference-panel').hidden=!show;document.getElementById('compare').classList.toggle('active',show);resize();if(livingView)focusLiving(livingView);else if(desk)focusDesk(desk);else if(selected)focusRoom(selected);else if(current!=='corridor-view')setView(current);}
  document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));document.querySelectorAll('[data-ref]').forEach(b=>b.onclick=()=>{refTab=b.dataset.ref;refreshReference();});

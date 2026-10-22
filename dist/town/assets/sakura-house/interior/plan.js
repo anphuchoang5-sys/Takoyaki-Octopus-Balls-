@@ -56,7 +56,7 @@ export const connections=[['entry','hall'],['hall','corridor'],['hall','living']
 export const entry={position:[11.28,-.16,.28],facing:[0,0,1],exit:[11.28,-.16,-.32],stepHeight:.16};
 export const routes={
  main:[[11.28,.28],[10.93,1.9],[10.93,3.17],[.46,3.17],[.46,7.7]],
- living:[[10.4,3.17],[10.4,4.25],[10.0,4.45]],
+ living:[[10.4,3.17],[10.4,4.0],[10.0,4.0]],
  kitchen:[[8.82,3.17],[8.82,2.15],[8.65,1.3]],
  parents:[[3.22,3.17],[3.22,2.1],[3.8,1.4]],
  sisters:[[6.45,3.17],[6.45,4.1],[6.4,5.4]],

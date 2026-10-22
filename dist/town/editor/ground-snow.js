@@ -26,5 +26,6 @@ export function createGroundSnow(parent,{tileSize=14}){
     layer.root.name='地图地面与道路积雪';layer.setAmount(amount);revision++;
   }
   return {rebuild,setAmount(value){amount=value;layer?.setAmount(value);},sample:(x,z)=>layer?.sample(x,z),
+    sampleInto:(x,z,out)=>layer?.sampleInto(x,z,out),
     getInspection:()=>({...layer?.getInspection(),revision}),dispose(){layer?.dispose();owned.forEach(g=>g.dispose());owned=[];source=null;}};
 }

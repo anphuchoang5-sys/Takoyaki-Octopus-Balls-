@@ -12,7 +12,13 @@ export function createPreviewLighting(scene,sceneView) {
   fill.position.set(20,14,-20);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.00012;sun.shadow.normalBias=.025;sun.shadow.radius=3;
   Object.assign(sun.shadow.camera,{near:1,far:220,left:-65,right:65,top:65,bottom:-65});root.add(sky,sun,sun.target,fill);
   const lamps=Array.from({length:10},()=>{const l=new THREE.PointLight('#ffcf8e',0,7,2);root.add(l);return l;});
-  const spots=Array.from({length:4},()=>{const l=new THREE.SpotLight('#ffd8a6',0,4.3,Math.PI*.39,.8,1.5);l.castShadow=true;l.shadow.mapSize.set(1024,1024);root.add(l,l.target);return l;});
+  const spots=Array.from({length:4},()=>{const l=new THREE.SpotLight('#ffd8a6',0,4.3,Math.PI*.39,.8,1.5);l.shadow.mapSize.set(1024,1024);root.add(l,l.target);return l;});
+  function setShadow(light,enabled){
+    if(!enabled){
+      light.castShadow=false;
+      if(light.shadow){light.shadow.map?.dispose();light.shadow.mapPass?.dispose();light.shadow.map=null;light.shadow.mapPass=null;}
+    }else if(!light.castShadow){light.castShadow=true;light.shadow.needsUpdate=true;}
+  }
   let environment={time:'afternoon',weather:'clear'},demand={point:0,spot:0},assignments=[];
   function setEnvironment(next){
     environment={...environment,...next};const p=PERIODS[environment.time],cloud=environment.weather==='clear'?1:.83;
@@ -32,12 +38,13 @@ export function createPreviewLighting(scene,sceneView) {
     for(const [type,pool] of [['point',lamps],['spot',spots]]){
       const entries=descriptors.filter(e=>e.d.type===type);
       pool.forEach((l,i)=>{
-        const entry=entries[i];l.intensity=entry?.d.intensity||0;l.userData.instanceId=entry?.placement.id||null;if(!entry)return;
+        const entry=entries[i];l.intensity=entry?.d.intensity||0;l.userData.instanceId=entry?.placement.id||null;
+        if(!entry){setShadow(l,false);return;}
         const {asset,placement,d}=entry;l.color.set(d.color);l.distance=d.distance*asset.root.getWorldScale(new THREE.Vector3()).x;l.decay=d.decay??2;
         l.position.copy(asset.root.localToWorld(new THREE.Vector3(...d.position)));
         if(type==='spot'){
           l.target.position.copy(asset.root.localToWorld(new THREE.Vector3(...d.target)));
-          l.angle=d.angle??Math.PI*.39;l.penumbra=d.penumbra??.8;l.castShadow=d.castShadow!==false;
+          l.angle=d.angle??Math.PI*.39;l.penumbra=d.penumbra??.8;setShadow(l,d.castShadow!==false);
           l.shadow.bias=d.shadowBias??-.0002;l.shadow.normalBias=d.shadowNormalBias??.012;l.shadow.camera.near=d.shadowNear??.06;
         }
         assignments.push({instanceId:placement.id,id:d.id,type,position:l.position.toArray(),target:type==='spot'?l.target.position.toArray():null,intensity:l.intensity});

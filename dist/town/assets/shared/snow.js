@@ -123,13 +123,15 @@ export function createSnowLayer(root,{key,parts,choose,step=.25,sourceRoot=root,
   const materials=parts.map(()=>snowMaterial()),empty=new THREE.BufferGeometry();
   const mesh=new THREE.Mesh(empty,materials);mesh.name='surface-snow';mesh.castShadow=!parts.every(p=>p.kind==='map');mesh.receiveShadow=true;mesh.visible=false;group.add(mesh);
   const replacements=new Map();let entry=null,amount=0,disposed=false;
+  let lookup=null,mask='',disabled=new Set(),replacementList=[];
+  const replacementHit={y:0,normal:new THREE.Vector3(),part:0};
   const client={desired:0,frame:null,install(frame){
-    if(client.frame===frame)return;if(client.frame)client.frame.refs--;client.frame=frame;frame.refs++;surfaceRevision++;mesh.geometry=frame.geometry;mesh.visible=amount>0;
+    if(client.frame===frame)return;if(client.frame)client.frame.refs--;client.frame=frame;lookup=null;frame.refs++;surfaceRevision++;mesh.geometry=frame.geometry;mesh.visible=amount>0;
   }};
   const options={id:key,parts,step,groundBounds,minNormal:.15,preparedURL};
   function prepare(){if(!entry){entry=acquire(key,sourceRoot,choose,options);entry.clients.add(client);}}
   function release(){
-    if(client.frame)client.frame.refs--;client.frame=null;mesh.geometry=empty;mesh.visible=false;
+    if(client.frame)client.frame.refs--;client.frame=null;lookup=null;mesh.geometry=empty;mesh.visible=false;
     if(entry){entry.clients.delete(client);entry.prune();if(!entry.clients.size)destroy(entry);entry=null;}
   }
   function setAmount(value){
@@ -140,18 +142,23 @@ export function createSnowLayer(root,{key,parts,choose,step=.25,sourceRoot=root,
     prepare();
     mesh.visible=!!client.frame;entry.pump();
   }
-  function sample(x,z){
+  function sampleInto(x,z,out){
     if(!amount||disposed)return null;let best=null;const frame=client.frame;
     if(frame&&mesh.visible){
-      const disabled=[...replacements.keys()].sort(),mask=disabled.join('|');
-      if(!frame.lookups.has(mask)){
-        frame.lookups.set(mask,indexPackedTriangles(frame.top,frame.parts,new Set(disabled.map(id=>parts.findIndex(p=>p.id===id)))));
+      if(!lookup){
+        if(!frame.lookups.has(mask))frame.lookups.set(mask,indexPackedTriangles(frame.top,frame.parts,disabled));
+        lookup=frame.lookups.get(mask);
       }
-      best=frame.lookups.get(mask).sample(x,z);
+      best=lookup.sampleInto(x,z,out);
     }
-    for(const p of replacements.values()){const hit=p.sample(x,z);if(hit&&(!best||hit.y>best.y))best=hit;}return best;
+    for(const p of replacementList){
+      const hit=p.sampleInto?p.sampleInto(x,z,replacementHit):p.sample(x,z);
+      if(hit&&(!best||hit.y>best.y)){out.y=hit.y;out.normal.copy(hit.normal);out.part=hit.part;best=out;}
+    }
+    return best;
   }
-  return {root:group,setAmount,sample,prepare,
+  const sample=(x,z)=>sampleInto(x,z,{y:0,normal:new THREE.Vector3(),part:0});
+  return {root:group,setAmount,sample,sampleInto,prepare,
     // Maintenance input for the offline preparation tool, collected only on demand.
     getPreparationSource:()=>({source:collectSnowSource(sourceRoot,choose,groundBounds),options}),
     replacePart(id,factory){
@@ -160,12 +167,13 @@ export function createSnowLayer(root,{key,parts,choose,step=.25,sourceRoot=root,
       if(next&&(!next.root||typeof next.setAmount!=='function'||typeof next.sample!=='function'||typeof next.dispose!=='function'))throw new Error('专属雪层必须提供 root/setAmount/sample/dispose');
       next?.setAmount(amount);replacements.get(id)?.root.removeFromParent();replacements.get(id)?.dispose();replacements.delete(id);
       if(next){next.root.userData.snowLayer=true;group.add(next.root);replacements.set(id,next);}materials[index].visible=!next;surfaceRevision++;
+      const ids=[...replacements.keys()].sort();mask=ids.join('|');disabled=new Set(ids.map(id=>parts.findIndex(p=>p.id===id)));lookup=null;replacementList=[...replacements.values()];
     },
     getInspection:()=>({...client.frame?.stats,coverageRatio:mesh.visible?client.frame?.stats.coverageRatio??0:0,maxThickness:mesh.visible?client.frame?.stats.maxThickness??0:0,amount,shown:mesh.visible?client.frame?.amount??0:0,ready:entry?.ready??!amount,busy:entry?.busy??false,error:entry?.error??null,preparation:entry?.stats,
       parts:parts.map(p=>({id:p.id,mode:replacements.has(p.id)?'specialized':'generic'})),sharedClients:entry?.clients.size??0,
       memory:entry?{frames:entry.frames.size,inFlight:entry.busy?1:0,geometryBytes:[...entry.frames.values()].reduce((s,f)=>s+Object.values(f.geometry.attributes).reduce((n,a)=>n+a.array.buffer.byteLength,0)+(f.geometry.index?.array.byteLength||0)+f.top.byteLength+f.parts.byteLength,0),queryVariants:[...entry.frames.values()].reduce((s,f)=>s+f.lookups.size,0)}:null}),
     dispose(){
-      if(disposed)return;disposed=true;group.removeFromParent();replacements.forEach(p=>p.dispose());replacements.clear();materials.forEach(m=>m.dispose());empty.dispose();
+      if(disposed)return;disposed=true;group.removeFromParent();replacements.forEach(p=>p.dispose());replacements.clear();replacementList=[];materials.forEach(m=>m.dispose());empty.dispose();
       release();
     }};
 }

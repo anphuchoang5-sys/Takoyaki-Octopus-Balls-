@@ -17,6 +17,7 @@ try{
  await page.waitForFunction(()=>window.__flower?.ready,{timeout:30000});
  await page.waitForTimeout(350);
  const initial=await page.evaluate(()=>window.__flower.inspect());
+ const revision=await page.evaluate(()=>window.__flower.asset.specification.revision);
  await page.screenshot({path:path.join(out,'00-interactive.png')});
  await page.evaluate(()=>window.__flower.clean());
  for(const view of ['reference','hero','left','right','back','top','roof','gate','balcony']){
@@ -94,13 +95,18 @@ try{
      await page.locator('#reset').click();await page.screenshot({path:path.join(out,'offline-preview.png')});
      const shots=[['hero','立体全景'],['left','左侧'],['right','右侧'],['back','背面补全'],['roof','屋面交接'],['gate','院门与花盆'],['balcony','阳台与百叶'],['top','俯视']];
      const gallery=`<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>花满橙瓦屋 · 参考与模型</title><style>body{margin:0;background:#edf0e6;color:#45543f;font:14px/1.8 'Microsoft YaHei',sans-serif}main{max-width:1600px;margin:auto;padding:30px}h1{font-size:30px;font-weight:500}a{color:#637e52}.pair,.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0}figure{margin:0;background:#f8faf2;border-radius:8px;overflow:hidden}img{width:100%;display:block}figcaption{padding:10px 15px}.pair{align-items:center}.pair img{aspect-ratio:1.6;object-fit:contain}.note{color:#7d8973;font-size:12px}</style><main><h1>花满橙瓦屋</h1><p>以用户动画截图为主参考的独立建筑外观 · <a href="花满橙瓦屋-三维预览.html">打开可旋转缩放的三维预览</a></p><div class="pair" id="comparison"><figure><img src="${ref}"><figcaption>用户原始动画参考</figcaption></figure><figure><img src="reference.png"><figcaption>本轮真实三维 · 接近参考的正面机位</figcaption></figure></div><p class="note">图中未见的背面、纵深、主屋顶短侧坡、附屋连接和住宅入户位置属于补全；原图左侧邻屋及背景不作为本建筑。独立室内、正式地图接入及雪景未制作，画面等待用户认可。</p><div class="grid">${shots.map(([f,t])=>`<figure><img src="${f}.png"><figcaption>${t}</figcaption></figure>`).join('')}</div></main></html>`;
-     const galleryPath=path.join(out,'原图与模型对照.html');await writeFile(galleryPath,gallery);await page.goto(pathToFileURL(galleryPath).href);await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));await page.locator('#comparison').screenshot({path:path.join(out,'reference-comparison.png')});
+     let entryComparison='';
+     if(process.argv.includes('--entry')){
+       entryComparison=`<h2>本轮只调整院门入口</h2><p>围墙向内折回，院门与黄色小屋顶后退；两级低台阶通向门前平台，三只花盆落在平台和踏步上。下图采用相同机位、光照和缩放。</p><div class="pair" id="entry-comparison"><figure><img src="entry-before-gate.png"><figcaption>修改前 · 院门齐墙，台阶向外伸，右侧粉花盆落在草地</figcaption></figure><figure><img src="entry-after-gate.png"><figcaption>修改后 · 院门内凹，折墙形成进深，台阶分层摆花</figcaption></figure></div><div class="pair"><figure><img src="entry-before-left.png"><figcaption>修改前 · 左侧斜视</figcaption></figure><figure><img src="entry-after-left.png"><figcaption>修改后 · 可见右侧折墙与花盆承托</figcaption></figure></div><div class="pair"><figure><img src="entry-before-reference.png"><figcaption>修改前 · 整体正面</figcaption></figure><figure><img src="entry-after-reference.png"><figcaption>修改后 · 主体、屋顶、窗与阳台保持原样</figcaption></figure></div>`;
+     }
+     const galleryPath=path.join(out,'原图与模型对照.html');await writeFile(galleryPath,gallery.replace('<div class="grid">',entryComparison+'<div class="grid">'));await page.goto(pathToFileURL(galleryPath).href);await page.waitForFunction(()=>[...document.images].every(i=>i.complete&&i.naturalWidth>0));await page.locator('#comparison').screenshot({path:path.join(out,'reference-comparison.png')});
+     if(entryComparison)await page.locator('#entry-comparison').screenshot({path:path.join(out,'entry-before-after.png')});
      delivery={glb:{bytes:result.bytes,meshes:result.meshes,roundtrip:true,bounds:result.roundtripBounds},offline:{modules:visited.size,bytes:Buffer.byteLength(html),networkRequests:requests.length,orbit:true,zoom:true,references:true}};
    }
    assert.deepEqual(errors,[]);
    const original=JSON.parse((await readFile(path.join(out,'boundary-before.json'),'utf8')).replace(/^\uFEFF/,'')),changed=[];
    for(const item of original){try{const hash=createHash('sha256').update(await readFile(item.path)).digest('hex');if(hash.toUpperCase()!==item.hash)changed.push(item.path);}catch{changed.push(item.path);}}
-   const report={passed:true,revision:'exterior-01',geometry:{nonfinite:geometry.nonfinite,degenerate:geometry.degenerate,triangles:geometry.triangles,meshCount:geometry.meshCount,rotations:geometry.rotations,potSupportChecks:geometry.contacts,windowRecessChecks:geometry.recesses,roofValleyChecks:geometry.seams},lifecycle,interaction,delivery,errors,warnings,boundary:{checked:original.length,changedOutsideTask:changed},visualAcceptance:'Pending user review; screenshots are actual WebGL output.'};
+   const report={passed:true,revision,geometry:{nonfinite:geometry.nonfinite,degenerate:geometry.degenerate,triangles:geometry.triangles,meshCount:geometry.meshCount,rotations:geometry.rotations,potSupportChecks:geometry.contacts,windowRecessChecks:geometry.recesses,roofValleyChecks:geometry.seams},lifecycle,interaction,delivery,errors,warnings,boundary:{baseline:'exterior-01 historical snapshot',checked:original.length,changedOutsideTask:changed},visualAcceptance:'Pending user review; screenshots are actual WebGL output.'};
    await writeFile(path.join(out,'inspection.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
  }
 }finally{await browser.close();}

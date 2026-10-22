@@ -15,13 +15,13 @@ function noise(x,z){
 // Numeric work buffers, rather than millions of boxed JS numbers/triangle objects.
 class Numbers {
   constructor(Type=Float32Array,capacity=1024){this.Type=Type;this.data=new Type(capacity);this.length=0;}
-  push(...values){
-    if(this.length+values.length>this.data.length){const next=new this.Type(Math.max(this.length+values.length,Math.ceil(this.data.length*1.5)));next.set(this.data);this.data=next;}
-    this.data.set(values,this.length);this.length+=values.length;
-  }
   push3(x,y,z){
     if(this.length+3>this.data.length){const next=new this.Type(Math.max(this.length+3,Math.ceil(this.data.length*1.5)));next.set(this.data);this.data=next;}
     const i=this.length;this.data[i]=x;this.data[i+1]=y;this.data[i+2]=z;this.length+=3;
+  }
+  push1(value){
+    if(this.length===this.data.length){const next=new this.Type(Math.ceil(this.data.length*1.5));next.set(this.data);this.data=next;}
+    this.data[this.length++]=value;
   }
   view(){return this.data.subarray(0,this.length);}
 }
@@ -119,6 +119,13 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
   let {vertexData}=prepared;
   const {faces,shared,occlusions,facetCount,sourceFaces,sourceArea,partStats,topology,preparationMs}=prepared;
   const face=Array.from({length:3},()=>({normal:new THREE.Vector3()}));
+  // A triangle clipped by one threshold has at most four vertices/two crossings.
+  // These records never escape the serial generator or become live geometry.
+  const crossings=Array.from({length:2},()=>({normal:new THREE.Vector3()}));
+  const poly=[],masks=[],bottom=Array.from({length:4},()=>new THREE.Vector3()),top=Array.from({length:4},()=>new THREE.Vector3());
+  const center=new THREE.Vector3(),faceNormal=new THREE.Vector3(),faceEdge=new THREE.Vector3(),sideNormal=new THREE.Vector3(),sideEdge=new THREE.Vector3(),mid=new THREE.Vector3(),hintNormals=new Array(3);
+  const pointFields=['x','y','z','fill','high','score','mound','edge','depth'];
+  const flatKind=kind=>kind==='ground'||kind==='map'||kind==='road';
   const material=new THREE.MeshStandardMaterial({color:'#f6fafc',roughness:.98,metalness:0,side:THREE.FrontSide});
   const mesh=new THREE.Mesh(new THREE.BufferGeometry(),material);mesh.name=`surface-snow-${options.id}`;
   mesh.castShadow=mesh.receiveShadow=true;
@@ -130,14 +137,14 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
     if(!workspace.has(name))workspace.set(name,new Numbers(Type));
     const b=workspace.get(name);b.length=0;return b;
   }
-  function interpolate(a,b,t){
-    const out={part:a.part};for(const k of ['x','y','z','fill','high','score','mound','edge','depth'])out[k]=THREE.MathUtils.lerp(a[k],b[k],t);
-    out.normal=a.normal.clone().lerp(b.normal,t).normalize();return out;
+  function interpolate(a,b,t,out){
+    out.part=a.part;for(const k of pointFields)out[k]=THREE.MathUtils.lerp(a[k],b[k],t);
+    out.normal.copy(a.normal).lerp(b.normal,t).normalize();return out;
   }
   function height(p,threshold){
     const coverage=smooth(0,.12,threshold-p.score);
     const thin=.0018+.018*smooth(0,.65,amount);
-    const deep=p.depth*Math.pow(amount,2.65)*(['ground','map','road'].includes(options.parts?.[p.part]?.kind)?1:p.mound);
+    const deep=p.depth*Math.pow(amount,2.65)*(flatKind(options.parts?.[p.part]?.kind)?1:p.mound);
     const base=p.y+(p.high-p.y)*smooth(.2,.6,amount);
     const top=base+Math.max(thin,thin+deep+p.fill*smooth(.22,.86,amount))*p.edge;
     return p.y+Math.max(0,top-p.y)*coverage;
@@ -196,7 +203,7 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
         }
       }
       const id=positions.length/3;
-      positions.push3(vertexValues[0],vertexValues[1],vertexValues[2]);normals.push3(vertexValues[3],vertexValues[4],vertexValues[5]);colors.push3(vertexValues[6],vertexValues[7],vertexValues[8]);vertexHashes.push(hash);
+      positions.push3(vertexValues[0],vertexValues[1],vertexValues[2]);normals.push3(vertexValues[3],vertexValues[4],vertexValues[5]);colors.push3(vertexValues[6],vertexValues[7],vertexValues[8]);vertexHashes.push1(hash);
       if(!top){vertexTable.data[slot]=id;vertexCount++;}return id;
     }
     function emit(a,b,c,ns=null){
@@ -214,33 +221,35 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
         if(groupPart>=0&&indices.length>groupStart)groups.push({start:groupStart,count:indices.length-groupStart,materialIndex:groupPart});
         groupPart=face[0].part;groupStart=indices.length;
       }
-      const poly=[],masks=[];
+      poly.length=0;masks.length=0;let crossing=0;
       for(let i=0;i<3;i++){
         const a=face[i],b=face[(i+1)%3],da=threshold-a.score,db=threshold-b.score;
         if(da>0){poly.push(a);masks.push((1<<i)|(1<<((i+2)%3)));}
-        if((da>0)!==(db>0)){poly.push(interpolate(a,b,da/(da-db)));masks.push(1<<i);}
+        if((da>0)!==(db>0)){poly.push(interpolate(a,b,da/(da-db),crossings[crossing++]));masks.push(1<<i);}
       }
       if(poly.length<3)continue;
       occlusionError=Math.max(occlusionError,occlusions[faceIndex]);
-      const bottom=poly.map(p=>new THREE.Vector3(p.x,p.y,p.z));
-      const top=poly.map(p=>new THREE.Vector3(p.x,height(p,threshold),p.z));
-      const center=bottom.reduce((v,p)=>v.add(p),new THREE.Vector3()).multiplyScalar(1/poly.length);
+      center.set(0,0,0);
+      for(let i=0;i<poly.length;i++){const p=poly[i];bottom[i].set(p.x,p.y,p.z);top[i].set(p.x,height(p,threshold),p.z);center.add(bottom[i]);}
+      center.multiplyScalar(1/poly.length);
       for(let i=1;i<poly.length-1;i++){
-        const a=top[0],b=top[i],c=top[i+1],tri=triangle(a,b,c);
+        const a=top[0],b=top[i],c=top[i+1],denom=(b.z-c.z)*(a.x-c.x)+(c.x-b.x)*(a.z-c.z);
         // Skip zero thickness fragments at the edge of a newly appearing patch.
         if(Math.max(a.y-bottom[0].y,b.y-bottom[i].y,c.y-bottom[i+1].y)<1e-7)continue;
-        const offset=positions.length;emit(a,b,c,[poly[0].normal,poly[i].normal,poly[i+1].normal]);
+        hintNormals[0]=poly[0].normal;hintNormals[1]=poly[i].normal;hintNormals[2]=poly[i+1].normal;
+        const offset=positions.length;emit(a,b,c,hintNormals);
         if(positions.length===offset)continue;
-        offsets.push(offset);partIds.push(face[0].part);
-        const n=new THREE.Vector3().subVectors(b,a).cross(new THREE.Vector3().subVectors(c,a));
-        for(const [v,hint] of [[a,poly[0]],[b,poly[i]],[c,poly[i+1]]]){
+        offsets.push1(offset);partIds.push1(face[0].part);
+        const n=faceNormal.subVectors(b,a).cross(faceEdge.subVectors(c,a));
+        for(let j=0;j<3;j++){
+          const index=j===0?0:j===1?i:i+1,v=top[index],hint=poly[index];
           const id=weld(v);
-          sums.data[id*3]+=n.x;sums.data[id*3+1]+=n.y;sums.data[id*3+2]+=n.z;weldIds.push(id);
+          sums.data[id*3]+=n.x;sums.data[id*3+1]+=n.y;sums.data[id*3+2]+=n.z;weldIds.push1(id);
           const kind=options.parts?.[hint.part]?.kind;
-          blends.push(kind==='shrub'?.92:['ground','map','road'].includes(kind)?0:hint.edge>.98?.88:.25);
+          blends.push1(kind==='shrub'?.92:flatKind(kind)?0:hint.edge>.98?.88:.25);
         }
         emit(bottom[0],bottom[i+1],bottom[i]);
-        coverageArea+=Math.abs(tri.denom)/2;
+        coverageArea+=Math.abs(denom)/2;
         if(offsets.length%Math.max(1,Math.floor(facetCount/600))===0){
           const p=bottom[0].clone().add(bottom[i]).add(bottom[i+1]).multiplyScalar(1/3),baseTri=triangle(...face),w=weights(baseTri,p.x,p.z);
           if(w)bottomError=Math.max(bottomError,Math.abs(p.y-baseTri.a.y*w[0]-baseTri.b.y*w[1]-baseTri.c.y*w[2]));
@@ -252,13 +261,14 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
         const j=(i+1)%poly.length;
         maxThickness=Math.max(maxThickness,top[i].y-bottom[i].y);
         if(shared[faceIndex]&masks[i]&masks[j])continue;
-        for(const verts of [[top[i],bottom[i],bottom[j]],[top[i],bottom[j],top[j]]]){
-          let t=triangle(...verts);
-          if(t.normal.lengthSq()<1e-8)continue;
-          const mid=verts.reduce((v,p)=>v.add(p),new THREE.Vector3()).multiplyScalar(1/3);
-          if(t.normal.x*(mid.x-center.x)+t.normal.z*(mid.z-center.z)<-1e-8){[verts[1],verts[2]]=[verts[2],verts[1]];t=triangle(...verts);}
-          emit(...verts);sideCount++;
-          if(t.normal.x*(mid.x-center.x)+t.normal.z*(mid.z-center.z)<-1e-8)sideInward++;
+        for(let half=0;half<2;half++){
+          const a=top[i];let b=half===0?bottom[i]:bottom[j],c=half===0?bottom[j]:top[j];
+          sideNormal.subVectors(b,a).cross(sideEdge.subVectors(c,a)).normalize();
+          if(sideNormal.lengthSq()<1e-8)continue;
+          mid.set(0,0,0).add(a).add(b).add(c).multiplyScalar(1/3);
+          if(sideNormal.x*(mid.x-center.x)+sideNormal.z*(mid.z-center.z)<-1e-8){const swap=b;b=c;c=swap;sideNormal.subVectors(b,a).cross(sideEdge.subVectors(c,a)).normalize();}
+          emit(a,b,c);sideCount++;
+          if(sideNormal.x*(mid.x-center.x)+sideNormal.z*(mid.z-center.z)<-1e-8)sideInward++;
         }
       }
     }
@@ -293,7 +303,7 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
     },
     takeFrame(allocate=(name,Type,length)=>new Type(length)){
       const g=mesh.geometry,p=g.attributes.position.array,top=allocate('top',Float32Array,topOffsets.length*9),parts=allocate('parts',Int16Array,topParts.length);
-      for(let i=0;i<topOffsets.length;i++)top.set(p.subarray(topOffsets[i],topOffsets[i]+9),i*9);
+      for(let i=0;i<topOffsets.length;i++)for(let j=0;j<9;j++)top[i*9+j]=p[topOffsets[i]+j];
       parts.set(topParts);
       // The index packer makes the sole transferable frame. Keep these as views,
       // avoiding another full-size copy of the formed topology before packing.

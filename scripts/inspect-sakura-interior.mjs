@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 
 const out='artifacts/buildings/sakura-house/interior';await mkdir(out,{recursive:true});
 const hash=data=>createHash('sha256').update(data).digest('hex');
-const protectionFile=out+'/living-01/scope-before.json';
+const protectionFile=out+'/living-01/scope-before-04-allfloors.json';
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
 const errors=[];let report;
 try{
@@ -44,6 +44,7 @@ try{
  const audit=await page.evaluate(async()=>{
   const T=await import('three'),a=window.__sakuraInterior,h=a.house;let meshes=0,vertices=0,nonfinite=0,degenerate=0;const va=new T.Vector3(),vb=new T.Vector3(),vc=new T.Vector3();
   h.root.traverse(o=>{if(!o.isMesh)return;meshes++;const p=o.geometry.attributes.position;vertices+=p.count;for(const v of p.array)if(!Number.isFinite(v))nonfinite++;const ix=o.geometry.index,n=ix?ix.count:p.count;for(let j=0;j<n;j+=3){va.fromBufferAttribute(p,ix?ix.getX(j):j);vb.fromBufferAttribute(p,ix?ix.getX(j+1):j+1);vc.fromBufferAttribute(p,ix?ix.getX(j+2):j+2);if(vb.sub(va).cross(vc.sub(va)).lengthSq()<1e-28)degenerate++;}});
+  const tatamiFloors=h.rooms.filter(r=>r.floor.startsWith('tatami')&&r.id!=='sisters').map(r=>({id:r.id,expected:r.color.slice(1),colors:h.root.getObjectByName('floor:'+r.id).children.filter(o=>o.isMesh).map(o=>o.material.color.getHexString())}));
   const visited=new Set(['entry']);let changed=true;while(changed){changed=false;for(const [p,q] of h.connections){if(visited.has(p)&&!visited.has(q)){visited.add(q);changed=true;}if(visited.has(q)&&!visited.has(p)){visited.add(p);changed=true;}}}
   // A 44 cm wide walking envelope along adopted route samples. This checks artwork clearances, not a character controller.
   const radius=.22,collisions=[];for(const [name,path] of Object.entries(h.routes))for(let i=1;i<path.length;i++){const p=path[i-1],q=path[i],len=Math.hypot(q[0]-p[0],q[1]-p[1]),steps=Math.ceil(len/.07);for(let s=0;s<=steps;s++){const t=s/steps,x=p[0]+(q[0]-p[0])*t,z=p[1]+(q[1]-p[1])*t;
@@ -60,11 +61,11 @@ try{
    doorChecks.push({route,clear:!hit,hit});
   }
   const sibling=a.createInterior();const counts=new Map();sibling.root.traverse(o=>{if(o.isMesh||o.isLineSegments){counts.set(o.geometry,0);const ms=Array.isArray(o.material)?o.material:[o.material];for(const m of ms)counts.set(m,0);}});for(const r of counts.keys())r.addEventListener('dispose',()=>counts.set(r,counts.get(r)+1));sibling.dispose();sibling.dispose();const resourceDisposal=[...counts.values()].every(v=>v===1);
-  const bounds=new T.Box3().setFromObject(h.root);return {meshes,vertices,nonfinite,degenerate,reachable:[...visited],routeRadius:radius,collisions,doorChecks,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},resourceDisposal,resources:counts.size};
+  const bounds=new T.Box3().setFromObject(h.root);return {meshes,vertices,nonfinite,degenerate,tatamiFloors,reachable:[...visited],routeRadius:radius,collisions,doorChecks,bounds:{min:bounds.min.toArray(),max:bounds.max.toArray()},resourceDisposal,resources:counts.size};
  });
  const before=JSON.parse(await readFile(protectionFile,'utf8')).files,changed=[];for(const [file,hash] of Object.entries(before)){try{const now=createHash('sha256').update(await readFile(file)).digest('hex');if(now!==hash)changed.push(file);}catch{changed.push(file);}}
  report={passed:false,initial,audit,interaction:{orbit:true,zoom:true,pan:true,roomFocus:12,desks:deskChecks,reference:true,wallModes:true,ceiling:true,doors:true},protectedFiles:{count:Object.keys(before).length,changed},errors};
  await page.setViewportSize({width:720,height:900});await page.locator('#reset').click();await page.waitForTimeout(400);await page.screenshot({path:out+'/18-small-viewer.png'});
- assert.equal(audit.nonfinite,0);assert.equal(audit.degenerate,0);assert.equal(audit.reachable.length,12);assert(audit.resourceDisposal);assert.deepEqual(audit.collisions,[]);assert(audit.doorChecks.every(c=>c.clear));assert.deepEqual(changed,[]);assert.deepEqual(errors,[]);report.passed=true;
+ assert(audit.tatamiFloors.every(f=>f.colors.length===1&&f.colors[0]===f.expected),'Tatami grey decoration remains');assert.equal(audit.nonfinite,0);assert.equal(audit.degenerate,0);assert.equal(audit.reachable.length,12);assert(audit.resourceDisposal);assert.deepEqual(audit.collisions,[]);assert(audit.doorChecks.every(c=>c.clear));assert.deepEqual(changed,[]);assert.deepEqual(errors,[]);report.passed=true;
  console.log(JSON.stringify({passed:true,geometry:{meshes:audit.meshes,vertices:audit.vertices},rooms:audit.reachable.length,doors:audit.doorChecks,protected:report.protectedFiles}));
 }finally{if(report)await writeFile(out+'/inspection.json',JSON.stringify(report,null,2));await browser.close();}

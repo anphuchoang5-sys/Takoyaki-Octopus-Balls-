@@ -32,8 +32,10 @@ if(process.argv.includes('--topology')){
     const fast=indexPackedTriangles(packed,ids,disabled),triangles=[];
     for(let i=0;i<packed.length;i+=9)if(!disabled.has(ids[i/9]))triangles.push(triangle(...[0,3,6].map(j=>new T.Vector3().fromArray(packed,i+j))));
     const reference=indexTriangles(triangles);
+    const reusable={y:0,normal:new T.Vector3(),part:0};
     for(let x=-2.5;x<=2.5;x+=.125)for(let z=-2.5;z<=2.5;z+=.125){
       const a=fast.sample(x,z),b=reference.sample(x,z);assert.equal(!!a,!!b,'Packed snow index changed a hole');if(a){assert(Math.abs(a.y-b.y)<1e-10);assert(a.normal.distanceTo(b.normal)<1e-10);}querySamples++;
+      const c=fast.sampleInto(x,z,reusable);assert.deepEqual(c,a);if(c){assert.equal(c,reusable);assert.notEqual(c.normal,a.normal);}
     }
   }
   await writeFile(`${out}/${label}-topology.json`,JSON.stringify({otherHeight,sameHeight,slivers:slivers.length,area:area(fine),querySamples},null,2));
