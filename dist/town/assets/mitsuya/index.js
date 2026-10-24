@@ -57,6 +57,7 @@ export function createModel({space='exterior'}={}){
  let cut=false,roofVisible=true;function setCutaway(value){cut=!!value;Object.values(walls).forEach(g=>g.visible=!cut);menu.visible=!cut;utilities.visible=!cut;return cut;}
  function setInspection(view){setCutaway(false);if(['inside','top','looking-out','table'].includes(view)){walls['背墙'].visible=false;walls['右墙'].visible=false;cut=true;}else if(['counter','jars'].includes(view)){walls['左墙'].visible=false;walls['背墙'].visible=false;cut=true;}menu.visible=walls['左墙'].visible;utilities.visible=!cut;}
  function setRoof(value){roofVisible=!!value;roof.visible=ceiling.visible=fixtures.visible=roofVisible;return roofVisible;}
+ w.finish();
  const environment=createEnvironment(root,{lampPositions,glow:w.glow,glass:w.glass});
  const asset = {root,specification,space,roof,ceiling,walls,front:entrance.front,furnishings,fixtures,entrance,street,lamps:lampPositions,previewLamps:lampPositions.map(l=>['#ffd8a6',8,4.3,l.x,l.y-.08,l.z]),floors:[{x:cx,z:cz,w:width-.12,d:depth-.12,height:.32}],entry:specification.entry,setCutaway,setInspection,setRoof,getViewState:()=>({cutaway:cut,roof:roofVisible}),environmentSupport,setEnvironment:environment.setEnvironment,getEnvironment:environment.inspect,getLightingDescriptors:environment.getLightingDescriptors,dispose(){environment.dispose();w.dispose();},textures:w.textures};
   return interior ? asset : addMitsuyaSnow(asset);

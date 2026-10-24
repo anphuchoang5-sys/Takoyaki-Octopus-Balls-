@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>小玉家 · 三维外观</title>
+<style id="viewer-style"></style><script type="importmap">{"imports":{"three":"../../../vendor/three.module.js","three/addons/":"../../../vendor/addons/"}}</script></head><body>
+<header><div><small>小丸子小镇 / 住宅手记</small><h1>小玉家</h1></div><p>双坡蓝瓦、白墙与草地庭院 · 第2版</p></header>
+<div class="layout"><aside><h2>从这里看房子</h2><div class="views">
+<button data-view="hero">立体全景</button><button data-view="reference">参考角度</button><button data-view="front">正面</button><button data-view="left">左侧</button><button data-view="right">右侧</button><button data-view="back">背面</button><button data-view="top">俯视</button><button data-view="roof">屋顶近看</button><button data-view="detail">门窗近看</button><button data-view="gate">院门近看</button></div>
+<div class="extra"><button id="compare" aria-pressed="false">原图同屏对照</button><button id="plants" aria-pressed="true">植物：显示</button><button id="rotate" aria-pressed="false">自动环绕</button><button id="reset">恢复全景</button></div>
+<p class="hint">左键拖动旋转<br>滚轮缩放 · 右键平移<br>Home 回到全景<br><a href="./tama-house.glb" download>下载三维模型 GLB</a></p></aside>
+<main id="viewport"><canvas id="world" tabindex="0" aria-label="小玉家，拖动旋转，滚轮缩放，右键平移"></canvas><footer id="caption">立体全景</footer></main>
+<section id="reference-panel" hidden><div class="reference-head"><span>你的动画参考</span><button id="close-reference" aria-label="关闭参考">×</button></div><img id="reference-image" src="./references/user-exterior.jpg" alt="小玉家用户参考"><p>左侧山墙与正门面垂直，共用一条屋脊；不可见的侧后、纵深及尺寸为结构补全。</p></section></div>
+<div id="fatal" hidden></div><script type="module" src="./preview.js"></script></body></html>
+

@@ -1,0 +1,95 @@
+{
+  "width": 280,
+  "height": 190,
+  "entries": [
+    {
+      "id": "convenience",
+      "revision": null,
+      "file": "convenience.png",
+      "sha256": "5a7d2b531a06c2ae75725198e402188ac2e0f0ac4e3645f49ece5edbc986691e",
+      "bytes": 45377
+    },
+    {
+      "id": "sakura-house",
+      "revision": "exterior-04-roof",
+      "file": "sakura-house.png",
+      "sha256": "da55c5014f8ffd1e7896350c79ef3a85edbf29600aeb3c48105b1661141ea714",
+      "bytes": 38638
+    },
+    {
+      "id": "mitsuya",
+      "revision": "anime-facade-night-10",
+      "file": "mitsuya.png",
+      "sha256": "88694f08b1c2deef4b693bdf1a6ab13cb3ced5a430c4b065f16d0516dd7e8673",
+      "bytes": 32442
+    },
+    {
+      "id": "flowerorangebuilding",
+      "revision": "exterior-04-hanging",
+      "file": "flowerorangebuilding.png",
+      "sha256": "d9f55bc3e194283db333bd31ec0b53c2705e8320f781a72bd79436208ec8c6ca",
+      "bytes": 46370
+    },
+    {
+      "id": "road-straight",
+      "revision": null,
+      "file": "road-straight.png",
+      "sha256": "452212c5c45cb7af4f48eb1ebb79f1d642400a457940f1f5a98fd20eb782f5c6",
+      "bytes": 6546
+    },
+    {
+      "id": "road-corner",
+      "revision": null,
+      "file": "road-corner.png",
+      "sha256": "1aeeffb9d980dc28dc5a463e4dd57304d2b501540f7862b50d0d565753648611",
+      "bytes": 6723
+    },
+    {
+      "id": "road-tee",
+      "revision": null,
+      "file": "road-tee.png",
+      "sha256": "145c574ce8164f57dea61ae36a87a262fc4037ac4ee5de9933396f0276078196",
+      "bytes": 7096
+    },
+    {
+      "id": "road-cross",
+      "revision": null,
+      "file": "road-cross.png",
+      "sha256": "d9a7bc88043c4eeadc58367e8c2db7467ac925efacb6835bc9fe9ad28f4083dd",
+      "bytes": 7744
+    }
+  ],
+  "sources": {
+    "dist/town/editor/scene.js": "10b6b1217fc0ccc4e2727b057c51f90d5b6dc5029cee6bd6062e14542bf96ff9",
+    "dist/town/editor/state.js": "39792cdf1120b2a89b414716b2f29598df04710e8b19a764a895f3404fad3a31",
+    "dist/town/editor/ground-snow.js": "13b25a18e274819f981c817ac357d6106eb85d02615d00f31615a9b83612fe44",
+    "dist/town/editor/environment.js": "c73f3c4a32c845ecff3ee39c69faf5f5829420d6109ba24c3850279481ec04c9",
+    "dist/town/editor/grass.js": "2daa6101c3a7e45511d6a69f8f3e02dad605f2c04fd89491635e1309fa7c02e8",
+    "dist/town/assets/shared/snow.js": "8b83c35bd15b8317cf5894c19e940a474ec03ecf906835bab7d708c2f844784f",
+    "dist/town/editor/roads.js": "92b2d72867bb3aa50f01b5374f1502c3866ed9492c2dc9feaed5b48d2ecd4bcc",
+    "dist/town/assets/shared/snow-surfaces.js": "871d82ec601aa10c4f88b39dc6bdd3f1b6c5847549f6fb4a2950da882a62313a",
+    "dist/town/editor/catalog.js": "85d6631a4c0138a13d0a027aa15868233e7063d3c1f9dac577d5429b5790ad33",
+    "dist/town/assets/shared/instances.js": "95aa7c4b2ff345c88ae6f03e4a482fd03b7ffedcfcb8b6da167beb3af5a39880",
+    "dist/town/editor/convenience-scene.js": "f6ce0a1dda73cedf5740d839f2396999def02e48ce5b6862991ea90810a06098",
+    "dist/town/assets/sakura-house/index.js": "4c1158f32a29ad2afc89fc9f65215196f41660fb40f636157d41e1d11f229108",
+    "dist/town/assets/mitsuya/index.js": "55b64b4c9bca8c06e51c9be026eb1fcb056a2a696d7dd9186d5c35eb80dd1da5",
+    "dist/town/assets/flowerorangebuilding/index.js": "7bc2afff3558df4a9a41c66c2dcf75790b96753fdefaf180fbd9e0e1b7abc263",
+    "dist/world.js": "6983a0473e96d32b52a9fe41d8169c05d6394b46c937e635fc4690c661aaef07",
+    "dist/street.js": "56b8dc6c82262e74d0a29682f8a80b0e42dffaf684a6fc1ef5717f2eaeacc624",
+    "dist/town/assets/convenience/index.js": "5941621f6c79bb57e059b48a86fabb5c5ca3dab3f0b6c18601bb3a4705c07321",
+    "dist/town/assets/convenience/snow.js": "08548a3cadd86b7af5f30e6c799c132972267177b2ca29abf1bd59217c7a66fd",
+    "dist/town/assets/mitsuya/snow.js": "0f5f7d1c9143ce8804f98699b1047ed91cbbd1f0fe26aa4ee7ea4129d78f68c7",
+    "dist/town/assets/mitsuya/workshop.js": "19513c4393fd8b62bc02c58d60de9d03be5d74f42bb7ef280d3b644f65382b00",
+    "dist/town/assets/shared/environment-rules.js": "4871d021a081c99c8470cd2479e3d1b085846b3d7eb197562b017330e043a44c",
+    "dist/town/assets/mitsuya/props.js": "494f34481902dea3f6ebb468a1519810565adabe03c1ff6f6a1cfa367d61d9f7",
+    "dist/town/assets/mitsuya/facade.js": "af44c69bb5a5e54a3e1ca3a5c00c7a7c6a66cab5cd70f2d78d6ce14ca37f5b4b",
+    "dist/town/assets/mitsuya/environment.js": "937ed60b7d44c646dc13c41d66029c2048a3b4227806fbe861fe3ca9a875b115",
+    "dist/town/assets/sakura-house/snow.js": "40838eef8e2425781223b79ee14e73972ecd37f9d95ec77c9326f740e9e84338",
+    "dist/town/assets/flowerorangebuilding/geometry.js": "fec8ea611e1ad07001ca03a19a4e284243a797af8a815718e9dec68f5d386676",
+    "dist/town/assets/flowerorangebuilding/garden.js": "a2d818486208287ce446140af1cbb2fb40f2519954a853178a64c914c601b130",
+    "dist/town/assets/sakura-house/environment.js": "193c65d1680fc14e89b4797e6efbe7e2b0b5bcc016831e667e2c7712862ff80c",
+    "dist/town/assets/sakura-house/geometry.js": "5db520bd087f822aa2f43ce0fdb56779d79201416e52b92ab693780ca3214ed1",
+    "dist/town/assets/convenience/store.js": "5b7c1131b3ff7609d6a77bad766f1d23b5ee9844ac7d9472c87b29fe318e2853",
+    "dist/town/assets/shared/building-parts.js": "1ee9d1b21d8fbe57eb3bfa6a2e29790c3bbac030d422b13a559b906bc6d4b91b"
+  }
+}

@@ -32,8 +32,33 @@ function finished(entry){if(activeJob===entry)activeJob=null;queueMicrotask(disp
 function recycle(arrays){if(worker)worker.postMessage({type:'recycle',arrays},Object.values(arrays).map(a=>a.buffer));}
 function releaseFrame(frame){
   frame.geometry.dispose();frame.lookups.clear();
-  const arrays={positions:frame.geometry.attributes.position.array,normals:frame.geometry.attributes.normal.array,colors:frame.geometry.attributes.color.array,indices:frame.geometry.index.array,top:frame.top,parts:frame.parts};
+  const arrays={positions:frame.geometry.attributes.position.array,normals:frame.geometry.attributes.normal.array,colors:frame.geometry.attributes.color.array,indices:frame.geometry.index.array,topIndices:frame.topIndices,parts:frame.parts};
   recycle(arrays);
+}
+const displayAttributes=[['positions','position',3],['normals','normal',3],['colors','color',3],['indices',null,1]];
+function fitsGeometry(geometry,data){
+  return displayAttributes.every(([key,name])=>{
+    const capacity=(name?geometry.attributes[name]:geometry.index).array.length,n=data[key].length;
+    // Shrink when sparse snow no longer needs the thick-snow allocation.
+    return n<=capacity&&(n>=capacity*.35||capacity<=1024);
+  });
+}
+function updateGeometry(geometry,data,reuse){
+  for(const [key,name,size]of displayAttributes){
+    const source=data[key];let attribute=name?geometry.attributes[name]:geometry.index;
+    if(!reuse){
+      // Small headroom covers gradual topology changes without keeping a large
+      // extra CPU/GPU allocation merely to avoid an occasional resize.
+      const capacity=Math.ceil(Math.max(16,source.length*1.02)/size)*size;
+      attribute=new THREE.BufferAttribute(new source.constructor(capacity),size).setUsage(THREE.DynamicDrawUsage);
+      if(name)geometry.setAttribute(name,attribute);else geometry.setIndex(attribute);
+    }
+    attribute.array.set(source);attribute.count=source.length/size;
+    attribute.clearUpdateRanges();attribute.addUpdateRange(0,source.length);attribute.needsUpdate=true;
+  }
+  geometry.setDrawRange(0,data.indices.length);geometry.clearGroups();
+  for(const g of data.groups)geometry.addGroup(g.start,g.count,g.materialIndex);
+  geometry.computeBoundingSphere();
 }
 function destroy(entry){
   jobs.delete(entry);receivers.delete(entry.token);worker?.postMessage({type:'release',token:entry.token});
@@ -48,7 +73,17 @@ export const getSnowRevision=()=>surfaceRevision;
 export const snowMaterial=()=>new THREE.MeshStandardMaterial({color:'#f6fafc',roughness:.98,metalness:0,vertexColors:true});
 export function collectSnowSource(root,choose,groundBounds){
   root.updateWorldMatrix(true,true);
-  const positions=[],parts=[];
+  // Collection is temporary, not a persistent model cache. Write the final
+  // numeric types directly instead of growing boxed-number arrays first.
+  let positions=new Float32Array(12288),parts=new Int16Array(4096),used=0;
+  const v=[new THREE.Vector3(),new THREE.Vector3(),new THREE.Vector3()],cross=new THREE.Vector3(),edge=new THREE.Vector3(),center=new THREE.Vector3();
+  function append(x,y,z,part){
+    if(used===parts.length){
+      const p=new Float32Array(positions.length*2),s=new Int16Array(parts.length*2);
+      p.set(positions);s.set(parts);positions=p;parts=s;
+    }
+    positions[used*3]=x;positions[used*3+1]=y;positions[used*3+2]=z;parts[used++]=part;
+  }
   root.traverse(node=>{
     if(!node.isMesh||node.isInstancedMesh)return;
     for(let p=node;p&&p!==root;p=p.parent)if(!p.visible||p.userData.snowLayer||p.name==='樱家外部环境响应')return;
@@ -64,12 +99,14 @@ export function collectSnowSource(root,choose,groundBounds){
       const material=materials[group.materialIndex];if(!material||material.transparent||material.depthWrite===false)continue;
       const end=Math.min(count,group.start+group.count,g.drawRange.start+g.drawRange.count);
       for(let i=Math.max(group.start,g.drawRange.start);i+2<end;i+=3){
-        const v=[0,1,2].map(k=>new THREE.Vector3().fromBufferAttribute(a,idx?idx.getX(i+k):i+k).applyMatrix4(matrix));
-        const cross=v[1].clone().sub(v[0]).cross(v[2].clone().sub(v[0])),area=cross.length()/2;
+        for(let k=0;k<3;k++)v[k].fromBufferAttribute(a,idx?idx.getX(i+k):i+k).applyMatrix4(matrix);
+        cross.copy(v[1]).sub(v[0]).cross(edge.copy(v[2]).sub(v[0]));const area=cross.length()/2;
         if(cross.y<=1e-8)continue;
-        const center=v[0].clone().add(v[1]).add(v[2]).multiplyScalar(1/3);
+        center.copy(v[0]).add(v[1]).add(v[2]).multiplyScalar(1/3);
+        // Selectors consume these scratch vectors synchronously; no vector
+        // escapes into the collected source or the generated snow surface.
         const part=area>.00005?choose({center,normal:cross.normalize(),color:material.color,name:ancestry.join('/'),vertices:v}):-1;
-        for(const p of v){positions.push(p.x,p.y,p.z);parts.push(part);}
+        for(const p of v)append(p.x,p.y,p.z,part);
       }
     }
   });
@@ -78,9 +115,10 @@ export function collectSnowSource(root,choose,groundBounds){
   if(groundBounds){
     const [a,b,c,d]=groundBounds,v=[[a,0,c],[a,0,d],[b,0,d],[a,0,c],[b,0,d],[b,0,c]];
     const part=choose({center:new THREE.Vector3((a+b)/2,0,(c+d)/2),normal:new THREE.Vector3(0,1,0),name:'plot-ground',vertices:[],color:null});
-    for(const p of v){positions.push(...p);parts.push(part);}
+    for(const p of v)append(p[0],p[1],p[2],part);
   }
-  return {positions:new Float32Array(positions),parts:new Int16Array(parts)};
+  // Transfer only the populated range; spare capacity dies with this call.
+  return {positions:positions.slice(0,used*3),parts:parts.slice(0,used)};
 }
 function acquire(key,root,choose,options){
   if(sources.has(key))return sources.get(key);
@@ -106,14 +144,22 @@ function acquire(key,root,choose,options){
     if(data.type==='error'){failed(data.message);return;}entry.stats=data.stats;
     if(data.type==='progress')return;
     if(data.type==='ready'){entry.ready=true;finished(entry);entry.pump();return;}
-    const geometry=new THREE.BufferGeometry();
-    geometry.setAttribute('position',new THREE.BufferAttribute(data.positions,3));geometry.setAttribute('normal',new THREE.BufferAttribute(data.normals,3));geometry.setAttribute('color',new THREE.BufferAttribute(data.colors,3));
-    geometry.setIndex(new THREE.BufferAttribute(data.indices,1));
-    for(const g of data.groups)geometry.addGroup(g.start,g.count,g.materialIndex);geometry.computeBoundingSphere();
-    const frame={amount:data.amount,geometry,top:data.top,parts:data.parts,lookups:new Map(),refs:0,stats:data.stats};
+    const installing=new Set(entry.batch.filter(c=>entry.clients.has(c)&&c.desired>0));
+    // Reuse only when every owner of this displayed frame is being replaced now.
+    // A client retaining a different snow amount must keep its immutable surface.
+    const previous=[...entry.frames.values()].find(f=>f.refs&&fitsGeometry(f.geometry,data)&&[...entry.clients].every(c=>c.frame!==f||installing.has(c)));
+    const geometry=previous?.geometry??new THREE.BufferGeometry();
+    if(previous){
+      entry.frames.delete(previous.amount);previous.lookups.clear();
+      recycle({topIndices:previous.topIndices,parts:previous.parts});
+    }
+    updateGeometry(geometry,data,!!previous);
+    const frame={amount:data.amount,geometry,topIndices:data.topIndices,parts:data.parts,lookups:new Map(),refs:0,stats:data.stats};
     entry.frames.set(data.amount,frame);entry.busy=false;
     // Show intermediate completed geometry, unless this client explicitly thawed to zero.
     for(const c of entry.batch)if(entry.clients.has(c)&&c.desired>0)c.install(frame);
+    // The display owns its capacity; return only the incoming transport buffers.
+    recycle({positions:data.positions,normals:data.normals,colors:data.colors,indices:data.indices});
     entry.batch=[];prune();finished(entry);entry.pump();
   };
   schedule(entry,()=>sharedWorker().postMessage({type:'init',token,...source,options},[source.positions.buffer,source.parts.buffer]));return entry;
@@ -146,7 +192,7 @@ export function createSnowLayer(root,{key,parts,choose,step=.25,sourceRoot=root,
     if(!amount||disposed)return null;let best=null;const frame=client.frame;
     if(frame&&mesh.visible){
       if(!lookup){
-        if(!frame.lookups.has(mask))frame.lookups.set(mask,indexPackedTriangles(frame.top,frame.parts,disabled));
+        if(!frame.lookups.has(mask))frame.lookups.set(mask,indexPackedTriangles(frame.geometry.attributes.position.array,frame.parts,disabled,.5,{indices:frame.topIndices}));
         lookup=frame.lookups.get(mask);
       }
       best=lookup.sampleInto(x,z,out);
@@ -171,7 +217,7 @@ export function createSnowLayer(root,{key,parts,choose,step=.25,sourceRoot=root,
     },
     getInspection:()=>({...client.frame?.stats,coverageRatio:mesh.visible?client.frame?.stats.coverageRatio??0:0,maxThickness:mesh.visible?client.frame?.stats.maxThickness??0:0,amount,shown:mesh.visible?client.frame?.amount??0:0,ready:entry?.ready??!amount,busy:entry?.busy??false,error:entry?.error??null,preparation:entry?.stats,
       parts:parts.map(p=>({id:p.id,mode:replacements.has(p.id)?'specialized':'generic'})),sharedClients:entry?.clients.size??0,
-      memory:entry?{frames:entry.frames.size,inFlight:entry.busy?1:0,geometryBytes:[...entry.frames.values()].reduce((s,f)=>s+Object.values(f.geometry.attributes).reduce((n,a)=>n+a.array.buffer.byteLength,0)+(f.geometry.index?.array.byteLength||0)+f.top.byteLength+f.parts.byteLength,0),queryVariants:[...entry.frames.values()].reduce((s,f)=>s+f.lookups.size,0)}:null}),
+      memory:entry?{frames:entry.frames.size,inFlight:entry.busy?1:0,geometryBytes:[...entry.frames.values()].reduce((s,f)=>s+Object.values(f.geometry.attributes).reduce((n,a)=>n+a.array.buffer.byteLength,0)+(f.geometry.index?.array.byteLength||0)+f.topIndices.byteLength+f.parts.byteLength,0),queryBytes:[...entry.frames.values()].reduce((s,f)=>s+f.topIndices.byteLength+f.parts.byteLength,0),queryVariants:[...entry.frames.values()].reduce((s,f)=>s+f.lookups.size,0)}:null}),
     dispose(){
       if(disposed)return;disposed=true;group.removeFromParent();replacements.forEach(p=>p.dispose());replacements.clear();replacementList=[];materials.forEach(m=>m.dispose());empty.dispose();
       release();

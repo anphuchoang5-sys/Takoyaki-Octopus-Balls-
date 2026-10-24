@@ -165,9 +165,15 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
     let weldCapacity=16;while(weldCapacity<facetCount*6)weldCapacity*=2;
     if(weldHash.data.length<weldCapacity)weldHash.data=new Int32Array(weldCapacity);
     weldHash.data.fill(-1,0,weldCapacity);
-    // Match the original toFixed(6) keys exactly, including negative rounded zero,
-    // without retaining hundreds of thousands of strings and Map entries.
-    const quantize=n=>{const q=Math.round(Number(n.toFixed(6))*1e6);return q===0&&n<0?-2147483648:q;};
+    // Away from decimal half ties, the multiplication error cannot change the
+    // rounded integer. Keep toFixed at the uncertainty boundary and outside
+    // the bounded range, preserving its exact rounding and negative-zero key.
+    const quantize=n=>{
+      const scaled=Math.abs(n)*1e6,rounded=Math.floor(scaled+.5);
+      const q=scaled<2147483647&&Math.abs(scaled-(rounded-.5))>Math.max(1,scaled)*Number.EPSILON*2
+        ?(n<0?-rounded:rounded):Math.round(Number(n.toFixed(6))*1e6);
+      return q===0&&n<0?-2147483648:q;
+    };
     function weld(p){
       const x=quantize(p.x),y=quantize(p.y),z=quantize(p.z);
       let slot=mixVertexHash(Math.imul(x,73856093)^Math.imul(y,19349663)^Math.imul(z,83492791))&(weldCapacity-1),id;
@@ -301,14 +307,18 @@ export function createSurfaceSnow(options,prepared=prepareSnowSurface(options),w
       mesh.geometry.dispose();mesh.geometry=new THREE.BufferGeometry();
       topOffsets=new Uint32Array();topParts=new Int16Array();
     },
-    takeFrame(allocate=(name,Type,length)=>new Type(length)){
-      const g=mesh.geometry,p=g.attributes.position.array,top=allocate('top',Float32Array,topOffsets.length*9),parts=allocate('parts',Int16Array,topParts.length);
-      for(let i=0;i<topOffsets.length;i++)for(let j=0;j<9;j++)top[i*9+j]=p[topOffsets[i]+j];
+    takeFrame(allocate=(name,Type,length)=>new Type(length),indexedTop=false){
+      const g=mesh.geometry,p=g.attributes.position.array,parts=allocate('parts',Int16Array,topParts.length);
+      // Live queries reference the rendered vertices; the coordinate form remains
+      // available only for the existing offline preparation/equality inspector.
+      const top=indexedTop?allocate('topIndices',Uint32Array,topOffsets.length*3):allocate('top',Float32Array,topOffsets.length*9);
+      if(indexedTop){for(let i=0;i<topOffsets.length;i++)for(let j=0;j<3;j++)top[i*3+j]=topOffsets[i]/3+j;}
+      else for(let i=0;i<topOffsets.length;i++)for(let j=0;j<9;j++)top[i*9+j]=p[topOffsets[i]+j];
       parts.set(topParts);
       // The index packer makes the sole transferable frame. Keep these as views,
       // avoiding another full-size copy of the formed topology before packing.
       const array=name=>g.attributes[name].array;
-      return {positions:array('position'),normals:array('normal'),colors:array('color'),indices:g.index.array,top,parts,groups:g.groups};
+      return {positions:array('position'),normals:array('normal'),colors:array('color'),indices:g.index.array,...(indexedTop?{topIndices:top}:{top}),parts,groups:g.groups};
     },
     dispose(){if(disposed)return;disposed=true;mesh.geometry.dispose();material.dispose();mesh.removeFromParent();vertexData=null;}
   };

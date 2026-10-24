@@ -33,20 +33,24 @@ export function indexTriangles(triangles,cell=.15){
 }
 // Render-frame queries keep packed triangles: no million-Vector3 allocation on
 // the render thread every time snow grows. The numbers are the WebGL Float32 data.
-export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsilon=1e-8,minArea=1e-12,minY=-Infinity,upward=false}={}){
+export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsilon=1e-8,minArea=1e-12,minY=-Infinity,upward=false,indices=null}={}){
+  const count=indices?indices.length/3:data.length/9;
+  const vertex=(i,j)=>indices?indices[i*3+j]*3:i*9+j*3;
   let minX=Infinity,maxX=-Infinity,minZ=Infinity,maxZ=-Infinity;
-  for(let i=0;i<data.length;i+=9)if(!disabled.has(parts[i/9])){
-    minX=Math.min(minX,data[i],data[i+3],data[i+6]);maxX=Math.max(maxX,data[i],data[i+3],data[i+6]);
-    minZ=Math.min(minZ,data[i+2],data[i+5],data[i+8]);maxZ=Math.max(maxZ,data[i+2],data[i+5],data[i+8]);
+  for(let i=0;i<count;i++)if(!disabled.has(parts[i])){
+    const a=vertex(i,0),b=vertex(i,1),c=vertex(i,2);
+    minX=Math.min(minX,data[a],data[b],data[c]);maxX=Math.max(maxX,data[a],data[b],data[c]);
+    minZ=Math.min(minZ,data[a+2],data[b+2],data[c+2]);maxZ=Math.max(maxZ,data[a+2],data[b+2],data[c+2]);
   }
   if(minX===Infinity)return {sample:()=>null,sampleInto:()=>null};
   const x0=Math.floor(minX/cell),z0=Math.floor(minZ/cell),nx=Math.floor(maxX/cell)-x0+1,nz=Math.floor(maxZ/cell)-z0+1;
   const offsets=new Uint32Array(nx*nz+1);
   function visit(append){
-  for(let i=0;i<data.length;i+=9){
-    if(disabled.has(parts[i/9]))continue;
-    const xa=Math.floor(Math.min(data[i],data[i+3],data[i+6])/cell),xb=Math.floor(Math.max(data[i],data[i+3],data[i+6])/cell);
-    const za=Math.floor(Math.min(data[i+2],data[i+5],data[i+8])/cell),zb=Math.floor(Math.max(data[i+2],data[i+5],data[i+8])/cell);
+  for(let i=0;i<count;i++){
+    if(disabled.has(parts[i]))continue;
+    const a=vertex(i,0),b=vertex(i,1),c=vertex(i,2);
+    const xa=Math.floor(Math.min(data[a],data[b],data[c])/cell),xb=Math.floor(Math.max(data[a],data[b],data[c])/cell);
+    const za=Math.floor(Math.min(data[a+2],data[b+2],data[c+2])/cell),zb=Math.floor(Math.max(data[a+2],data[b+2],data[c+2])/cell);
     for(let x=xa;x<=xb;x++)for(let z=za;z<=zb;z++)append((x-x0)*nz+z-z0,i);
   }
   }
@@ -61,18 +65,18 @@ export function indexPackedTriangles(data,parts,disabled=new Set(),cell=.5,{epsi
     const bin=ix*nz+iz;
     let y=-Infinity,best=-1;
     for(let j=offsets[bin];j<offsets[bin+1];j++){
-      const i=entries[j];
-      const ax=data[i],az=data[i+2],bx=data[i+3],bz=data[i+5],cx=data[i+6],cz=data[i+8];
+      const i=entries[j],a=vertex(i,0),b=vertex(i,1),c=vertex(i,2);
+      const ax=data[a],az=data[a+2],bx=data[b],bz=data[b+2],cx=data[c],cz=data[c+2];
       const d=(bz-cz)*(ax-cx)+(cx-bx)*(az-cz);if(Math.abs(d)<minArea)continue;
       const u=((bz-cz)*(x-cx)+(cx-bx)*(z-cz))/d,v=((cz-az)*(x-cx)+(ax-cx)*(z-cz))/d,w=1-u-v;
       if(u< -epsilon||v< -epsilon||w< -epsilon)continue;
-      const h=data[i+1]*u+data[i+4]*v+data[i+7]*w;if(h>=minY&&h>y){y=h;best=i;}
+      const h=data[a+1]*u+data[b+1]*v+data[c+1]*w;if(h>=minY&&h>y){y=h;best=i;}
     }
     if(best<0)return null;
-    const i=best,normal=out.normal.set(data[i+3]-data[i],data[i+4]-data[i+1],data[i+5]-data[i+2])
-      .cross(edge.set(data[i+6]-data[i],data[i+7]-data[i+1],data[i+8]-data[i+2])).normalize();
+    const a=vertex(best,0),b=vertex(best,1),c=vertex(best,2),normal=out.normal.set(data[b]-data[a],data[b+1]-data[a+1],data[b+2]-data[a+2])
+      .cross(edge.set(data[c]-data[a],data[c+1]-data[a+1],data[c+2]-data[a+2])).normalize();
     if(upward&&normal.y<0)normal.negate();
-    out.y=y;out.part=parts[i/9];return out;
+    out.y=y;out.part=parts[best];return out;
   }
   return {sampleInto,sample:(x,z)=>sampleInto(x,z,{y:0,normal:new THREE.Vector3(),part:0})};
 }

@@ -3,16 +3,29 @@
 <style id="viewer-style"></style>
 <script type="importmap">{"imports":{"three":"../../../../vendor/three.module.js","three/addons/":"../../../../vendor/addons/"}}</script>
 </head><body>
-<aside class="sidebar"><div class="eyebrow">MARUKO TOWN / INTERIOR 03</div><h1>さくら家<span>樱家 · 完整室内</span></h1><div class="stage">客厅精修待审 · 姐妹房保留<br>其余房间仍为结构样板</div><p class="intro">按参考方案复原樱家<br>整屋查看、客厅与姐妹房细节。</p>
-<label class="section-label">整屋查看</label><div class="buttons"><button data-view="hero" class="active">斜俯全景</button><button data-view="top">整屋俯视</button><button data-view="reference">参考视角</button><button data-view="corridor-view">走廊近看</button></div>
+<aside class="sidebar"><div class="eyebrow">MARUKO TOWN / INTERIOR 07</div><h1>さくら家<span>樱家 · 完整室内</span></h1><div class="stage">走廊已统一玄关地板样式<br>画面待审 · 布局保留</div><p class="intro">按参考方案复原樱家<br>整屋查看与房间细节。</p>
+<label class="section-label">整屋查看</label><div class="buttons"><button data-view="hero" class="active">斜俯全景</button><button data-view="top">整屋俯视</button><button data-view="reference">参考视角</button><button data-view="corridor-view">走廊近看</button><button data-view="engawa-view">缘侧近看</button></div>
 <label class="section-label">逐房间聚焦</label><div class="buttons" id="room-buttons"></div>
+<label class="section-label">玄关与正门</label><div class="buttons"><button data-view="entry-reference">玄关参考方向</button><button data-view="entry-cabinet">木鞋柜正面</button><button data-view="entry-plant">盆花近看</button><button data-view="entry-door">正门外侧</button><button data-view="entry-inside">正门内侧</button><button data-view="entry-reverse">玄关侧后</button><button data-view="entry-top">玄关俯视</button><button data-view="entry-junction">地板与柜侧</button></div>
+<label class="section-label">厨房近看</label><div class="buttons"><button data-view="kitchen-stove">灶台参考方向</button><button data-view="kitchen-entry">橱柜与入口</button><button data-view="kitchen-side">日历与小架</button><button data-view="kitchen-table">餐桌与椅凳</button><button data-view="kitchen-sink">水槽与燃气灶</button><button data-view="kitchen-cabinet">食器柜近看</button><button data-view="kitchen-cooker">圆饭锅近看</button><button data-view="kitchen-top">厨房俯视</button><button data-view="kitchen-rear">厨房侧后</button></div>
+<label class="section-label">洗面室近看</label><div class="buttons"><button data-view="wash-reference">参考方向</button><button data-view="wash-basin">镜子与台盆</button><button data-view="wash-baskets">篮具与布料</button><button data-view="wash-reverse">门口侧回看</button><button data-view="wash-entry">地毯与鞋套机</button></div>
+<label class="section-label">卫浴空间与门</label><div class="buttons"><button data-view="wet-overview">卫浴俯视</button><button data-view="bath-view">浴室近看</button><button data-view="wet-doors">洗面室推拉门</button><button data-view="bath-door">浴室推拉门</button><button data-view="wet-rear">卫浴侧后</button></div>
 <label class="section-label">客厅近看</label><div class="buttons"><button data-view="living-reference">参考机位</button><button data-view="living-tv">电视与书本</button><button data-view="living-cabinet">餐具柜近看</button><button data-view="living-cabinet-front">碗柜正面</button><button data-view="living-window">窗框窗帘</button><button data-view="living-reverse">侧后查看</button></div>
 <label class="section-label">姐妹房近看</label><div class="buttons"><button data-desk="maruko">小丸子书桌</button><button data-desk="sakiko">姐姐书桌</button></div>
 <label class="section-label" for="walls">墙体显示</label><select id="walls"><option value="cut">低墙剖视 · 看清布局</option><option value="full">完整墙体</option><option value="outer-hidden">隐藏外墙</option><option value="hidden">隐藏全部墙体</option></select>
 <div class="checks"><label><input id="ceiling" type="checkbox">显示天花顶盖</label><label><input id="doors" type="checkbox" checked>打开通行门扇</label><label><input id="labels" type="checkbox" checked>房间名称</label><label><input id="routes" type="checkbox">通行路线</label></div>
-<button id="compare" class="primary">对照参考图</button><button id="reset" class="quiet">回到整屋　Home</button><p class="side-foot">低墙便于看布局<br>客厅与姐妹房近景显示完整墙面<br>其余房间与外景保持原样</p></aside>
-<main><header><div><strong id="view-title">樱家完整室内</strong><span id="view-subtitle">客厅精修待审 · 姐妹房保留 · 其余结构样板</span></div><div class="header-actions"><button id="rotate">自动环绕</button><a href="./sakura-interior.glb" download>整屋模型 GLB</a></div></header>
+<button id="compare" class="primary">对照参考图</button><button id="reset" class="quiet">回到整屋　Home</button><p class="side-foot">低墙便于看布局<br>近景显示完整墙面<br>可切换低墙查看通行空间</p></aside>
+<main><header><div><strong id="view-title">樱家完整室内</strong><span id="view-subtitle">玄关与正门精修待审</span></div><div class="header-actions"><button id="rotate">自动环绕</button><a href="./sakura-interior.glb" download>整屋模型 GLB</a></div></header>
 <div class="workspace"><section id="viewport"><canvas id="world" tabindex="0" aria-label="樱家真实三维室内，可拖动旋转、滚轮缩放、右键平移"></canvas><div id="room-labels"></div><div class="view-badge">按参考方案复原樱家</div><div class="hint">拖动旋转 · 滚轮缩放 · 右键平移</div><div id="fatal" hidden></div></section>
 <aside id="reference-panel" hidden><div class="ref-heading"><span>参考对照</span><button id="close-reference" aria-label="关闭参考">×</button></div><div class="ref-tabs"><button data-ref="plan" class="active">采用平面</button><button data-ref="room">对应视角</button><button data-ref="anime">动画细节</button></div><a id="reference-image-link" target="_blank" rel="noopener"><img id="reference-image" alt="本次采用的参考图"></a><p id="reference-caption"></p><a id="reference-source" target="_blank" rel="noopener">查看原文 ↗</a><div class="ref-notes"><b>本阶段的取舍</b><p>空间连接沿用整屋方案。浅黄客厅、粉色姐妹房、绿色厨房与门窗色带取自动画局部。尺寸、墙厚和未见连接为建模补全。</p><p>另一篇文章对祖父母房的位置与窗向有不同推测；此处保留整屋方案，待你确认，不混用两套户型。</p></div></aside></div>
-<footer><span id="room-note">入口、长廊与十二处空间 · 客厅与姐妹房</span><span class="status">客厅精修版 · 等你审看</span></footer></main>
-<script type="module" src="./preview.js"></script></body></html>
+<footer><span id="room-note">入口、长廊与十二处空间</span><span class="status">玄关与正门精修 · 等你审看</span></footer></main>
+<template id="preview-module"><script type="module" src="./preview.js"></script></template>
+<script>
+// Keep file:// from requesting source modules; packagers replace the module inside this template.
+if(location.protocol==='file:'&&!globalThis.__interiorReferences){
+ const offline=new URL('../../../../../artifacts/buildings/sakura-house/interior/樱家-室内结构预览.html',location.href);
+ offline.search=location.search;offline.hash=location.hash;location.replace(offline.href);
+}else{
+ document.body.append(document.getElementById('preview-module').content.cloneNode(true));
+}
+</script></body></html>

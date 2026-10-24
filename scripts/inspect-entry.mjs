@@ -1,0 +1,75 @@
+import {chromium} from 'playwright';
+import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+const trimBaseline=process.argv.includes('--baseline-door-trim'),hall=process.argv.includes('--hall');
+const folder='dist/town/assets/sakura-house/interior',out='artifacts/buildings/sakura-house/interior/'+(hall?'entry-02':'entry-01'),baseline=process.argv.includes('--baseline')||trimBaseline;
+const hash=v=>createHash('sha256').update(v).digest('hex');
+const cameras=[
+ ['entry-reference',[11.60,1.55,2.6],[10.65,.75,.55],.9],
+ ['entry-cabinet',[11.65,1.15,.90],[10.32,.48,.88],.8],
+ ['entry-plant',[11.13,1.31,1.38],[10.32,.88,.88],.95],
+ ['entry-door',[10.9,1.25,-2.3],[10.9,.9,0],.9],
+ ['entry-inside',[10.93,1.35,1.72],[10.90,.9,0],.72],
+ ['entry-reverse',[11.50,1.65,.25],[10.40,.45,1.20],.8],
+ ['entry-top',[10.92,12,.911],[10.92,0,.91],3.5,false]
+];
+if(hall)cameras.push(['entry-junction',[11.55,.86,2.28],[10.34,.23,1.70],.85]);
+await mkdir(out,{recursive:true});
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+try{
+ const page=await browser.newPage({viewport:{width:1600,height:1050}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ const distRoot=path.resolve('dist');await page.route('http://127.0.0.1:4173/**',async route=>{const file=path.resolve(distRoot,'.'+decodeURIComponent(new URL(route.request().url()).pathname)),rel=path.relative(distRoot,file);if(route.request().method()!=='GET'||rel.startsWith('..')||path.isAbsolute(rel))return route.abort();try{await route.fulfill({status:200,contentType:({'.html':'text/html','.js':'text/javascript','.css':'text/css','.jpg':'image/jpeg','.png':'image/png'})[path.extname(file)]||'application/octet-stream',body:await readFile(file)});}catch{await route.fulfill({status:404,body:'Missing local file'});}});
+ await page.goto(trimBaseline?'file:///'+path.resolve('artifacts/buildings/sakura-house/interior/樱家-室内结构预览.html').replace(/\\/g,'/'):'http://127.0.0.1:4173/town/assets/sakura-house/interior/preview.html');await page.waitForFunction(()=>window.__sakuraInterior?.ready);
+ const snapshot=await page.evaluate(async(hall)=>{
+  const h=window.__sakuraInterior.house,data={};h.setWalls('full');h.setDoorsOpen(false);h.root.updateMatrixWorld(true);
+  const excluded=new Set(hall?['玄关精修','floor:hall','玄关上框台阶','玄关柜侧立柱','玄关柜侧立柱剖视']:['玄关精修','玄关鞋柜','floor:entry','frame:north-main','door:north-main:10.1']);
+  async function visit(o,p){if(excluded.has(o.name))return;const key=p+'/'+(o.name||o.type);if(o.isMesh||o.isLineSegments){
+   const pos=o.geometry.attributes.position,omit=!hall&&(key.includes('/wall:north-main/')||key.includes('/cut:north-main/'));
+   const kept=Array.from({length:pos.count},(_,i)=>i).filter(i=>!(omit&&pos.getX(i)>=10.0999&&pos.getX(i)<=11.7001&&pos.getY(i)>=-.0001&&pos.getY(i)<=.0801&&Math.abs(pos.getZ(i))<.08));
+   const attributes=Object.fromEntries(Object.entries(o.geometry.attributes).map(([k,a])=>[k,kept.flatMap(i=>Array.from(a.array.slice(i*a.itemSize,(i+1)*a.itemSize)))]));
+   const m=o.material,record=JSON.stringify({matrix:o.matrixWorld.elements,attributes,index:o.geometry.index&&Array.from(o.geometry.index.array),color:m.color?.getHex(),opacity:m.opacity,map:m.map?.image?.toDataURL?.()});const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(record)))).map(x=>x.toString(16).padStart(2,'0')).join('');data[key]=(data[key]||'')+digest;
+  }else for(const c of o.children)await visit(c,key);}
+  const local=o=>({name:o.name,matrix:o.matrix.elements,attributes:o.geometry&&Object.fromEntries(Object.entries(o.geometry.attributes).map(([k,a])=>[k,Array.from(a.array)])),index:o.geometry?.index&&Array.from(o.geometry.index.array),color:o.material?.color?.getHex(),opacity:o.material?.opacity,children:o.children.map(local)});
+  const entryContents=hall?Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(h.genkan.root.children.map(local)))))).map(x=>x.toString(16).padStart(2,'0')).join(''):null;
+  for(const c of h.root.children)await visit(c,'');return {objects:data,entryContents,layout:{rooms:h.rooms,walls:h.walls,routes:h.routes,entry:h.entry,connections:h.connections}};
+ },hall);
+ const files={},exclude=new Set(['index.js','entry-room.js','preview.js','preview.html','README.md','sakura-interior.glb']);for(const e of await readdir(folder,{withFileTypes:true}))if(e.isFile()&&!exclude.has(e.name))files[folder+'/'+e.name]=hash(await readFile(folder+'/'+e.name));for(const e of await readdir(folder+'/..',{withFileTypes:true}))if(e.isFile())files[folder+'/../'+e.name]=hash(await readFile(folder+'/../'+e.name));
+ const parallelChanges=[];
+ if(baseline)await writeFile(out+(trimBaseline?'/scope-door-trim-before.json':'/scope-before.json'),JSON.stringify({...snapshot,files},null,2),{flag:'wx'});
+ else{const before=JSON.parse(await readFile(out+(hall?'/scope-before.json':'/scope-door-trim-before.json'),'utf8'));assert.deepEqual(snapshot.objects,before.objects,'Objects outside entry changed');assert.deepEqual(snapshot.layout,before.layout,'Layout changed');if(hall)assert.equal(snapshot.entryContents,before.entryContents,'Cabinet/plant appearance changed');for(const [f,h]of Object.entries(before.files)){const current=hash(await readFile(f));if(hall&&f===folder+'/../geometry.js'&&current!==h){parallelChanges.push({file:f,before:h,current,note:'Read-only reviewed exterior memory cleanup; not imported by the interior.'});continue;}assert.equal(current,h,f);}}
+ if(!trimBaseline)for(const [name,p,t,zoom,persp=true]of cameras){await page.evaluate(({p,t,zoom,persp})=>{const a=window.__sakuraInterior;a.setView(persp?'corridor-view':'top');a.setWallMode(persp?'full':'cut');a.house.setDoorsOpen(false);a.camera.position.fromArray(p);a.controls.target.fromArray(t);a.camera.zoom=zoom;a.camera.updateProjectionMatrix();a.controls.update();},{p,t,zoom,persp});await page.waitForTimeout(200);await page.locator('#world').screenshot({path:out+'/'+(baseline?'before-':'')+name+'.png'});}
+ if(baseline){console.log(JSON.stringify({baseline:true,objects:Object.keys(snapshot.objects).length,files:Object.keys(files).length}));}
+ else{
+  const audit=await page.evaluate(async(hall)=>{
+   const T=await import('three'),h=window.__sakuraInterior.house,entry=h.genkan;h.setWalls('full');h.setDoorsOpen(false);h.root.updateMatrixWorld(true);
+   const dg=h.root.getObjectByName('door:north-main:10.1'),leaves=dg.children.filter(g=>g.userData.motion==='slide'),roots=[entry.root,h.root.getObjectByName('floor:entry'),h.root.getObjectByName('frame:north-main'),dg];
+   if(hall)roots.push(...['floor:hall','玄关上框台阶','玄关柜侧立柱','玄关柜侧立柱剖视'].map(n=>h.root.getObjectByName(n)));
+   let nonfinite=0,degenerate=0,triangles=0;const a=new T.Vector3(),b=new T.Vector3(),c=new T.Vector3();for(const root of roots)root.traverse(o=>{if(!o.isMesh)return;const p=o.geometry.attributes.position,ix=o.geometry.index,n=ix?.count||p.count;triangles+=n/3;for(const v of p.array)if(!Number.isFinite(v))nonfinite++;for(let i=0;i<n;i+=3){a.fromBufferAttribute(p,ix?ix.getX(i):i);b.fromBufferAttribute(p,ix?ix.getX(i+1):i+1);c.fromBufferAttribute(p,ix?ix.getX(i+2):i+2);if(b.sub(a).cross(c.sub(a)).lengthSq()<1e-28)degenerate++;}});
+   const bounds={};for(const g of entry.root.children){const bb=new T.Box3().setFromObject(g);bounds[g.name]={min:bb.min.toArray(),max:bb.max.toArray()};}
+   const cabinet=entry.root.getObjectByName('玄01 木鞋柜'),plant=entry.root.getObjectByName('玄02 盆花'),cb=new T.Box3().setFromObject(cabinet),pb=new T.Box3().setFromObject(plant);
+   const collisions=[],doorSamples=[];for(let i=0;i<=32;i++){for(const leaf of leaves)leaf.position.fromArray(leaf.userData.closedPosition).lerp(new T.Vector3(...leaf.userData.openPosition),i/32);h.root.updateMatrixWorld(true);const boxes=leaves.map(g=>new T.Box3().setFromObject(g));if(boxes[0].intersectsBox(boxes[1]))collisions.push('leaf overlap '+i);for(const box of boxes)if(box.intersectsBox(cb)||box.intersectsBox(pb))collisions.push('furniture '+i);doorSamples.push(boxes.map(b=>[b.min.toArray(),b.max.toArray()]));}
+   h.setDoorsOpen(true);const box=new T.Box3().setFromObject(leaves[1]),clearWidth=11.7-.043-box.max.x;
+   const passage=[];const points=[[11.28,-.35],[11.28,.28],[10.93,1.9],[10.93,2.4]];for(let i=1;i<points.length;i++){const [ax,az]=points[i-1],[bx,bz]=points[i],n=Math.ceil(Math.hypot(bx-ax,bz-az)/.03);for(let j=0;j<=n;j++){const x=ax+(bx-ax)*j/n,z=az+(bz-az)*j/n;for(const o of h.obstacles){const dx=Math.max(Math.abs(x-o.x)-o.w/2,0),dz=Math.max(Math.abs(z-o.z)-o.d/2,0);if(Math.hypot(dx,dz)<.22)passage.push(o.name);}for(const y of [.3,1.1])for(let m=0;m<16;m++){const hit=new T.Raycaster(new T.Vector3(x,y,z),new T.Vector3(Math.cos(m*Math.PI/8),0,Math.sin(m*Math.PI/8)),0,.22).intersectObjects([h.fullWalls,h.doors,entry.root],true).find(v=>v.object.isMesh);if(hit)passage.push(hit.object.parent.name);}}}
+   const ray=(g,x,z)=>new T.Raycaster(new T.Vector3(x,2,z),new T.Vector3(0,-1,0)).intersectObject(g,true).find(v=>v.object.isMesh)?.point.y;
+   const support={cabinetBottom:cb.min.y,plantBottom:pb.min.y,cabinetTop:ray(cabinet,10.32,entry.root.position.z),floor:ray(h.root.getObjectByName('floor:entry'),11.28,.75)};
+   let junction=null;if(hall){const step=h.root.getObjectByName('玄关上框台阶'),post=h.root.getObjectByName('玄关柜侧立柱'),sb=new T.Box3().setFromObject(step),vb=new T.Box3().setFromObject(post),floor=h.root.getObjectByName('floor:hall');const floorHit=(x,z)=>new T.Raycaster(new T.Vector3(x,.5,z),new T.Vector3(0,-1,0)).intersectObject(floor,true).find(v=>v.object.isMesh);const across=Array.from({length:179},(_,i)=>floorHit(10.03+i*.01,2.20)),along=Array.from({length:160},(_,i)=>floorHit(10.11,1.94+i*.01));
+    const stepBoxes=step.children.filter(o=>o.isMesh).map(o=>new T.Box3().setFromObject(o)),tri=new T.Triangle();let stepIntersections=0;cabinet.traverse(o=>{if(!o.isMesh)return;const p=o.geometry.attributes.position,ix=o.geometry.index,n=ix?.count||p.count;for(let i=0;i<n;i+=3){for(const [j,v]of [tri.a,tri.b,tri.c].entries())v.fromBufferAttribute(p,ix?ix.getX(i+j):i+j).applyMatrix4(o.matrixWorld);if(stepBoxes.some(b=>b.intersectsTriangle(tri)))stepIntersections++;}});
+    junction={cabinetZ:entry.root.position.z,stepFront:sb.min.z,cabinetSide:cb.max.z,cabinetBodyGap:sb.min.z-(entry.root.position.z+.55),postGap:vb.min.z-cb.max.z,stepIntersections,postCollision:vb.intersectsBox(cb),acrossHeights:[...new Set(across.map(h=>Number(h.point.y.toFixed(5))))],alongHeights:[...new Set(along.map(h=>Number(h.point.y.toFixed(5))))],floorColors:[...new Set(across.map(h=>h.object.material.color.getHexString()))],postBounds:[vb.min.toArray(),vb.max.toArray()]};}
+   const ghostTrim=new T.Raycaster(new T.Vector3(11.28,.04,-.30),new T.Vector3(0,0,1),0,.6).intersectObject(h.fullWalls,true).filter(v=>v.object.isMesh).length;
+   const modes={};for(const mode of ['hidden','cut','outer-hidden','full']){h.setWalls(mode);modes[mode]={doors:h.doors.visible,plant:plant.visible};}
+   const fresh=window.__sakuraInterior.createInterior(),counts=new Map();fresh.root.traverse(o=>{if(o.isMesh||o.isLineSegments){counts.set(o.geometry,0);for(const m of Array.isArray(o.material)?o.material:[o.material]){counts.set(m,0);if(m.map)counts.set(m.map,0);}}});for(const o of counts.keys())o.addEventListener('dispose',()=>counts.set(o,counts.get(o)+1));fresh.dispose();fresh.dispose();
+   return {triangles,nonfinite,degenerate,bounds,support,junction,ghostTrim,door:{leaves:leaves.length,clearWidth,samples:doorSamples,collisions},passage:[...new Set(passage)],modes,resourceDisposal:[...counts.values()].every(v=>v===1),resources:counts.size};
+  },hall);
+  for(const v of cameras.map(c=>c[0])){await page.locator(`[data-view="${v}"]`).click();await page.locator('#compare').click();await page.waitForFunction(()=>document.getElementById('reference-image').naturalWidth===1200);await page.locator('#close-reference').click();}
+  await page.locator('[data-view="entry-door"]').click();await page.locator('#doors').check();await page.waitForTimeout(200);await page.locator('#world').screenshot({path:out+'/entry-door-open.png'});
+  const box=await page.locator('#world').boundingBox(),cam=()=>page.evaluate(()=>window.__sakuraInterior.inspect().camera),pre=await cam();await page.mouse.move(box.x+box.width*.5,box.y+box.height*.5);await page.mouse.down();await page.mouse.move(box.x+box.width*.55,box.y+box.height*.52,{steps:8});await page.mouse.up();await page.waitForTimeout(200);assert.notDeepEqual((await cam()).position,pre.position);const orbit=await cam();await page.mouse.wheel(0,-120);await page.waitForTimeout(200);assert.notDeepEqual((await cam()).position,orbit.position);const zoom=await cam();await page.mouse.down({button:'right'});await page.mouse.move(box.x+box.width*.60,box.y+box.height*.55,{steps:8});await page.mouse.up({button:'right'});await page.waitForTimeout(200);assert.notDeepEqual((await cam()).target,zoom.target);
+  if(hall){await page.locator('[data-view="entry-cabinet"]').click();await page.waitForTimeout(200);await page.locator('#world').screenshot({path:out+'/reference-cabinet.png'});}
+  const sourceHashes={};for(const f of ['index.js','plan.js','entry-room.js','preview.js','preview.html','references/entry-01-anime.png'])sourceHashes[folder+'/'+f]=hash(await readFile(folder+'/'+f));
+  const report={passed:false,sourceHashes,scope:{objects:Object.keys(snapshot.objects).length,files:Object.keys(files).length-parallelChanges.length,parallelChanges,layoutUnchanged:true,cabinetPlantUnchanged:hall?true:undefined},audit,views:cameras.map(c=>c[0]),interaction:{orbit:true,zoom:true,pan:true,reference:true},errors};await writeFile(out+'/inspection.json',JSON.stringify(report,null,2));
+  assert.equal(audit.nonfinite,0);assert.equal(audit.degenerate,0);assert.equal(audit.ghostTrim,0);assert.equal(audit.door.leaves,2);assert(audit.door.clearWidth>.70);assert.deepEqual(audit.door.collisions,[]);assert.deepEqual(audit.passage,[]);assert(Math.abs(audit.support.cabinetBottom+.16)<.001);assert(Math.abs(audit.support.plantBottom-audit.support.cabinetTop)<.001);assert(Math.abs(audit.support.floor+.16)<.001);assert(audit.resourceDisposal);assert.deepEqual(errors,[]);
+  if(hall){assert.equal(audit.junction.cabinetZ,1.18);assert(audit.junction.cabinetBodyGap>=0&&audit.junction.cabinetBodyGap<.03);assert(audit.junction.postGap>=0&&audit.junction.postGap<.02);assert.equal(audit.junction.stepIntersections,0);assert.equal(audit.junction.postCollision,false);assert.equal(audit.junction.alongHeights.length,1);assert(audit.junction.acrossHeights.length>=2);}
+  report.passed=true;await writeFile(out+'/inspection.json',JSON.stringify(report,null,2));console.log(JSON.stringify({passed:true,scope:report.scope,audit:{...audit,door:{...audit.door,samples:audit.door.samples.length}},errors}));
+ }
+}finally{await browser.close();}

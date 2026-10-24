@@ -5,24 +5,30 @@ import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
 import {createEditorState} from './town/editor/state.js';
 import {ASSETS,PENDING_BUILDINGS,assetIds,createAsset,TILE_SIZE} from './town/editor/catalog.js';
-import {createEditorScene,renderThumbnails,cellToWorld} from './town/editor/scene.js';
+import {createEditorScene,cellToWorld} from './town/editor/scene.js';
+import {editorThumbnails} from './town/editor/thumbnails.js';
 import {readSavedLayout,connectAutosave} from './town/editor/persistence.js';
 import {createRuntimeBridge} from './town/editor/runtime.js';
 import {createEditorCamera} from './town/editor/camera.js';
 import {createPreviewLighting} from './town/editor/lighting.js';
+import {createShadowUpdates} from './town/editor/shadows.js';
 import {mountEditorUI} from './town/editor/ui.js';
 import {createTownWeather} from './town/editor/weather.js';
 import {createEnvironmentState} from './town/editor/environment.js';
 import {createTownDocument} from './town/editor/document.js';
 import {REVIEW_STORAGE_KEY,REVIEW_TOWN} from './editor-preview/snow-review.js';
+import {FLOWER_REVIEW_STORAGE_KEY,FLOWER_REVIEW_TOWN} from './editor-preview/flowerorangebuilding-review.js';
 
 try {
   const styleResponse=await fetch(new URL('./town/editor/editor.css',import.meta.url));
   if(!styleResponse.ok)throw new Error('无法加载编辑器样式');
   const style=document.createElement('style');style.textContent=await styleResponse.text();document.head.append(style);
-  const reviewMode=new URLSearchParams(location.search).get('review')==='snow';
-  const storage={getItem:key=>reviewMode?(localStorage.getItem(REVIEW_STORAGE_KEY)??JSON.stringify(REVIEW_TOWN)):localStorage.getItem(key),
-    setItem:(key,value)=>localStorage.setItem(reviewMode?REVIEW_STORAGE_KEY:key,value)};
+  const reviewName=new URLSearchParams(location.search).get('review');
+  const review=reviewName==='snow'?{key:REVIEW_STORAGE_KEY,town:REVIEW_TOWN,hint:'雪景审看 · 使用独立存档 · 建筑雪层为待美术接手的初稿'}:
+    reviewName==='flowerorangebuilding'?{key:FLOWER_REVIEW_STORAGE_KEY,town:FLOWER_REVIEW_TOWN,hint:'花满橙瓦屋审看 · 使用独立存档 · 双击建筑近看 · 滚轮缩放'}:null;
+  const reviewMode=!!review;
+  const storage={getItem:key=>reviewMode?(localStorage.getItem(review.key)??JSON.stringify(review.town)):localStorage.getItem(key),
+    setItem:(key,value)=>localStorage.setItem(reviewMode?review.key:key,value)};
   const saved=readSavedLayout(storage,assetIds),state=createEditorState({assetIds,initial:saved.layout}),runtime=createRuntimeBridge();
   const environment=createEnvironmentState(saved.environment),townDocument=createTownDocument({state,environment,assetIds,onApplied:()=>autosave.save()});
   const sceneView=createEditorScene({state,createAsset,tileSize:TILE_SIZE});
@@ -40,6 +46,7 @@ try {
   renderer.info.autoReset=false;
   const cameraRig=createEditorCamera({canvas,state,sceneView}),camera=cameraRig.camera;
   const lighting=createPreviewLighting(scene,sceneView);
+  const shadows=createShadowUpdates({scene,camera,renderer});
   let environmentDirty=false;
   function applyEnvironment(next,previous={}){
     sceneView.setEnvironment(next);
@@ -55,13 +62,16 @@ try {
   stage.rotation.x=-Math.PI/2;stage.position.y=-1.04;stage.receiveShadow=true;scene.add(stage);
   const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,samples:Math.min(4,renderer.capabilities.maxSamples)});
   const composer=new EffectComposer(renderer,target);composer.addPass(new RenderPass(scene,camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(1,1),.13,.35,1.2));composer.addPass(new OutputPass());
-  const thumbnails=renderThumbnails(ASSETS,createAsset,TILE_SIZE);
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(1,1),.13,.35,1.2));
+  // This last pass writes to the screen, not the other scene target. Keep the
+  // same read buffer next frame instead of allocating a second full-size MSAA target.
+  const output=new OutputPass();output.needsSwap=false;composer.addPass(output);
+  const thumbnails=editorThumbnails;
   const ui=mountEditorUI({host:document.getElementById('editor'),canvas,camera,state,sceneView,assets:ASSETS,pendingBuildings:PENDING_BUILDINGS,thumbnails,runtime,documentAPI:townDocument,
     onOverview:options=>cameraRig.overview(options),onFocus:id=>cameraRig.focus(id),onEditingChange:enabled=>cameraRig.setEditing(enabled),isCameraBusy:()=>cameraRig.isBusy()});
   const autosave=connectAutosave(state,storage,{blocked:saved.blocked,serialize:townDocument.exportJSON,canSave:()=>!townDocument.applying,onStatus:result=>ui.setSaveStatus(result.message,!result.ok)});
   ui.setSaveStatus(saved.status,saved.blocked);
-  if(reviewMode)document.getElementById('scene-hint').textContent='雪景审看 · 使用独立存档 · 建筑雪层为待美术接手的初稿';
+  if(reviewMode)document.getElementById('scene-hint').textContent=review.hint;
   let lastSave=0;const flushSave=()=>{if(environmentDirty){autosave.save();environmentDirty=false;}};
   const visibility=()=>{last=performance.now();if(document.hidden)flushSave();};
   document.addEventListener('visibilitychange',visibility);window.addEventListener('pagehide',flushSave);
@@ -73,13 +83,20 @@ try {
   const observer=new ResizeObserver(resize);observer.observe(canvas.parentElement);resize();
   const first=state.getLayout().instances.find(p=>p.assetId==='convenience');
   if(first&&!reviewMode)cameraRig.focus(first.id,{immediate:true});else cameraRig.overview({immediate:true});
+  function renderScene(){
+    shadows.update();renderer.info.reset();
+    // shadows.update already refreshed the world matrices after all animations.
+    // Skip only the renderer's duplicate traversal, restoring the public flag even on failure.
+    const autoUpdate=scene.matrixWorldAutoUpdate;scene.matrixWorldAutoUpdate=false;
+    try{composer.render();}finally{scene.matrixWorldAutoUpdate=autoUpdate;}
+  }
   function draw(now){if(stopped)return;const elapsedDt=Math.max(0,(now-last)/1000),dt=Math.min(.05,elapsedDt);last=now;
     if(!document.hidden){time+=elapsedDt;environment.advance(time);cameraRig.update(dt);sceneView.update(time);weather.update(time);lighting.update(cameraRig.controls.target,camera.position.distanceTo(cameraRig.controls.target));
       const viewDistance=camera.position.distanceTo(cameraRig.controls.target);scene.fog.near=viewDistance+80;scene.fog.far=viewDistance+280;
       // Door animation belongs to the original asset and responds to a close view at its entrance.
       const virtualVisitor=camera.position.clone();if(camera.position.distanceTo(cameraRig.controls.target)>15)virtualVisitor.set(9999,0,9999);
       for(const {asset}of sceneView.getInstances())asset.update?.(dt,virtualVisitor);
-      renderer.shadowMap.needsUpdate=true;renderer.info.reset();composer.render();frames++;
+      renderScene();frames++;
       if(time-lastSave>=1){flushSave();lastSave=time;}
       const snowStatus=document.getElementById('snow-status');if(snowStatus)snowStatus.textContent=`积雪 ${Math.round(environment.get().snowAmount*100)}% · ${environment.get().weather==='snow'?'正在积雪':environment.get().snowAmount?'正在融雪':'无积雪'}`;}
     frameId=requestAnimationFrame(draw);
@@ -88,9 +105,9 @@ try {
   window.townEditor=Object.freeze({state,sceneView,runtime,weather,environment,exportJSON:townDocument.exportJSON,importJSON:input=>{const result=townDocument.importJSON(input);autosave.save();return result;},root:sceneView.root,getLayout:state.getLayout,loadLayout:input=>state.loadLayout(input),onLayoutChange:listener=>state.subscribe(listener),
     connectRuntime:adapter=>runtime.connect(adapter),requestMode:mode=>runtime.request('mode',mode),setTime:value=>runtime.request('time',value),setWeather:value=>runtime.request('weather',value),
     setEditing:enabled=>ui.setEditing(enabled),focusInstance:id=>cameraRig.focus(id),showOverview:options=>cameraRig.overview(options),
-    dispose(){stopped=true;flushSave();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',flushSave);stopEnvironment();townDocument.dispose();cancelAnimationFrame(frameId);observer.disconnect();stopState();stopRuntime();autosave.dispose();ui.dispose();cameraRig.dispose();lighting.dispose();weather.dispose();sceneView.dispose();stage.geometry.dispose();stage.material.dispose();for(const pass of composer.passes)pass.dispose?.();composer.dispose();renderer.dispose();}});
+    dispose(){stopped=true;flushSave();document.removeEventListener('visibilitychange',visibility);window.removeEventListener('pagehide',flushSave);stopEnvironment();townDocument.dispose();cancelAnimationFrame(frameId);observer.disconnect();stopState();stopRuntime();autosave.dispose();ui.dispose();cameraRig.dispose();shadows.dispose();lighting.dispose();weather.dispose();sceneView.dispose();stage.geometry.dispose();stage.material.dispose();for(const pass of composer.passes)pass.dispose?.();composer.dispose();renderer.dispose();}});
   function screenWorld(x,y,z){const v=new THREE.Vector3(x,y,z).project(camera),rect=canvas.getBoundingClientRect();return{x:rect.left+(v.x+1)*rect.width/2,y:rect.top+(1-v.y)*rect.height/2};}
-  window.__editor={environment,scene,camera,cameraRig,renderer,
+  window.__editor={environment,scene,camera,cameraRig,renderer,shadows,
     advanceEnvironment(seconds){time+=seconds;environment.advance(time);sceneView.update(time);weather.update(time);lighting.update(cameraRig.controls.target,camera.position.distanceTo(cameraRig.controls.target));},
     get ready(){return frames>2;},get inspection(){return{environment:environment.get(),frames,layout:state.getLayout(),scene:sceneView.getInspection(),selection:ui.getSelection(),runtime:runtime.getState(),weather:weather.getInspection(),camera:cameraRig.getInspection(),lighting:lighting.getInspection(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles};},
     screenCell(x,z){const p=cellToWorld(x,z,TILE_SIZE);return screenWorld(p.x,.01,p.z);},screenWorld,

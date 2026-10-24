@@ -19,7 +19,9 @@ export function createPreviewLighting(scene,sceneView) {
       if(light.shadow){light.shadow.map?.dispose();light.shadow.mapPass?.dispose();light.shadow.map=null;light.shadow.mapPass=null;}
     }else if(!light.castShadow){light.castShadow=true;light.shadow.needsUpdate=true;}
   }
-  let environment={time:'afternoon',weather:'clear'},demand={point:0,spot:0},assignments=[];
+  let environment={time:'afternoon',weather:'clear'},demand={point:0,spot:0};
+  const pointEntries=[],spotEntries=[],scale=new THREE.Vector3(),position=new THREE.Vector3(),center=new THREE.Vector3(),sunOffset=new THREE.Vector3();
+  const pools=[['point',lamps,pointEntries],['spot',spots,spotEntries]];
   function setEnvironment(next){
     environment={...environment,...next};const p=PERIODS[environment.time],cloud=environment.weather==='clear'?1:.83;
     scene.background.set(p.sky);if(scene.fog)scene.fog.color.set(p.sky);
@@ -28,33 +30,44 @@ export function createPreviewLighting(scene,sceneView) {
   }
   setEnvironment(environment);
   function update(target,distance){
-    const instances=sceneView.getInstances().slice().sort((a,b)=>a.asset.root.position.distanceToSquared(target)-b.asset.root.position.distanceToSquared(target));
-    const descriptors=instances.flatMap(({placement,asset})=>{
+    const instances=sceneView.getInstances().sort((a,b)=>a.asset.root.position.distanceToSquared(target)-b.asset.root.position.distanceToSquared(target));
+    demand.point=0;demand.spot=0;
+    function offer(asset,placement,d){
+      if(!(d.intensity>0)||(d.type!=='point'&&d.type!=='spot'))return;
+      const i=demand[d.type]++,entries=d.type==='point'?pointEntries:spotEntries,limit=d.type==='point'?lamps.length:spots.length;
+      if(i>=limit)return;
+      const entry=entries[i]??(entries[i]={});entry.asset=asset;entry.placement=placement;entry.d=d;
+    }
+    for(const {placement,asset}of instances){
       asset.root.updateWorldMatrix(true,false);
-      const list=asset.getLightingDescriptors?.()??(asset.previewLamps||[]).map((s,i)=>({id:`legacy-${i}`,type:asset.previewLampStyle==='downlight'?'spot':'point',color:s[0],intensity:s[1],distance:s[2],position:s.slice(3),target:[s[3],.4,s[5]]}));
-      return list.filter(d=>d.intensity>0).map(d=>({asset,placement,d}));
-    });
-    demand={point:descriptors.filter(e=>e.d.type==='point').length,spot:descriptors.filter(e=>e.d.type==='spot').length};assignments=[];
-    for(const [type,pool] of [['point',lamps],['spot',spots]]){
-      const entries=descriptors.filter(e=>e.d.type===type);
+      // Descriptors remain live: an asset may animate them without changing the environment.
+      const list=asset.getLightingDescriptors?.();
+      if(list!=null){for(const d of list)offer(asset,placement,d);}
+      else for(let i=0;i<(asset.previewLamps?.length||0);i++){
+        const s=asset.previewLamps[i];offer(asset,placement,{id:`legacy-${i}`,type:asset.previewLampStyle==='downlight'?'spot':'point',color:s[0],intensity:s[1],distance:s[2],position:s.slice(3),target:[s[3],.4,s[5]]});
+      }
+    }
+    pointEntries.length=Math.min(demand.point,lamps.length);spotEntries.length=Math.min(demand.spot,spots.length);
+    for(const [type,pool,entries] of pools){
       pool.forEach((l,i)=>{
-        const entry=entries[i];l.intensity=entry?.d.intensity||0;l.userData.instanceId=entry?.placement.id||null;
+        const entry=entries[i];l.intensity=entry?.d.intensity||0;l.userData.instanceId=entry?.placement.id||null;l.userData.descriptorId=entry?.d.id;
         if(!entry){setShadow(l,false);return;}
-        const {asset,placement,d}=entry;l.color.set(d.color);l.distance=d.distance*asset.root.getWorldScale(new THREE.Vector3()).x;l.decay=d.decay??2;
-        l.position.copy(asset.root.localToWorld(new THREE.Vector3(...d.position)));
+        const {asset,d}=entry;l.color.set(d.color);l.distance=d.distance*asset.root.getWorldScale(scale).x;l.decay=d.decay??2;
+        l.position.copy(asset.root.localToWorld(position.fromArray(d.position)));
         if(type==='spot'){
-          l.target.position.copy(asset.root.localToWorld(new THREE.Vector3(...d.target)));
+          l.target.position.copy(asset.root.localToWorld(position.fromArray(d.target)));
           l.angle=d.angle??Math.PI*.39;l.penumbra=d.penumbra??.8;setShadow(l,d.castShadow!==false);
-          l.shadow.bias=d.shadowBias??-.0002;l.shadow.normalBias=d.shadowNormalBias??.012;l.shadow.camera.near=d.shadowNear??.06;
+          l.shadow.bias=d.shadowBias??-.0002;l.shadow.normalBias=d.shadowNormalBias??.012;
+          const near=d.shadowNear??.06;if(l.shadow.camera.near!==near){l.shadow.camera.near=near;l.shadow.camera.updateProjectionMatrix();}
         }
-        assignments.push({instanceId:placement.id,id:d.id,type,position:l.position.toArray(),target:type==='spot'?l.target.position.toArray():null,intensity:l.intensity});
       });
     }
-    const span=THREE.MathUtils.clamp(distance*.6,11,100),center=new THREE.Vector3(Math.round(target.x),0,Math.round(target.z));
-    sun.position.copy(center).add(new THREE.Vector3(...PERIODS[environment.time].position));sun.target.position.copy(center);
+    const span=THREE.MathUtils.clamp(distance*.6,11,100);center.set(Math.round(target.x),0,Math.round(target.z));
+    sun.position.copy(center).add(sunOffset.fromArray(PERIODS[environment.time].position));sun.target.position.copy(center);
     Object.assign(sun.shadow.camera,{left:-span,right:span,top:span,bottom:-span});sun.shadow.camera.updateProjectionMatrix();
   }
   return{setEnvironment,update,invalidate(){sun.shadow.needsUpdate=true;},
-    getInspection:()=>({environment:{...environment},pointLimit:10,downlightLimit:4,activeStoreLamps:lamps.filter(l=>l.intensity>0).length,activeDownlights:spots.filter(l=>l.intensity>0).length,demand,assignments,ambient:sky.intensity,sun:sun.intensity}),
-    dispose(){root.removeFromParent();sun.shadow.dispose();spots.forEach(l=>l.shadow.dispose());}};
+    getInspection:()=>({environment:{...environment},pointLimit:10,downlightLimit:4,activeStoreLamps:lamps.filter(l=>l.intensity>0).length,activeDownlights:spots.filter(l=>l.intensity>0).length,demand:{...demand},
+      assignments:pools.flatMap(([type,pool])=>pool.filter(l=>l.intensity>0).map(l=>({instanceId:l.userData.instanceId,id:l.userData.descriptorId,type,position:l.position.toArray(),target:type==='spot'?l.target.position.toArray():null,intensity:l.intensity}))),ambient:sky.intensity,sun:sun.intensity}),
+    dispose(){pointEntries.length=spotEntries.length=0;root.removeFromParent();sun.shadow.dispose();spots.forEach(l=>l.shadow.dispose());}};
 }

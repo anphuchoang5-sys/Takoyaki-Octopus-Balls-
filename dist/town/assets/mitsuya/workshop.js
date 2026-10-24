@@ -26,6 +26,11 @@ export function workshop(){
   g.traverse(o=>{if(o===g)return;const tr=new THREE.Matrix4().multiplyMatrices(inv,o.matrixWorld);if(o.isMesh){const geo=o.geometry.clone().applyMatrix4(tr);if(o.material.transparent){geometries.add(geo);const m=new THREE.Mesh(geo,o.material);m.name=o.name;m.renderOrder=2;transparent.push(m);return;}const k=o.material.uuid;if(!buckets.has(k))buckets.set(k,{m:o.material,gs:[]});buckets.get(k).gs.push(geo);}else if(o.isLineSegments){const a=o.geometry.attributes.position,v=new THREE.Vector3();for(let i=0;i<a.count;i++){v.fromBufferAttribute(a,i).applyMatrix4(tr);lines.push(v.x,v.y,v.z);}}});
   g.clear();for(const {m,gs} of buckets.values()){const copies=gs.map(x=>{const y=x.index?x.toNonIndexed():x.clone();if(!m.map)y.deleteAttribute('uv');return y;}),geo=mergeGeometries(copies,false);copies.forEach(x=>x.dispose());gs.forEach(x=>x.dispose());geometries.add(geo);const mesh=new THREE.Mesh(geo,m);mesh.castShadow=mesh.receiveShadow=true;g.add(mesh);}if(lines.length){const geo=new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(lines,3));geometries.add(geo);g.add(new THREE.LineSegments(geo,ink));}if(transparent.length)g.add(...transparent);
  }
+ function finish(){
+  // Run after all groups are attached: nested batches may still reuse geometry.
+  const used=new Set();root.traverse(node=>{if(node.geometry)used.add(node.geometry);});
+  for(const geometry of geometries)if(!used.has(geometry)){geometry.dispose();geometries.delete(geometry);}
+ }
  let disposed=false;function dispose(){if(disposed)return;disposed=true;geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());root.removeFromParent();root.clear();}
- return {THREE,root,group,mat,mesh,box,cyl,ball,beam,ring,tube,solid,texture,face,label,glass,glow,batch,dispose,textures};
+ return {THREE,root,group,mat,mesh,box,cyl,ball,beam,ring,tube,solid,texture,face,label,glass,glow,batch,finish,dispose,textures};
 }

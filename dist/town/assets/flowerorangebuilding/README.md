@@ -1,9 +1,10 @@
 # flowerorangebuilding
 
-2026-10-21：当前为 `exterior-04-hanging`，修复阳台三个挂盆和院门挂盆的枝叶穿盆壁，并补上实体盆底；花盆位置、大小、配色和其他建筑部分保持，见[挂盆修复记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-hanging-plants.md)。此前[地块闪烁修复](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-ground-flicker.md)和[入口修改](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-entry.md)保留；[第一版记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-model.md)保留当时验证事实。未接入正式地图，本轮挂盆画面待用户认可。界面名“花满橙瓦屋”为描述性临时名，不声称是原作正式名称。
+2026-10-21：当前为 `exterior-04-hanging`，修复阳台三个挂盆和院门挂盆的枝叶穿盆壁，并补上实体盆底；花盆位置、大小、配色和其他建筑部分保持，见[挂盆修复记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-hanging-plants.md)。此前[地块闪烁修复](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-ground-flicker.md)和[入口修改](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-entry.md)保留；[第一版记录](../../../../docs/actions/2026-10-21-B-flowerorangebuilding-model.md)保留当时验证事实。2026-10-22 已由 C 原样接入正式地图，技术验证见[接入记录](../../../../docs/actions/2026-10-22-C-flowerorangebuilding-integration.md)；挂盆和正式街区画面仍待用户认可。界面名“花满橙瓦屋”为描述性临时名，不声称是原作正式名称。
 
 ## 查看当前作品
 
+- [正式地图审看](http://127.0.0.1:4173/?review=flowerorangebuilding)：同一正式编辑器、独立存档；两栋本建筑与樱家、便利店、みつや同场，不替换用户地图。
 - [本地三维预览](http://127.0.0.1:4184/town/assets/flowerorangebuilding/preview.html)：复用现有服务；拖动旋转、滚轮缩放、右键平移，可切换原图机位、全景、两侧、背面、俯视、屋顶、院门及阳台。
 - [离线三维预览](../../../../artifacts/buildings/flowerorangebuilding/花满橙瓦屋-三维预览.html)：双击直接打开，内嵌 8 个代码模块及参考图，已阻断 HTTP 验证操作。
 - [原图与模型对照](../../../../artifacts/buildings/flowerorangebuilding/原图与模型对照.html)：原图对照、同机位入口修改前后对照及多面截图。
@@ -23,7 +24,7 @@
 | `getLightingDescriptors()` | 当前返回空数组；建筑工厂没有真实 Light，不另建天气或时钟 |
 | `dispose()` | 释放本实例拥有的资源，重复调用安全，不影响其他实例 |
 
-白天外观是本轮美术范围；雨雪、积雪、夜间局部灯光和独立室内均未制作，也未自动接入通用积雪或地图。后续按项目统一接口处理，不能把本静态 GLB 当成完整运行能力。
+建筑自身雨雪、积雪、夜间局部灯光和独立室内均未制作，也未自动接入通用建筑积雪。正式地图已接入全局四时段受光、统一飘雨/飘雪、实体遮挡与雨滴水花；这些由地图宿主管理，不能当成本建筑已有完整环境视觉。`entry` 仍只是院门资料，不接进屋。后续按项目统一接口处理，不能把本静态 GLB 当成完整运行能力。
 
 ## 实际验证
 

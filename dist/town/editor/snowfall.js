@@ -35,7 +35,10 @@ export function createSnowfall(scene,{surfaces,state,tileSize=14}){
       const f=flakes[i],duration=24/f.speed,age=(seconds+f.phase)%duration,cycle=Math.floor((seconds+f.phase)/duration);
       if(cycle!==f.cycle){f.cycle=cycle;f.landed=false;}
       const x=f.x+Math.sin(seconds*.67+f.seed)*.28,z=f.z+Math.sin(seconds*.43+f.seed*.7)*.20,y=22-age*f.speed;
-      const hit=surfaces.sampleInto(x,z,contact);if(!hit||y-f.size<=hit.point[1])f.landed=true;
+      // Contact already ended this fall. Keep the inspected samples current;
+      // other hidden flakes cannot become visible again until their next cycle.
+      const hit=(!f.landed||i%7===0)?surfaces.sampleInto(x,z,contact):null;
+      if(!f.landed&&(!hit||y-f.size<=hit.point[1]))f.landed=true;
       dummy.position.set(x,y,z);dummy.rotation.set(.45+Math.sin(f.seed)*.5,seconds*.25+f.seed,seconds*.15+f.seed*.4);
       dummy.scale.setScalar(f.landed?0:f.size);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);
       if(i%7===0)samples.push({x,y,z,size:f.size,visible:!f.landed,hitY:hit?.point[1]??null,surface:hit?.surface});

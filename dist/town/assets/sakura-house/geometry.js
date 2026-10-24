@@ -31,6 +31,9 @@ export function createWorkshop(){
     if(linePositions.length){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));geometries.add(g);root.add(new THREE.LineSegments(g,ink));}
     // UVs survive on the separate mapped-material batches used by nameplates.
     root.userData.components=components;
+    // Merged copies own their buffers. Stop retaining the construction geometry.
+    const used=new Set();root.traverse(node=>{if(node.geometry)used.add(node.geometry);});
+    for(const geometry of geometries)if(!used.has(geometry)){geometry.dispose();geometries.delete(geometry);}
   }
   function dispose(){for(const g of geometries)g.dispose();for(const m of materials.values())m.dispose();for(const t of textures)t.dispose();root.removeFromParent();root.clear();}
   return {THREE,root,mat,mesh,group,box,cylinder,ellipsoid,beam,tube,solid,surface,plaque,finish,dispose,geometries,materials};

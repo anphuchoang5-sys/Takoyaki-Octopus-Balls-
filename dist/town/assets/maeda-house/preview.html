@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>前田家 · 外观试作</title>
+<style id="viewer-style"></style>
+<script type="importmap">{"imports":{"three":"../../../vendor/three.module.js","three/addons/":"../../../vendor/addons/"}}</script>
+</head><body>
+<main id="viewport"><canvas id="world" tabindex="0" aria-label="前田家三维预览，拖动旋转，滚轮缩放，右键平移"></canvas></main>
+<header><p class="eyebrow">小丸子小镇 / 建筑试作 · 前田家</p><h1>前田家</h1><p class="subtitle">木围墙里，红瓦的前翼和转过一个角的奶油色后翼。</p></header>
+<aside class="controls"><p class="section-label">看一看房子</p><div class="views">
+<button data-view="reference">参考机位</button><button data-view="hero">立体全景</button><button data-view="front">正面</button><button data-view="left">左侧</button><button data-view="right">右侧</button><button data-view="corner">右翼转角</button><button data-view="back">背面</button><button data-view="roof">屋顶近景</button><button data-view="gate">院门近景</button><button data-view="door">大门近景</button><button data-view="window">窗近景</button><button data-view="yard">前院灌木</button><button data-view="tree">屋后落叶树</button><button data-view="top">俯视</button></div>
+<div class="rule"></div><button id="reference-toggle" class="wide" aria-pressed="false">打开原图对照</button><button id="plants-toggle" class="wide" aria-pressed="true">花木：显示</button><button id="time-toggle" class="wide" aria-pressed="false">窗户暖光：关</button><button id="rotate" class="wide" aria-pressed="false">自动环绕</button><button id="reset" class="wide">恢复全景</button>
+<p class="hint">左键拖动旋转 · 滚轮缩放<br>右键平移 · Home 回到全景</p></aside>
+<section id="reference-panel" hidden><div class="reference-title"><span>你的动画参考</span><button id="reference-close" aria-label="关闭参考">×</button></div><img id="reference-image" src="./references/user-maeda-front.jpg" alt="用户提供的前田家正面动画截图"><p>参考只给正面：左侧、背面、院内与门窗内部为补全。</p></section>
+<footer><span class="dot"></span><span id="caption">完整外观 · 可从任意方向查看</span></footer><div id="fatal" hidden></div>
+<script type="module" src="./preview.js"></script></body></html>

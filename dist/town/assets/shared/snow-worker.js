@@ -35,6 +35,7 @@ function indexedFrame(frame){
     if(table[slot]<0){table[slot]=i;remap[i]=unique++;}else remap[i]=remap[table[slot]];
   }
   for(let i=0;i<indices.length;i++)indices[i]=remap[frame.indices[i]];
+  for(let i=0;i<frame.topIndices.length;i++)frame.topIndices[i]=remap[frame.topIndices[i]];
   const packed=['positions','normals','colors'].map(name=>outputBuffer(name,Float32Array,unique*3));
   for(let i=0;i<count;i++)for(let a=0;a<arrays.length;a++)for(let j=0;j<3;j++)packed[a][remap[i]*3+j]=arrays[a][i*3+j];
   return {...frame,positions:packed[0],normals:packed[1],colors:packed[2],indices};
@@ -76,11 +77,11 @@ self.onmessage=async({data})=>{
       models.set(token,snow);send({type:'ready',stats:snow.inspect()});return;
     }
     const snow=models.get(token);if(!snow)return;
-    const stats=snow.setAmount(data.amount),frame=indexedFrame(snow.takeFrame(outputBuffer)),{positions,normals,colors,top,parts,indices}=frame;
+    const stats=snow.setAmount(data.amount),frame=indexedFrame(snow.takeFrame(outputBuffer,true)),{positions,normals,colors,topIndices,parts,indices}=frame;
     snow.releaseFrame();
     stats.uniqueVertices=positions.length/3;
     send({type:'mesh',amount:data.amount,...frame,stats},
-      [positions.buffer,normals.buffer,colors.buffer,top.buffer,parts.buffer,indices.buffer]);
+      [positions.buffer,normals.buffer,colors.buffer,topIndices.buffer,parts.buffer,indices.buffer]);
     // Full snow is stationary. Retain its actual displayed surface and prepared
     // support, but no generation scratch or unused transport allocations.
     if(data.amount===1&&[...models.values()].every(s=>s.getAmount()===1)){

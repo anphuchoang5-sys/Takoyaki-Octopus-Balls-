@@ -38,7 +38,8 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 
 ## 建筑与后续功能
 
-- 编辑器当前可用：完整 AME MART 便利店街角、小丸子的家、みつや小店，以及直路、转角、丁字路、十字路。学校、公园仍待接入。
+- 编辑器当前可用：完整 AME MART 便利店街角、小丸子的家、みつや小店、花满橙瓦屋，以及直路、转角、丁字路、十字路。学校、公园仍待接入。
+- 花满橙瓦屋 `flowerorangebuilding / exterior-04-hanging` 沿用源码工厂与完整庭院，14×14 占一格。已接入编辑、保存、全局光照和降水遮挡；自身积雪、局部夜灯和室内未制作。[正式地图独立审看](http://127.0.0.1:4173/?review=flowerorangebuilding)使用专用存档，不覆盖原地图；实际检查与画面待审范围见[接入记录](docs/actions/2026-10-22-C-flowerorangebuilding-integration.md)。
 - みつや小店当前使用 B `anime-facade-night-10` 源码工厂，稳定 `assetId=mitsuya`，外观原比例占一格 14×14。狗屋、长凳、右侧松卷竹帘、左后低灌木粉花和门口陈设原样保留；全格遮罩地图长草。现有晴雨按实际屋顶与地面计算落点，门口暖光仍使用编辑器既有灯池。C v2.6 已接通全镇时段与本店夜灯描述；专属积雪造型目前为暂停的联调初稿，已转交建筑美术，不能视作正式成品。独立室内继续保留，正式进出门、人物、碰撞和购物未接入。制作与待审状态见[夜晚 10 交付记录](docs/actions/2026-10-20-B-mitsuya-night.md)。
 - 小丸子的家使用 B 交付的樱家 `exterior-04-roof`，房屋、院落、植栽和院外电灯占一格 14×14，支持重复摆放、旋转、搬动和存档。源码、GLB 和[独立预览](http://127.0.0.1:4173/town/assets/sakura-house/preview.html)保留在 `dist/town/assets/sakura-house/`。局部檐口滴水已通过 [B 当前接口](docs/handoffs/B-sakura-house.md)接入统一晴雨；原有夜灯、完整梯形光束和地面光斑保留。独立室内已包含姐妹房和精修待审的客厅，其余房间保留结构样板；[整屋预览](http://127.0.0.1:4173/town/assets/sakura-house/interior/preview.html)及离线版已同步，正式进出门尚未实现；C v2.6 已接通全镇时段，屋顶及地图整体夜景待用户认可，见[屋顶 04 交付记录](docs/actions/2026-10-20-B-sakura-roof.md)。
 - 咖啡店、书店、普通住宅和小公园仍作为旧样稿保留在各自建筑文件夹，通用创建入口仍可使用；正式编辑器不加载它们。
@@ -69,6 +70,8 @@ GitHub 仓库：[anphuchoang5-sys/Takoyaki-Octopus-Balls-](https://github.com/an
 当前建筑离线预览、截图和检查结果仍保留在 `artifacts/`。2026-10-20 已按用户授权删除五个樱家旧 archive 目录，随后又按 Codex 清理清单删除其余 12 个旧备份目录（みつや `history`、编辑器 v2–v2.5 的 `before`、目录整理/改名/签出验证副本），共 361 个文件、约 35.34 MiB；保留 `roof-04/`（含 `before`）、`interior/`、`references/`、`night-10/` 当前交付及旧原型归档。首轮范围见[清理执行记录](docs/actions/2026-10-20-building-commit-and-backup-cleanup.md)，12 项执行与核对见[后续执行记录](docs/actions/2026-10-20-backup-cleanup-execution.md)，删除前清单见[清理清单](docs/actions/2026-10-20-backup-cleanup-candidates.md)。本次没有发布网站，既有线上地址的内容不由本地文件变更自动更新。
 
 ## 检查与记录
+
+编辑器素材卡片现在读取预生成的真实模型 PNG，启动时不再为卡片构造全部建筑和额外 WebGL 渲染器。新增素材或修改外观、缩略图机位后，在本地服务运行时执行 `node scripts/generate-editor-thumbnails.mjs`，将生成的 `dist/town/editor/thumbnails.js` 与 `thumbnails/` 一同交付；`node scripts/generate-editor-thumbnails.mjs --check` 会重绘并核对 8 张图片及素材覆盖。生成沿用原 280×190 渲染器、灯光与机位，严格图片校验需使用相同 Chrome、字体及 GPU 环境。资源及性能验证见[本轮行动记录](docs/actions/2026-10-24-C-thumbnail-and-batch-memory.md)。
 
 `npm run check` 检查首页宿主语法；本地服务运行后，`npm run check:editor` 使用本机 Chrome/Playwright 执行完整编辑器检查，输出到 `artifacts/editor/current/`。检查使用隔离浏览器，不修改用户浏览器的存档。
 
